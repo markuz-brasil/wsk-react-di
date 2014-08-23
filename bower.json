@@ -1,0 +1,26 @@
+{
+  "name": "wsk-paper-es7",
+  "version": "0.0.0",
+  "homepage": "'blank'",
+  "authors": [
+    "markuz brasil"
+  ],
+  "description": "base polymer es7 app",
+  "main": "public/index.html",
+  "moduleType": [
+    "es6"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "core-elements": "Polymer/core-elements#~0.3.5",
+    "traceur": "~0.0.58"
+  }
+}
