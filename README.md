@@ -1,5 +1,5 @@
 ##### Extra Features
-|    |    |    |    |    |    |
+
 |--- |--- |--- |--- |--- |--- |
 |[less](http://lesscss.org/) | [Jade](http://jade-lang.com/) | [traceur](https://github.com/google/traceur-compiler) | [Reactjs](http://facebook.github.io/react/index.html) | [DI](https://github.com/angular/di.js#a3130ef87a) | [Zone](https://github.com/angular/zone.js#74947b6f509b)|
 
