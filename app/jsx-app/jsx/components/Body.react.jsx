@@ -1,3 +1,4 @@
+console.log('---- hello from React Body Class ---')
 
 class _Body {
   getClassName() {

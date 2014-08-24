@@ -18,213 +18,112 @@
  */
 
 'use strict';
-var exec = require('child_process').exec
 var path = require('path')
 
 // Include Gulp & Tools We'll Use
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
-
-var es6ify = require('es6ify');
-var reactify = require('reactify');
-
-var browserify   = require('browserify');
-var watchify     = require('watchify');
-var source       = require('vinyl-source-stream');
-var aliasify = require('aliasify')
-
-// gulp.task('browserify', function() {
-
-//   var bundleMethod = global.isWatching ? watchify : browserify;
-
-//   var bundler = bundleMethod({
-//     // Specify the entry point of your app
-//     entries: [
-//     './app/main.js',
-//     './app/jsx-app/jsx/app.jsx',
-//     ],
-//     // Add file extentions to make optional in your requires
-//     extensions: ['.jsx', '.js'],
-//     // Enable source maps!
-//     debug: true
-//   });
-
-//   var bundle = function() {
-//     // Log when bundling starts
-//     // bundleLogger.start();
-
-//     return bundler
-//       .bundle()
-//       // Report compile errors
-//       // .on('error', handleErrors)
-//       // Use vinyl-source-stream to make the
-//       // stream gulp compatible. Specifiy the
-//       // desired output filename here.
-//       .pipe(source('app.js'))
-//       // Specify the output destination
-//       .pipe(gulp.dest('./.tmp/build/'))
-//       // Log when bundling completes!
-//       // .on('end', bundleLogger.end);
-//   };
-
-//   if(global.isWatching) {
-//     // Rebundle with watchify on changes.
-//     bundler.on('update', bundle);
-//   }
-
-//   return bundle();
-// });
-
-
-var AUTOPREFIXER_BROWSERS = [
-  'ie >= 10',
-  'ie_mob >= 10',
-  'ff >= 30',
-  'chrome >= 34',
-  'safari >= 7',
-  'opera >= 23',
-  'ios >= 7',
-  'android >= 4.4',
-  'bb >= 10'
-];
+var thr = require('through2').obj
 
 var CFG = require('./config');
-var ROOT = CFG.root
+CFG.webpack = require("../webpack.config")
+
 var TMP = CFG.tmp
 var APP = CFG.app
-var BUILD = CFG.build
-var WEB = CFG.web
+var LIBS = CFG.libs
+var SRC = '{'+ APP +','+ LIBS +'}/**/*'
 
-var DEST = path.join(TMP, APP)
-var traceurOps ={
-  modules: 'commonjs',
-  types: true,
-  typeAssertions: true,
-  typeAssertionModule: 'rtts-assert',
-  annotations: true,
-  sourceMaps: true
-}
+// TODO: add comments
+gulp.task('assets', ['clean'], function(cb){
+  runSequence([
+    'assets:less', 'assets:jade', 'assets:js'], cb)
+})
+
+// TODO: add comments
+gulp.task('assets:js', function(cb){
+  runSequence([
+    'assets:es7', 'assets:react'], 'assets:webpack', cb)
+})
 
 // Compile and Automatically Prefix Stylesheets
 gulp.task('assets:less', function () {
-  return gulp.src([
-      path.join(APP, '**/*.less'),
-    ])
+  return gulp.src([SRC +'.{less,css}'])
+    .pipe($.cached('less', {optimizeMemory: true}))
     .pipe($.sourcemaps.init())
     .pipe($.less())
-    .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
+    .pipe($.autoprefixer(CFG.cssPrefixer))
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(DEST))
+    .pipe(gulp.dest(TMP))
     .pipe($.size({title: 'less'}));
 });
 
 // TODO: add comments
 gulp.task('assets:jade', function(){
-  return gulp.src([
-      path.join(APP, '**/*.jade'),
-    ])
+  return gulp.src([SRC +'.jade'])
+    .pipe($.cached('jade', {optimizeMemory: true}))
     .pipe($.sourcemaps.init())
     .pipe($.jade({pretty: true}))
     .on('error', console.error.bind(console))
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(DEST))
+    .pipe(gulp.dest(TMP))
     .pipe($.size({title: 'jade'}))
 });
 
-// TODO: write comments
-gulp.task('assets:es7:copy-deps', function(cb){
-  return gulp.src([
-      'node_modules/di/src/*.js',
-      'node_modules/zone.js/*zone.js',
-    ])
-    .pipe(gulp.dest('libs'))
-});
-
-// TODO: write comments
-gulp.task('assets:es7:deps', function(cb){
-  return gulp.src('libs/**/*.js')
+// TODO: add comments
+gulp.task('assets:es7', function(cb){
+  return gulp.src([SRC +'.js'])
+    .pipe($.cached('es7', {optimizeMemory: true}))
     .pipe($.sourcemaps.init())
-    .pipe($.traceur(traceurOps))
+    .pipe($.traceur(CFG.traceur))
     .on('error', console.error.bind(console))
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(DEST+ '/libs'))
-    .pipe($.size({title: 'es7:deps'}))
+    .pipe(gulp.dest(TMP))
+    .pipe($.size({title: 'es7'}))
 });
 
+// TODO: add comments
 gulp.task('assets:react', function(cb){
-  return gulp.src([
-      path.join(APP, '**/*.jsx'),
-    ])
+  return gulp.src([SRC +'.jsx'])
+    .pipe($.cached('react', {optimizeMemory: true}))
     .pipe($.react({harmony: true, sourceMap: true}))
     .pipe($.sourcemaps.init())
-    .pipe($.traceur(traceurOps))
+    .pipe($.traceur(CFG.traceur))
     .on('error', console.error.bind(console))
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(DEST))
-    .pipe($.size({title: 'es7'}))
+    .pipe(gulp.dest(TMP))
+    .pipe($.size({title: 'react'}))
 });
 
-gulp.task('assets:es7', function(cb){
+// TODO: add comments
+gulp.task('assets:webpack', function(cb){
+  var pack = true;
   return gulp.src([
-      path.join(APP, '**/*.js'),
+      TMP +'/**/*.js',
+      '!'+ TMP +'/{webpack,build,dist}/**',
     ])
-    .pipe($.sourcemaps.init())
-    .pipe($.traceur(traceurOps))
-    .on('error', console.error.bind(console))
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(DEST))
-    .pipe($.size({title: 'es7'}))
+    .pipe($.cached('webpack', {optimizeMemory: true}))
+    .pipe(thr(function(f,e,next){
+      // TODO: explain why all of this.
+      var ctx = this;
+      if (!pack) return next()
+      pack = false
+
+      $.webpack(CFG.webpack)
+        .on('error', console.error.bind(console))
+        .on('end', next)
+        .pipe(thr(function(vfs, e, next){
+          ctx.push(vfs); next()
+        }))
+    }))
+    .pipe($.rename(function(filePath){
+      filePath.dirname = TMP +'/webpack'
+    }))
+    .pipe(gulp.dest('.'))
+    .pipe($.size({title: 'webpack'}))
 });
 
-gulp.task('assets:webpack:dev', function(cb){
-  // executing pub build
-  var cmd = exec('webpack -d', {cwd: ROOT});
-  cmd.stdout.pipe(process.stdout);
-  cmd.stderr.pipe(process.stderr);
-  cmd.on('close', cb);
-});
-
-// TODO: add comments
-gulp.task('assets:js', function(cb){
-  runSequence([
-    'assets:es7', 'assets:es7:deps', 'assets:react'],
-    'assets:webpack:dev', cb)
-})
-
-// TODO: add comments
-gulp.task('assets', ['clean'], function(cb){
-  runSequence([
-    'assets:less',
-    'assets:jade',
-    'assets:js'], cb)
-
-})
-
-
-// TODO: add comments
-// gulp.task('assets:copy', function(){
-//   return gulp.src([
-//       path.join(APP, 'pubspec.yaml'),
-//       path.join(APP, 'pubspec.lock'),
-//       path.join(APP, 'build.dart')
-
-//     ])
-//     .pipe(gulp.dest(DEST))
-//     .pipe($.size({title: 'assets:copy'}))
-// });
-
-// executing pub build
-// gulp.task('assets:pub', ['assets:copy'], function(cb){
-//   var cmd = exec('pub get', {cwd: DEST});
-//   // cmd.stdout.pipe(process.stdout);
-//   cmd.stderr.pipe(process.stderr);
-//   cmd.on('close', cb);
-// })
-
-
-
-// // TODO: write the equivalent of dart
+// // TODO: write the equivalent for es7
 // // Lint JavaScript
 // gulp.task('jshint', function () {
 //   return gulp.src('app/scripts/**/*.js')

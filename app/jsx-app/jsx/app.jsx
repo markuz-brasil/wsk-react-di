@@ -1,4 +1,5 @@
 import {MainSection} from './components/MainSection.react';
+import {Injector} from 'di'
 
 var render = () => React.renderComponent(
     <MainSection />,
@@ -6,4 +7,3 @@ var render = () => React.renderComponent(
 );
 
 render();
-

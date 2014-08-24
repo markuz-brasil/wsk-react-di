@@ -4,15 +4,17 @@ import {toString} from './util';
 var IS_DEBUG = false;
 var _global = null;
 
-if (typeof process === 'object' && process.env) {
-  // Node.js
-  IS_DEBUG = !!process.env['DEBUG'];
-  _global = global;
-} else if (typeof location === 'object' && location.search) {
+if (typeof location === 'object' && location.search) {
   // Browser
   IS_DEBUG = /di_debug/.test(location.search);
   _global = window;
 }
+else {
+  // Node.js
+  IS_DEBUG = !!process.env['DEBUG'];
+  _global = global;
+}
+
 
 
 var globalCounter = 0;

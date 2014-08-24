@@ -52,12 +52,14 @@ if (process.argv[2] && process.argv[2].split(':')[0] === 'serve') {
 }
 
 // Load custom tasks from the `tasks` directory
-try { require('require-dir')('tasks'); } catch (err) {}
+try { require('require-dir')('tasks'); } catch (err) {
+  console.log(err)
+}
 
 // TODO: add comments
-// gulp.task('default', ['clean'], function(cb){
-//   runSequence('build', cb)
-// })
+gulp.task('default', ['clean'], function(cb){
+  runSequence('assets', cb)
+})
 
 
 

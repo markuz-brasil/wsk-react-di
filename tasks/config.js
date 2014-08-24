@@ -18,29 +18,51 @@
  */
 
 'use strict';
-var join = require('path').join;
-var TMP = '.tmp';
-
-var AUTOPREFIXER_BROWSERS = [
-  'ie >= 10',
-  'ie_mob >= 10',
-  'ff >= 30',
-  'chrome >= 34',
-  'safari >= 7',
-  'opera >= 23',
-  'ios >= 7',
-  'android >= 4.4',
-  'bb >= 10'
-];
 
 module.exports = {
   root: process.cwd(),
-  tmp: TMP,
+  tmp: '.tmp',
   app: 'app',
   dist: 'dist',
-  // dart folders
+  libs: 'libs',
   web: 'web',
   build: 'build',
-  cssPrefixer: AUTOPREFIXER_BROWSERS
+
+  cssPrefixer: [
+    'ie >= 10',
+    'ie_mob >= 10',
+    'ff >= 30',
+    'chrome >= 34',
+    'safari >= 7',
+    'opera >= 23',
+    'ios >= 7',
+    'android >= 4.4',
+    'bb >= 10'
+  ],
+  browserSync: {
+    notify: false,
+    port: 3000,
+    // browser: 'chrome',
+    // browser: 'skip',
+
+    // forces full page reload on css changes.
+    injectChanges: false,
+
+    // Run as an https by uncommenting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    // https: true,
+    server: {
+      baseDir: []
+    }
+  },
+  traceur: {
+    modules: 'commonjs',
+    types: true,
+    typeAssertions: true,
+    typeAssertionModule: 'rtts-assert',
+    annotations: true,
+    sourceMaps: true
+  },
 }
 

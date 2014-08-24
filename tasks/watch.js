@@ -33,18 +33,15 @@ var cyan = $.util.colors.cyan;
 var CFG = require('./config');
 var TMP = CFG.tmp
 var APP = CFG.app
-var WEB = CFG.web
-var DIST = CFG.dist
-var ROOT = CFG.root
-var BUILD = CFG.build
+var LIBS = CFG.libs
 
 // Watch Files For Changes & reload
 var files = {
   html: path.join(APP, '**/*.{jade,html}'),
   css: path.join(APP, '**/*.{less,css}'),
   js: [
-    path.join(APP, '**/*.js'),
-    path.join('libs', '**/*.js')
+    path.join(APP, '**/*.{js,jsx}'),
+    path.join(LIBS, '**/*.{js,jsx}')
   ],
 }
 

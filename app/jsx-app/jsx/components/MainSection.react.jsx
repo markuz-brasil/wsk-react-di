@@ -1,6 +1,5 @@
 import {Body} from './Body.react';
 
-
 class _MainSection {
     render() {
         return (
