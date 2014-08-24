@@ -41,13 +41,13 @@ Let's check to see if you already have Node installed. Bring up a terminal and t
 Bring up a terminal and type `gulp --version`. If Gulp is installed it should return a version number at or above 3.5.x. If you don't see any errors, proceed to the Gulp commands section. If you need to install Gulp, open up a terminal and type in the following:
 
 ```sh
-$ npm install --global gulp
+$ npm install --global gulp bower
 ```
 
 This will install Gulp globally. Depending on your user account, you may need to gain elevated permissions using `sudo` (i.e `sudo npm install --global gulp`). Next, install the local dependencies Web Starter Kit requires:
 
 ```sh
-$ npm install
+$ npm install && bower install
 ```
 
 That's it! You should now have everything needed to use the Gulp tools in Web Starter Kit.
