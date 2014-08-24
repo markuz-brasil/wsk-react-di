@@ -1,3 +1,10 @@
+#### I added some features
+- [less](http://lesscss.org/)
+- [Jade](http://jade-lang.com/)
+- [traceur](https://github.com/google/traceur-compiler)
+- [Reactjs](http://facebook.github.io/react/index.html)
+- [DI](https://github.com/angular/di.js)
+
 # [![Web Starter Kit](https://cloud.githubusercontent.com/assets/170270/3343034/ceef6e92-f899-11e3-96b9-5d9d69d97a00.png)](https://github.com/google/web-starter-kit/releases/latest)
 
 ## Overview
@@ -23,13 +30,13 @@ If you would like to use the optional tooling we provide, make sure your system 
 
 Let's check to see if you already have Node installed. Bring up a terminal and type `node --version`. If Node responds, and if it shows a version at or above v0.10.x, proceed to checking if you have Ruby installed too. If you require Node, go to [nodejs.org](http://nodejs.org/) and click on the big green Install button.
 
-### Ruby
+### ~~Ruby~~
 
-Bring up a terminal and type `ruby --version`. If Ruby responds, and if it shows a version number at or above 1.8.7 then type `gem --version`. If you don't see any errors, proceed to installing the Sass gem. If you require Ruby, it can be installed from the [Ruby downloads](https://www.ruby-lang.org/en/downloads/) page.
+~~Bring up a terminal and type `ruby --version`. If Ruby responds, and if it shows a version number at or above 1.8.7 then type `gem --version`. If you don't see any errors, proceed to installing the Sass gem. If you require Ruby, it can be installed from the [Ruby downloads](https://www.ruby-lang.org/en/downloads/) page.~~
 
-### Sass
+### ~~Sass~~
 
-Bring up a terminal and type `sass --version`. If Sass is installed it should return a version number at or above 3.3.x. If you don't see any errors, proceed to the Gulp installation. If you need to install Sass, see the command-line instructions on the [Sass installation](http://sass-lang.com/install) page.
+~~Bring up a terminal and type `sass --version`. If Sass is installed it should return a version number at or above 3.3.x. If you don't see any errors, proceed to the Gulp installation. If you need to install Sass, see the command-line instructions on the [Sass installation](http://sass-lang.com/install) page.~~
 
 ### Gulp
 
