@@ -3,26 +3,26 @@
 |--- |--- |--- |--- |--- |--- |
 
 
-# [![Web Starter Kit](https://cloud.githubusercontent.com/assets/170270/3343034/ceef6e92-f899-11e3-96b9-5d9d69d97a00.png)](https://github.com/google/web-starter-kit/releases/latest)
+# [![Web Starter Kit](https://cloud.githubusercontent.com/assets/170270/3343034/ceef6e92-f899-11e3-96b9-5d9d69d97a00.png)]()
 
 ## Overview
 
 [Web Starter Kit](http://developers.google.com/web/starter-kit) is an opinionated boilerplate for web development. Tools for building a great experience [across many devices](http://google.github.io/web-starter-kit/hello-world/) and [performance oriented](#web-performance). Helping you to stay productive following the best practices outlined in Google's [Web Fundamentals](http://developers.google.com/web/fundamentals). A solid starting point for both professionals and newcomers to the industry.
 
-[![](https://cloud.githubusercontent.com/assets/170270/3343033/ceee251e-f899-11e3-9dd9-e313cf2522ec.png)](https://developers.google.com/web/starter-kit/ 'Features')
+[![](https://cloud.githubusercontent.com/assets/170270/3343033/ceee251e-f899-11e3-9dd9-e313cf2522ec.png)]()
 
 ## Quickstart
 
-[Download](https://github.com/google/web-starter-kit/releases/latest) the kit or clone this repository and build on what we include in the `app` directory.
+[Download]() the kit or clone this repository and build on what we include in the `app` directory.
 
-We provide 2 HTML starting points, from which you can choose:
+We provide 2 Jade starting points, from which you can choose:
 
-- `index.html` - the default starting point, containing layout and a slide-out menu
-- `basic.html` - includes no layout
+- `index.jade` - the default starting point, containing layout and a slide-out menu
+- `basic.jade` - includes no layout
 
 ## Tooling
 
-If you would like to use the optional tooling we provide, make sure your system has [Node.js](http://nodejs.org), [Ruby](https://www.ruby-lang.org/), [gulp.js](http://gulpjs.com) and [Sass](http://sass-lang.com/install) installed.
+If you would like to use the optional tooling we provide, make sure your system has [Node.js](http://nodejs.org), [gulp.js](http://gulpjs.com), ~~[Ruby](https://www.ruby-lang.org/) and [Sass](http://sass-lang.com/install)~~ installed.
 
 ### Node
 
