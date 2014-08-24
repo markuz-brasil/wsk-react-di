@@ -1,7 +1,7 @@
 {
-  "name": "wsk-paper-es7",
+  "name": "wsk-reack-di",
   "version": "0.0.0",
-  "description": "base es7 app",
+  "description": "wsk - react - di - zone - es7 - webpack",
   "main": "public/index.html",
   "author": "markuz brasil",
   "scripts": {

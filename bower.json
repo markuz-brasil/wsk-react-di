@@ -5,7 +5,7 @@
   "authors": [
     "markuz brasil"
   ],
-  "description": "wsk - react - di - zone - es7",
+  "description": "wsk - react - di - zone - es7 - webpack",
   "main": "public/index.html",
   "moduleType": [
     "es6"
