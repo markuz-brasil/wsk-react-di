@@ -115,7 +115,11 @@ gulp.task('assets:webpack', function(cb){
         }))
     }))
     .pipe($.rename(function(filePath){
-      filePath.dirname = TMP +'/webpack'
+      filePath.dirname = TMP +'/webpack';
+      if (filePath.extname === '.map') {
+        filePath.dirname += '/maps'
+      }
+      console.log(filePath)
     }))
     .pipe(gulp.dest('.'))
     .pipe($.size({title: 'webpack'}))

@@ -21,6 +21,7 @@
 
 var path = require('path')
 var chop = require("webpack/lib/optimize/CommonsChunkPlugin");
+var webpack = require('webpack')
 
 var TMP = '.tmp'
 var APP = 'app'
@@ -84,11 +85,13 @@ module.exports = {
 
   webpack: {
     target: "web",
-    devtool: 'inline-source-map',
+    // devtool: 'source-map',
+    // devtool: 'inline-source-map',
     entry: {
       p1: './'+ APP_TMP +'/wsk-app/index.js',
       p2: './'+ APP_TMP +'/kitchen-di/main.js',
       p3: './'+ APP_TMP +'/jsx-app/jsx/app.js',
+      p4: './.tmp/libs/through2/index.js',
     },
     output: {
       filename: APP_TMP +'/[name].chunk.js'
@@ -98,10 +101,12 @@ module.exports = {
       modulesDirectories: [
         APP_TMP,
         path.join(TMP, path.basename(LIBS)),
+        './node_modules/',
       ],
 
       alias : {
         di: 'di/index.js',
+        through2: 'through2/through2.js'
       }
     },
       module: {
@@ -110,8 +115,11 @@ module.exports = {
       ]
     },
     plugins: [
+      new webpack.optimize.DedupePlugin(),
       new chop(APP_TMP +'/c2.chunk.js', ['p1', 'p2']),
       new chop(APP_TMP +'/c1.chunk.js', ['p3', APP_TMP +'/c2.chunk.js']),
+      // new webpack.optimize.UglifyJsPlugin(),
+      new webpack.SourceMapDevToolPlugin("[file].map", "\n//# sourceMappingURL=maps/[url]")
     ],
   },
 }
