@@ -19,14 +19,20 @@
 
 'use strict';
 
+var path = require('path')
+var chop = require("webpack/lib/optimize/CommonsChunkPlugin");
+
+var TMP = '.tmp'
+var APP = 'app'
+var LIBS = 'libs'
+var ROOT = process.cwd()
+var APP_TMP = path.join(TMP, path.basename(APP))
+
 module.exports = {
-  root: process.cwd(),
-  tmp: '.tmp',
-  app: 'app',
-  dist: 'dist',
-  libs: 'libs',
-  web: 'web',
-  build: 'build',
+  root: ROOT,
+  tmp: TMP,
+  app: APP,
+  libs: LIBS,
 
   cssPrefixer: [
     'ie >= 10',
@@ -39,10 +45,11 @@ module.exports = {
     'android >= 4.4',
     'bb >= 10'
   ],
+
   browserSync: {
     notify: false,
     port: 3000,
-    // browser: 'chrome',
+    browser: 'chrome',
     // browser: 'skip',
 
     // forces full page reload on css changes.
@@ -56,13 +63,56 @@ module.exports = {
       baseDir: []
     }
   },
+
   traceur: {
     modules: 'commonjs',
+    sourceMaps: true,
+    // ES6
+    // symbols: true, // buggy
+    blockBinding: true, // noisy
+    // ES7
+    asyncFunctions: true, // noisy
+    exponentiation: true,
+    arrayComprehension: true,
+    generatorComprehension: true, // noisy
+    // options for DI
     types: true,
     typeAssertions: true,
     typeAssertionModule: 'rtts-assert',
     annotations: true,
-    sourceMaps: true
+  },
+
+  webpack: {
+    target: "web",
+    devtool: 'inline-source-map',
+    entry: {
+      p1: './'+ APP_TMP +'/wsk-app/index.js',
+      p2: './'+ APP_TMP +'/kitchen-di/main.js',
+      p3: './'+ APP_TMP +'/jsx-app/jsx/app.js',
+    },
+    output: {
+      filename: APP_TMP +'/[name].chunk.js'
+    },
+    resolve: {
+      root: ROOT,
+      modulesDirectories: [
+        APP_TMP,
+        path.join(TMP, path.basename(LIBS)),
+      ],
+
+      alias : {
+        di: 'di/index.js',
+      }
+    },
+      module: {
+      loaders: [
+        { test: /\.js$/, loader: 'source-map-loader' }, // loaders can take parameters as a querystring
+      ]
+    },
+    plugins: [
+      new chop(APP_TMP +'/c2.chunk.js', ['p1', 'p2']),
+      new chop(APP_TMP +'/c1.chunk.js', ['p3', APP_TMP +'/c2.chunk.js']),
+    ],
   },
 }
 

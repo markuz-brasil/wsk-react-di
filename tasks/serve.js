@@ -48,7 +48,8 @@ gulp.task('serve', function (cb) {
   ]
 
   watch.assets(reload)
-  browserSync(opts, function(){
+  browserSync(opts, function(err){
+    if (err) throw err
     cb()
     runSequence('assets', reload)
   });
@@ -62,5 +63,3 @@ gulp.task('serve', function (cb) {
 //   watch.build(reload)
 //   browserSync(opts);
 // });
-
-

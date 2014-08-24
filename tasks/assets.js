@@ -27,8 +27,6 @@ var runSequence = require('run-sequence');
 var thr = require('through2').obj
 
 var CFG = require('./config');
-CFG.webpack = require("../webpack.config")
-
 var TMP = CFG.tmp
 var APP = CFG.app
 var LIBS = CFG.libs
@@ -150,8 +148,3 @@ gulp.task('assets:webpack', function(cb){
 //     .pipe(gulp.dest('dist/fonts'))
 //     .pipe($.size({title: 'fonts'}));
 // });
-
-
-
-
-

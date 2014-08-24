@@ -26,12 +26,11 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 
-var log = $.util.log;
-var cyan = $.util.colors.cyan;
-
+var log = $.util.log
+var red = $.util.colors.red
+var cyan = $.util.colors.cyan
 
 var CFG = require('./config');
-var TMP = CFG.tmp
 var APP = CFG.app
 var LIBS = CFG.libs
 
@@ -45,8 +44,6 @@ var files = {
   ],
 }
 
-// files.all = [ files.html, files.css, files.js ]
-
 function assets (reload) {
   log("Starting '"+ cyan('watch:assets') +"'...")
 
@@ -55,7 +52,18 @@ function assets (reload) {
   gulp.watch(files.js, ['assets:js', reload]);
 }
 
+function gulpfile () {
+  log("Starting '"+ cyan('watch:tasks') +"'...")
+  gulp.watch(['gulpfile.js', 'tasks/**/*.js'], function(evt){
+    if ('changed' === evt.type) {
+      log(red(':: restarting ::'))
+      process.exit(0)
+    }
+  })
+}
+
 module.exports = {
   assets: assets,
+  gulpfile: gulpfile,
 }
 
