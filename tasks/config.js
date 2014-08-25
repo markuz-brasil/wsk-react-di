@@ -90,8 +90,7 @@ module.exports = {
     entry: {
       p1: './'+ APP_TMP +'/wsk-app/index.js',
       p2: './'+ APP_TMP +'/kitchen-di/main.js',
-      p3: './'+ APP_TMP +'/jsx-app/jsx/app.js',
-      p4: './.tmp/libs/through2/index.js',
+      p3: './.tmp/libs/through2/index.js',
     },
     output: {
       filename: APP_TMP +'/[name].chunk.js'
