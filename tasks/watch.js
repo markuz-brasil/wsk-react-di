@@ -71,26 +71,17 @@ function test (reload) {
 
   gulp.watch(files.html, function(evt){
     if ('changed' !== evt.type) { return }
-    runSequence('assets:jade', function(){
-      reload()
-      gulp.start('test')
-    })
+    runSequence('assets:jade', 'test')
   })
 
   gulp.watch(files.css, function(evt){
     if ('changed' !== evt.type) { return }
-    runSequence('assets:less', function(){
-      reload()
-      gulp.start('test')
-    })
+    runSequence('assets:less','test')
   })
 
   gulp.watch(files.js, function(evt){
     if ('changed' !== evt.type) { return }
-    runSequence('assets:js', function(){
-      reload()
-      gulp.start('test')
-    })
+    runSequence('assets:js', 'test')
   })
 
   gulp.watch(files.test, function(evt){

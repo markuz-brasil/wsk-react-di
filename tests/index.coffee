@@ -15,9 +15,3 @@ describe 'my page', ->
   it 'expect this test to fail', (done) ->
     casper.then ->
       expect(@getTitle()).to.equal 'Web Starter Kit -error'
-      # @echo @getTitle()
-
-
-
-
-    # casper.run()

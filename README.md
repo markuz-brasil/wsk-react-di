@@ -41,7 +41,7 @@ Let's check to see if you already have Node installed. Bring up a terminal and t
 Bring up a terminal and type `gulp --version`. If Gulp is installed it should return a version number at or above 3.5.x. If you don't see any errors, proceed to the Gulp commands section. If you need to install Gulp, open up a terminal and type in the following:
 
 ```sh
-$ npm install --global gulp bower
+$ npm install --global gulp bower phantomjs
 ```
 
 This will install Gulp globally. Depending on your user account, you may need to gain elevated permissions using `sudo` (i.e `sudo npm install --global gulp`). Next, install the local dependencies Web Starter Kit requires:
@@ -62,7 +62,11 @@ You can now use Gulp with the following commands to stay productive during devel
 $ gulp serve
 ```
 
-This outputs an IP address you can use to locally test and another that can be used on devices connected to your network.
+#### Watch For Changes & Automatically Re-Run Tests on PhantomJS
+
+```sh
+$ gulp serve:test
+```
 
 ### Build & Optimize
 
@@ -135,3 +139,4 @@ Contributions, questions and comments are all welcome and encouraged. For code c
 
 Apache 2.0  
 Copyright 2014 Google Inc
+
