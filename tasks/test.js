@@ -18,32 +18,29 @@
  */
 
 'use strict';
+var path = require('path')
+var exec = require('child_process').exec
 
 // Include Gulp & Tools We'll Use
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
-var del = require('del');
 var runSequence = require('run-sequence');
+var thr = require('through2').obj
 
-var CFG = require('./tasks/config');
+var CFG = require('./config');
+var watch = require('./watch');
+
 var TMP = CFG.tmp
+var APP = CFG.app
+var LIBS = CFG.libs
+var SRC = '{'+ APP +','+ LIBS +'}/**/*'
 
-// Clean Output Directory
-gulp.task('clean', del.bind(null, [TMP]));
-
-if (process.argv[2] && process.argv[2].split(':')[0] === 'serve') {
-  require('./tasks/watch').gulpfile()
-}
-
-// Load custom tasks from the `tasks` directory
-try { require('require-dir')('tasks'); } catch (err) {
-  console.log(err)
-}
-
-// TODO: add comments
-gulp.task('default', ['clean'], function(cb){
-  runSequence('assets', cb)
+gulp.task('test', function(cb){
+  var cmd = './node_modules/.bin/mocha-casperjs tests/index.coffee'
+  cmd = exec(cmd, {cwd: process.cwd()});
+  cmd.stdout.pipe(process.stdout);
+  cmd.stderr.pipe(process.stderr);
+  cmd.on('close', function(err){
+    cb()
+  })
 })
-
-
-

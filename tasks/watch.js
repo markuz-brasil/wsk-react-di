@@ -31,6 +31,7 @@ var red = $.util.colors.red
 var cyan = $.util.colors.cyan
 
 var CFG = require('./config');
+var TMP = CFG.tmp
 var APP = CFG.app
 var LIBS = CFG.libs
 
@@ -42,6 +43,9 @@ var files = {
     path.join(APP, '**/*.{js,jsx}'),
     path.join(LIBS, '**/*.{js,jsx}')
   ],
+  test: [
+    path.join('tests', '**/*.{js,jsx,coffee,less,css,jade,html}')
+  ]
 }
 
 function assets (reload) {
@@ -62,8 +66,44 @@ function gulpfile () {
   })
 }
 
+function test (reload) {
+  log("Starting '"+ cyan('watch:tests') +"'...")
+
+  gulp.watch(files.html, function(evt){
+    if ('changed' !== evt.type) { return }
+    runSequence('assets:jade', function(){
+      reload()
+      gulp.start('test')
+    })
+  })
+
+  gulp.watch(files.css, function(evt){
+    if ('changed' !== evt.type) { return }
+    runSequence('assets:less', function(){
+      reload()
+      gulp.start('test')
+    })
+  })
+
+  gulp.watch(files.js, function(evt){
+    if ('changed' !== evt.type) { return }
+    runSequence('assets:js', function(){
+      reload()
+      gulp.start('test')
+    })
+  })
+
+  gulp.watch(files.test, function(evt){
+    if ('changed' !== evt.type) { return }
+    gulp.start('test')
+  })
+
+
+}
+
 module.exports = {
   assets: assets,
   gulpfile: gulpfile,
+  test: test,
 }
 

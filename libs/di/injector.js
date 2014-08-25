@@ -9,7 +9,6 @@ import {isFunction, toString} from './util';
 import {profileInjector} from './profiler';
 import {createProviderFromFnOrClass} from './providers';
 
-
 function constructResolvingMessage(resolving, token) {
   // If a token is passed in, add it into the resolving array.
   // We need to check arguments.length because it can be null/undefined.

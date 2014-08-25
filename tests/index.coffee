@@ -1,14 +1,20 @@
-
+chai.config.showDiff = false
 
 describe 'my page', ->
 
   before =>
-    casper.start 'https://www.google.com'
+    casper.start 'http://localhost:3000/'
 
 
-  it 'casper should work', (done) ->
+  it 'expect google title to be `Web Starter Kit`', (done) ->
     casper.then ->
-      console.log('---------', @getTitle())
+      console.log('console.log also works ...')
+      expect(@getTitle()).to.equal 'Web Starter Kit'
+
+
+  it 'expect this test to fail', (done) ->
+    casper.then ->
+      expect(@getTitle()).to.equal 'Web Starter Kit -error'
       # @echo @getTitle()
 
 

@@ -55,6 +55,32 @@ gulp.task('serve', function (cb) {
   });
 });
 
+// Watch Files For Changes & Reload
+gulp.task('serve:test', function (cb) {
+  var opts = CFG.browserSync
+  opts.browser = 'skip'
+  opts.server.baseDir = [
+    path.join(TMP, APP, 'wsk-app'),
+    path.join(TMP, APP),
+    path.join(TMP, 'webpack'),
+    TMP,
+    path.join(APP, 'wsk-app'),
+    APP,
+    'bower_components'
+  ]
+
+  watch.test(reload)
+  browserSync(opts, function(err){
+    if (err) throw err
+    cb()
+    runSequence('assets', function(){
+      reload()
+      // watch.test(reload)
+      gulp.start('test')
+    })
+  });
+});
+
 // // Build and serve the output from the dist build
 // gulp.task('serve:build', ['assets:react'], function () {
 //   var opts = OPTS
