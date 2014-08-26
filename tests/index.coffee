@@ -2,7 +2,7 @@
 
 chai.config.showDiff = false
 
-describe '', ->
+describe 'index.html', ->
 
   before =>
     casper.start 'http://localhost:3000/'
