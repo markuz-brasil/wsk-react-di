@@ -30,7 +30,8 @@ var ROOT = process.cwd()
 var APP_TMP = path.join(TMP, path.basename(APP))
 
 var TASKS = {}
-process.argv.splice(2).map(function(task){
+process.argv.forEach(function(task, i){
+  if (i < 2) {return}
   TASKS[task] = true
 })
 
