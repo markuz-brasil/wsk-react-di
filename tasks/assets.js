@@ -19,6 +19,7 @@
 
 'use strict';
 var path = require('path')
+var exec = require('child_process').exec
 
 // Include Gulp & Tools We'll Use
 var gulp = require('gulp');
@@ -27,21 +28,22 @@ var runSequence = require('run-sequence');
 var thr = require('through2').obj
 
 var CFG = require('./config');
+var ROOT = CFG.root
 var TMP = CFG.tmp
 var APP = CFG.app
 var LIBS = CFG.libs
 var SRC = '{'+ APP +','+ LIBS +'}/**/*'
 
 // TODO: add comments
-gulp.task('assets', ['clean'], function(cb){
+gulp.task('assets', function(next){
   runSequence([
-    'assets:less', 'assets:jade', 'assets:js'], cb)
+    'assets:less', 'assets:jade', 'assets:js'], next)
 })
 
 // TODO: add comments
-gulp.task('assets:js', function(cb){
+gulp.task('assets:js', function(next){
   runSequence([
-    'assets:es7', 'assets:react'], 'assets:webpack', cb)
+    'assets:es7', 'assets:react'], 'assets:webpack', next)
 })
 
 // Compile and Automatically Prefix Stylesheets
@@ -69,11 +71,11 @@ gulp.task('assets:jade', function(){
 });
 
 // TODO: add comments
-gulp.task('assets:es7', function(cb){
+gulp.task('assets:es7', function(next){
   return gulp.src([SRC +'.js'])
     .pipe($.cached('es7', {optimizeMemory: true}))
     .pipe($.sourcemaps.init())
-    .pipe($.traceur(CFG.traceur))
+    .pipe($.traceur(CFG.traceur()))
     .on('error', console.error.bind(console))
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(TMP))
@@ -81,12 +83,12 @@ gulp.task('assets:es7', function(cb){
 });
 
 // TODO: add comments
-gulp.task('assets:react', function(cb){
+gulp.task('assets:react', function(next){
   return gulp.src([SRC +'.jsx'])
     .pipe($.cached('react', {optimizeMemory: true}))
     .pipe($.react({harmony: true, sourceMap: true}))
     .pipe($.sourcemaps.init())
-    .pipe($.traceur(CFG.traceur))
+    .pipe($.traceur(CFG.traceur()))
     .on('error', console.error.bind(console))
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(TMP))
@@ -94,7 +96,7 @@ gulp.task('assets:react', function(cb){
 });
 
 // TODO: add comments
-gulp.task('assets:webpack', function(cb){
+gulp.task('assets:webpack', function(next){
   var pack = true;
   return gulp.src([
       TMP +'/**/*.js',
@@ -107,7 +109,7 @@ gulp.task('assets:webpack', function(cb){
       if (!pack) return next()
       pack = false
 
-      $.webpack(CFG.webpack)
+      $.webpack(CFG.webpack())
         .on('error', console.error.bind(console))
         .on('end', next)
         .pipe(thr(function(vfs, e, next){
@@ -124,7 +126,25 @@ gulp.task('assets:webpack', function(cb){
     .pipe($.size({title: 'webpack'}))
 });
 
+gulp.task('assets:optimize', function(next){
+  // mock
+  setTimeout(next, 1000)
+});
+
+gulp.task('assets:test', function(next){
+  var cmd = './node_modules/.bin/mocha-casperjs tests/index.coffee'
+
+  cmd = exec(cmd, {cwd: ROOT});
+  cmd.stdout.pipe(process.stdout);
+  cmd.stderr.pipe(process.stderr);
+  cmd.on('close', function(err){ next() })
+});
+
+
+
+
 // // TODO: write the equivalent for es7
+
 // // Lint JavaScript
 // gulp.task('jshint', function () {
 //   return gulp.src('app/scripts/**/*.js')

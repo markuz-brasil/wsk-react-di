@@ -23,7 +23,6 @@ function constructResolvingMessage(resolving, token) {
   return '';
 }
 
-
 // Injector encapsulate a life scope.
 // There is exactly one instance for given token in given injector.
 //

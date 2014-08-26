@@ -1,17 +1,17 @@
+# chai should is also enabled.
+
 chai.config.showDiff = false
 
-describe 'my page', ->
+describe '', ->
 
   before =>
     casper.start 'http://localhost:3000/'
 
-
-  it 'expect google title to be `Web Starter Kit`', (done) ->
+  it 'expect the page title to be `Web Starter Kit`', ->
     casper.then ->
-      console.log('console.log also works ...')
       expect(@getTitle()).to.equal 'Web Starter Kit'
 
-
-  it 'expect this test to fail', (done) ->
-    casper.then ->
-      expect(@getTitle()).to.equal 'Web Starter Kit -error'
+  # it 'expect this test to fail', (done) ->
+  #   console.log('console.log also works ...')
+  #   casper.then ->
+  #     expect(@getTitle()).to.equal 'Web Starter Kit blabla'

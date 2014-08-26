@@ -24,26 +24,103 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
+
+var log = $.util.log
+var red = $.util.colors.red
+var cyan = $.util.colors.cyan
+
+var watch = require('./tasks/watchers');
 
 var CFG = require('./tasks/config');
 var TMP = CFG.tmp
+var APP = CFG.app
 
-// Clean Output Directory
-gulp.task('clean', del.bind(null, [TMP]));
-
-if (process.argv[2] && process.argv[2].split(':')[0] === 'serve') {
-  require('./tasks/watch').gulpfile()
-}
+var TASKS = CFG.tasks
 
 // Load custom tasks from the `tasks` directory
 try { require('require-dir')('tasks'); } catch (err) {
   console.log(err)
 }
 
+// Clean Output Directory
+gulp.task('clean', del.bind(null, [TMP]));
+
 // TODO: add comments
-gulp.task('default', ['clean'], function(cb){
-  runSequence('assets', cb)
+gulp.task('default', ['dev'])
+
+// TODO: add comments
+gulp.task('dev', ['clean'], function(next){
+  runSequence('assets', function(){
+
+    if (browserSync.active && !TASKS.build) { gulp.start('reload') }
+
+    if (TASKS.test && !TASKS.build) {
+      runSequence('assets:test', function(){
+        if (!TASKS.serve) {browserSync.exit()}
+      })
+    }
+
+    next()
+  })
 })
+
+// TODO: add comments
+gulp.task('build', ['dev'], function(next){
+  runSequence('assets:optimize', function(){
+
+    if (browserSync.active) { gulp.start('reload') }
+
+    if (TASKS.test) {
+      runSequence('assets:test', function(){
+        if (!TASKS.serve) {browserSync.exit()}
+      })
+    }
+    next()
+  })
+})
+
+// TODO: add comments
+gulp.task('watch', function(next){
+  watch.gulpfile()
+
+  if (TASKS.test) {
+    watch.test(TASKS)
+  }
+  else {
+    watch.assets(TASKS)
+  }
+
+  next()
+})
+
+// Watch Files For Changes & Reload
+gulp.task('serve', function (next) {
+  var opts = CFG.browserSync()
+  opts.browser = 'skip'
+
+  browserSync(opts, function(err, bs){
+    if (err) {throw err}
+    log("Loaded '"+ cyan('browserSync') +"'...")
+    next()
+  });
+});
+
+// TODO: add comments
+gulp.task('reload', function(next){
+  browserSync.reload()
+  next()
+});
+
+// TODO: add comments
+gulp.task('restart', function(){
+  log(red(':: restarting ::'))
+  process.exit(0)
+})
+
+// TODO: add comments
+gulp.task('test', ['serve', 'dev'])
 
 
 
