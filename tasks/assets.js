@@ -137,7 +137,10 @@ gulp.task('assets:test', function(next){
   cmd = exec(cmd, {cwd: ROOT});
   cmd.stdout.pipe(process.stdout);
   cmd.stderr.pipe(process.stderr);
-  cmd.on('close', function(err){ next() })
+  cmd.on('close', function(err){
+    if (err) { console.log('test exit code:', err)}
+    next()
+  })
 });
 
 

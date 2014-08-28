@@ -51,11 +51,15 @@ var FILES = {
   ]
 }
 
+
 function runTasks () {
-  var args = arguments
+  var args = Array.prototype.slice.call(arguments)
+
   return function (evt) {
     if ('changed' !== evt.type) { return }
-    runSequence.apply(runSequence, args)
+    // bug on runSequece.
+    // this JSON trick is cleanest way to deep copy an obj.
+    runSequence.apply(runSequence, JSON.parse(JSON.stringify(args)))
   }
 }
 
@@ -84,6 +88,23 @@ function gulpfile (TASKS) {
 
 }
 
+function runTasks2 () {
+  var args =  Array.prototype.slice.call(arguments)
+  var files = args[0]
+  var args = args.slice(1, args.length)
+
+  // var run = runSequence.bind.apply(runSequence, args)
+
+
+
+  gulp.watch(files, function(evt){
+    if ('changed' !== evt.type) { return }
+
+    // run()
+  })
+
+}
+
 function test (TASKS) {
   log("Starting '"+ cyan('watch:tests') +"'...")
 
@@ -99,6 +120,7 @@ function test (TASKS) {
     gulp.watch(FILES.js, runTasks('assets:js', ['assets:test', 'reload']))
     gulp.watch(FILES.test, runTasks('assets:test'))
   }
+  log("Finished '"+ cyan('watch:tests') +"'...")
 
 }
 
