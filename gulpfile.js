@@ -48,7 +48,7 @@ try { require('require-dir')('tasks'); } catch (err) {
 gulp.task('clean', del.bind(null, [TMP]));
 
 // TODO: add comments
-gulp.task('default', ['dev'])
+gulp.task('default', ['build'])
 
 // TODO: add comments
 gulp.task('dev', ['clean'], function(next){

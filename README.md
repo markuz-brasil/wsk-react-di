@@ -61,6 +61,7 @@ You can now use Gulp with the following commands to stay productive during devel
 ```sh
 $ gulp serve dev
 ```
+Now direct your browser to `http://localhost:3000/`
 
 #### Watch For Changes, Fully build it & Automatically Re-Run Tests on PhantomJS
 
