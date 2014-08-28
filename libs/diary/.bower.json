@@ -1,0 +1,12 @@
+{
+  "name": "diary",
+  "homepage": "https://github.com/angular/diary.js",
+  "_release": "2b3b288e41",
+  "_resolution": {
+    "type": "commit",
+    "commit": "2b3b288e41"
+  },
+  "_source": "git://github.com/angular/diary.js.git",
+  "_target": "2b3b288e41",
+  "_originalSource": "git://github.com/angular/diary.js"
+}
