@@ -58,7 +58,7 @@ module.exports = {
     return {
       notify: false,
       port: 3000,
-      browser: 'chrome',
+      // browser: 'chrome',
       // browser: 'skip',
 
       // forces full page reload on css changes.
@@ -124,6 +124,7 @@ module.exports = {
         p1: './'+ APP_TMP +'/wsk-app/index.js',
         p2: './'+ APP_TMP +'/kitchen-di/main.js',
         p3: './.tmp/libs/through2/index.js',
+        zoneExtra: './'+ APP_TMP +'/zone-extra.js',
       },
       output: {
         filename: APP_TMP +'/[name].chunk.js'
@@ -137,7 +138,7 @@ module.exports = {
         ],
 
         alias : {
-          di: 'di/index.js',
+          // di: 'di/index.js',
           through2: 'through2/through2.js'
         }
       },

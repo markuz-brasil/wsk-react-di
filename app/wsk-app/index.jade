@@ -30,10 +30,8 @@ head
     script(src='react/react-with-addons.js')
     // endbuild
 
-    // build:js scripts/extra-dev.js
-    script(src='libs/zone/except-zone.js')
-    script(src='libs/zone/counting-zone.js')
-    script(src='libs/zone/long-stack-trace-zone.js')
+    // build:js scripts/zone-extra-dev.js
+    script(src='zoneExtra.chunk.js')
     // endbuild
 
     //build:css styles/components/main.min.css
@@ -44,8 +42,6 @@ head
 
   body
     #react-app
-
-
       
     // build:js scripts/bundle.min.js
     script(src='c1.chunk.js')
@@ -53,8 +49,6 @@ head
     script(src='p1.chunk.js')
     script(src='p2.chunk.js')
     script(src='p3.chunk.js')
-    script(src='libs/diary/index.js')
-      
     // endbuild
 
     // Google Analytics: change UA-XXXXX-X to be your site's ID
