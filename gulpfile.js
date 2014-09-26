@@ -31,28 +31,29 @@ var log = $.util.log
 var red = $.util.colors.red
 var cyan = $.util.colors.cyan
 
-var watch = require('./tasks/watchers');
+var watch = require('./etc/watchers');
 
-var CFG = require('./tasks/config');
+var CFG = require('./etc/config');
 var TMP = CFG.tmp
 var APP = CFG.app
+var DIST = CFG.dist
 
 var TASKS = CFG.tasks
 
 // Load custom tasks from the `tasks` directory
-try { require('require-dir')('tasks'); } catch (err) {
+try { require('require-dir')('etc'); } catch (err) {
   console.log(err)
 }
 
 // Clean Output Directory
-gulp.task('clean', del.bind(null, [TMP]));
+gulp.task('clean', del.bind(null, [TMP, DIST]));
 
 // TODO: add comments
 gulp.task('default', ['build'])
 
 // TODO: add comments
 gulp.task('dev', ['clean'], function(next){
-  runSequence('assets', function(){
+  runSequence('assets', 'browserify', function(){
 
     if (browserSync.active && !TASKS.build) { gulp.start('reload') }
 
@@ -68,7 +69,7 @@ gulp.task('dev', ['clean'], function(next){
 
 // TODO: add comments
 gulp.task('build', ['dev'], function(next){
-  runSequence('assets:optimize', function(){
+  runSequence('optimize', function(){
 
     if (browserSync.active) { gulp.start('reload') }
 

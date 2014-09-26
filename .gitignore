@@ -3,4 +3,5 @@
 .sass-cache
 dist
 .tmp
+tmp
 .DS_Store

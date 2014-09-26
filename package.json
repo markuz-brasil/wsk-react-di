@@ -5,19 +5,19 @@
   "main": "public/index.html",
   "author": "markuz brasil",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd client && npm install"
   },
   "dependencies": {
-    "di": "git://github.com/angular/di.js#a3130ef87a",
-    "zone.js": "git://github.com/angular/zone.js#74947b6f509b"
-  },
-  "devDependencies": {
+    "aliasify": "^1.4.0",
     "browser-sync": "^1.3.0",
-    "serve-static": "1.5.3",
+    "browserify": "^5.12.0",
     "casper-chai": "^0.2.1",
     "casperjs": "^1.1.0-beta3",
     "chai": "^1.9.1",
     "del": "^0.1.2",
+    "es6ify": "^1.4.0",
+    "factor-bundle": "^2.2.1",
     "gulp": "^3.8.5",
     "gulp-autoprefixer": "^0.0.8",
     "gulp-cached": "^1.0.1",
@@ -29,29 +29,28 @@
     "gulp-less": "^1.3.5",
     "gulp-load-plugins": "^0.5.3",
     "gulp-react": "^1.0.0",
+    "gulp-regenerator": "^1.1.0",
     "gulp-rename": "^1.2.0",
     "gulp-size": "^1.0.0",
     "gulp-sourcemaps": "^1.1.1",
     "gulp-traceur": "^0.13.0",
     "gulp-uglify": "^0.3.1",
     "gulp-uncss": "^0.4.5",
+    "gulp-unpathify": "^0.1.1",
     "gulp-useref": "^0.6.0",
     "gulp-util": "^3.0.0",
-    "gulp-webpack": "^0.3.0",
     "jshint-stylish": "^0.4.0",
     "mocha": "^1.21.4",
     "mocha-casperjs": "^0.5.1",
-    "phantomjs": "^1.9.7-15",
     "psi": "^0.1.2",
     "require-dir": "^0.1.0",
     "rtts-assert": "git://github.com/angular/assert#6caafd2561",
     "run-sequence": "^0.3.6",
+    "serve-static": "1.5.3",
     "sinon": "^1.10.3",
     "sinon-chai": "^2.5.0",
-    "source-map-loader": "^0.1.3",
     "through2": "^0.6.1",
-    "vinyl-source-stream": "^0.1.1",
-    "webpack": "^1.3.3-beta2"
+    "vinyl-source-stream": "^1.0.0"
   },
   "engines": {
     "node": ">=0.10.0"
