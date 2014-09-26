@@ -53,7 +53,7 @@ gulp.task('default', ['build'])
 
 // TODO: add comments
 gulp.task('dev', ['clean'], function(next){
-  runSequence('assets', 'browserify', function(){
+  runSequence('assets', function(){
 
     if (browserSync.active && !TASKS.build) { gulp.start('reload') }
 

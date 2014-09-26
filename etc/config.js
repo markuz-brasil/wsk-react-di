@@ -24,7 +24,8 @@ var path = require('path')
 var TMP = 'tmp'
 var APP = 'client/app'
 var LIBS = 'libs'
-var DIST = 'tmp/prod'
+var DIST = path.join(TMP, 'dist')
+var ES5 = 'es5'
 var ROOT = process.cwd()
 var APP_TMP = path.join(TMP, path.basename(APP))
 
@@ -40,6 +41,7 @@ module.exports = {
   app: APP,
   libs: LIBS,
   dist: DIST,
+  es5: ES5,
   tasks: TASKS,
 
   cssPrefixer: [
@@ -53,6 +55,9 @@ module.exports = {
     'android >= 4.4',
     'bb >= 10'
   ],
+  throw : function(err) {
+    throw err
+  },
 
   browserSync: function(){
     return {
@@ -60,9 +65,9 @@ module.exports = {
         baseDir: [
           DIST,
           path.join(TMP, DIST),
+          path.join(TMP, ES5),
           path.join(TMP, APP),
-          TMP,
-          APP,
+          path.join(APP, 'public'),
           'client/bower_components'
         ]
       },

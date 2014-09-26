@@ -5,14 +5,7 @@
     "di": {
       "version": "2.0.0-pre-11",
       "from": "di@git://github.com/angular/di.js#a3130ef87a",
-      "resolved": "git://github.com/angular/di.js#a3130ef87acec9d0c6f65cb182274648b6f3d3a1",
-      "dependencies": {
-        "es6-shim": {
-          "version": "0.11.1",
-          "from": "es6-shim@~0.11.0",
-          "resolved": "https://registry.npmjs.org/es6-shim/-/es6-shim-0.11.1.tgz"
-        }
-      }
+      "resolved": "git://github.com/angular/di.js#a3130ef87acec9d0c6f65cb182274648b6f3d3a1"
     },
     "zone.js": {
       "version": "0.3.0",

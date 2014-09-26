@@ -37,26 +37,27 @@ var TMP = CFG.tmp
 var APP = CFG.app
 var LIBS = CFG.libs
 var DIST = CFG.dist
+var ES5 = CFG.es5
 var SRC = '{'+ APP +','+ LIBS +'}/**/*'
 
 var browserifyConfig = {
   entries: [
-    path.join(ROOT, TMP, DIST, APP),
-    path.join(ROOT, TMP, DIST, APP, 'kitchen'),
-    path.join(ROOT, TMP, DIST, APP, 'zone-extras'),
+    path.join(ROOT, TMP, ES5, APP),
+    path.join(ROOT, TMP, ES5, APP, 'kitchen'),
+    path.join(ROOT, TMP, ES5, APP, 'public/zone-extras'),
   ],
   debug: true,
 };
 
 var aliasify = require('aliasify').configure({
   aliases: {
-    di: './'+ path.join(TMP, DIST, LIBS, 'di/src'),
-    zone: './'+ path.join(TMP, DIST, LIBS, 'zone.js'),
+    di: './'+ path.join(TMP, ES5, LIBS, 'di/src'),
+    zone: './'+ path.join(TMP, ES5, LIBS, 'zone.js'),
   }
 })
 
 // TODO: add comments
-gulp.task('browserify', ['assets:js'], function(next){
+gulp.task('browserify', function(next){
   // need to create bundles dir before browserify needs
   try {
     fs.mkdirSync(path.join(ROOT, DIST))
@@ -68,7 +69,6 @@ gulp.task('browserify', ['assets:js'], function(next){
       throw err
     }
   }
-
 
   return browserify(browserifyConfig)
     .plugin(factor, {
@@ -85,7 +85,7 @@ gulp.task('browserify', ['assets:js'], function(next){
 });
 
 // TODO: add comments
-gulp.task('optimize', ['assets:jade', 'assets:less', 'browserify'], function(next){
+gulp.task('optimize', function(next){
   // mock
   setTimeout(next, 1000)
 });

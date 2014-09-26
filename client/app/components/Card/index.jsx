@@ -1,18 +1,21 @@
-// var React = require('react');
+import {BaseCtrl} from '../Core'
 
-
-class _DefautCard {
-  render() {
-    return <div>  </div>
+export class DefautCardBody extends BaseCtrl {
+  constructor () {
+    return super()
+  }
+  render () {
+    return <div> .. DefaultCardBody .. </div>
   }
 }
 
-var DefautCard = React.createClass(_DefautCard.prototype)
-
-class _CardCtrl {
+export class CardCtrl extends BaseCtrl {
+  constructor () {
+    return super()
+  }
   getInitialState () {
     return {
-      body: !!this.props.body ? this.props.body : DefautCard,
+      Body: !!this.props.Body ? new this.props.Body() : new DefautCardBody(),
       title: !!this.props.title ? this.props.title: `${Math.random()}`,
     }
   }
@@ -24,12 +27,12 @@ class _CardCtrl {
               <h3 className="panel-title"> {this.state.title} </h3>
           </div>
           <div className="panel-body">
-            <this.state.body ctx={this.props.ctx}/>
+            <this.state.Body ctx={this.props.ctx}/>
           </div>
         </div>
     );
   }
 }
 
-export var CardCtrl = React.createClass(_CardCtrl.prototype);
+export var Card = new CardCtrl()
 

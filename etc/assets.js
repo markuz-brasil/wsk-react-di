@@ -36,6 +36,7 @@ var APP = CFG.app
 var LIBS = CFG.libs
 var DIST = CFG.dist
 var SRC = '{'+ APP +','+ LIBS +'}/**/*'
+var ES5 = CFG.es5
 
 // TODO: add comments
 gulp.task('assets', function(next){
@@ -44,7 +45,7 @@ gulp.task('assets', function(next){
 
 // TODO: add comments
 gulp.task('assets:js', function(next){
-  runSequence(['assets:esx', 'assets:react', 'assets:copy-js', 'assets:libs'], 'assets:es5', next)
+  runSequence(['assets:esx', 'assets:react', 'assets:copy-js', 'assets:libs'], 'assets:es5', 'browserify', next)
 })
 
 // Compile and Automatically Prefix Stylesheets
@@ -55,7 +56,7 @@ gulp.task('assets:less', function () {
     .pipe($.less())
     .pipe($.autoprefixer(CFG.cssPrefixer))
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(TMP))
+    .pipe(gulp.dest( path.join(TMP, APP) ))
     .pipe($.size({title: 'less'}));
 });
 
@@ -65,7 +66,7 @@ gulp.task('assets:jade', function(){
     .pipe($.cached('jade', {optimizeMemory: true}))
     .pipe($.sourcemaps.init())
     .pipe($.jade({pretty: true}))
-    .on('error', console.error.bind(console))
+    .on('error', CFG.throw)
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(TMP))
     .pipe($.size({title: 'jade'}))
@@ -73,12 +74,12 @@ gulp.task('assets:jade', function(){
 
 // TODO: add comments
 gulp.task('assets:esx', function(next){
-  return gulp.src([SRC +'.esx.js'])
+  return gulp.src([SRC +'.js'])
     .pipe($.cached('assets:esx', {optimizeMemory: true}))
     .pipe($.sourcemaps.init({loadMaps: true}))
 
     .pipe($.traceur(CFG.traceur()))
-    .on('error', console.error.bind(console))
+    .on('error', CFG.throw)
     .pipe(thr(function(vfs,e,n){
       vfs.path = vfs.path.replace('.js', '.es6.js')
       vfs.path = vfs.path.replace('.esx', '')
@@ -100,7 +101,7 @@ gulp.task('assets:copy-js', function(next){
       n(null, vfs)
     }))
 
-    .pipe(gulp.dest(path.join(TMP, DIST, LIBS)))
+    .pipe(gulp.dest(path.join(TMP, ES5, LIBS)))
     .pipe($.size({title: 'js'}))
 });
 
@@ -112,14 +113,14 @@ gulp.task('assets:libs', function(next){
     .pipe($.cached('assets:libs', {optimizeMemory: true}))
 
     .pipe($.regenerator())
-    .on('error', console.error.bind(console))
+    .on('error', CFG.throw)
 
     .pipe($.sourcemaps.init({loadMaps: true}))
     .pipe($.traceur({sourceMaps: true}))
-    .on('error', console.error.bind(console))
+    .on('error', CFG.throw)
 
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(path.join(TMP, DIST, LIBS)))
+    .pipe(gulp.dest(path.join(TMP, ES5, LIBS)))
     .pipe($.size({title: 'libs'}))
 });
 
@@ -132,18 +133,18 @@ gulp.task('assets:es5', function(next){
     .pipe($.cached('assets:es5', {optimizeMemory: true}))
 
     .pipe($.regenerator())
-    .on('error', console.error.bind(console))
+    .on('error', CFG.throw)
 
     .pipe($.sourcemaps.init({loadMaps: true}))
     .pipe($.traceur({sourceMaps: true}))
-    .on('error', console.error.bind(console))
+    .on('error', CFG.throw)
     .pipe(thr(function(vfs,e,n){
       vfs.path = vfs.path.replace('.es6.js', '.js')
       n(null, vfs)
     }))
 
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(path.join(TMP, DIST)))
+    .pipe(gulp.dest(path.join(TMP, ES5)))
     .pipe($.size({title: 'es5'}))
 });
 
@@ -154,7 +155,7 @@ gulp.task('assets:react', function(next){
     .pipe($.sourcemaps.init({loadMaps: true}))
 
     .pipe($.react({sourceMap: true}))
-    .on('error', console.error.bind(console))
+    .on('error', CFG.throw)
     .pipe(thr(function(vfs,e,n){
       vfs.path = vfs.path.replace('.js', '.es6.js')
       n(null, vfs)

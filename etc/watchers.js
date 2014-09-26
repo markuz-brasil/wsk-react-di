@@ -68,9 +68,9 @@ function assets (TASKS) {
   log("Starting '"+ cyan('watch:assets') +"'...")
 
   if (TASKS.build) {
-    gulp.watch(FILES.html, runTasks('assets:jade', 'assets:optimize', 'reload'))
-    gulp.watch(FILES.css, runTasks('assets:less', 'assets:optimize', 'reload'))
-    gulp.watch(FILES.js, runTasks('assets:js', 'assets:optimize', 'reload'))
+    gulp.watch(FILES.html, runTasks('assets:jade', 'optimize', 'reload'))
+    gulp.watch(FILES.css, runTasks('assets:less', 'optimize', 'reload'))
+    gulp.watch(FILES.js, runTasks('assets:js', 'optimize', 'reload'))
   }
   else {
     gulp.watch(FILES.html, runTasks('assets:jade', 'reload'))
@@ -91,9 +91,9 @@ function test (TASKS) {
   log("Starting '"+ cyan('watch:tests') +"'...")
 
   if (TASKS.build) {
-    gulp.watch(FILES.html, runTasks('assets:jade', 'assets:optimize', ['assets:test', 'reload']))
-    gulp.watch(FILES.css, runTasks('assets:less', 'assets:optimize', ['assets:test', 'reload']))
-    gulp.watch(FILES.js, runTasks('assets:js', 'assets:optimize', ['assets:test', 'reload']))
+    gulp.watch(FILES.html, runTasks('assets:jade', 'optimize', ['assets:test', 'reload']))
+    gulp.watch(FILES.css, runTasks('assets:less', 'optimize', ['assets:test', 'reload']))
+    gulp.watch(FILES.js, runTasks('assets:js', 'optimize', ['assets:test', 'reload']))
     gulp.watch(FILES.test, runTasks('assets:test'))
   }
   else {
