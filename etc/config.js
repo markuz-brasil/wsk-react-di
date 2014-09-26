@@ -24,7 +24,7 @@ var path = require('path')
 var TMP = 'tmp'
 var APP = 'client/app'
 var LIBS = 'libs'
-var DIST = 'dist'
+var DIST = 'tmp/prod'
 var ROOT = process.cwd()
 var APP_TMP = path.join(TMP, path.basename(APP))
 
@@ -56,6 +56,16 @@ module.exports = {
 
   browserSync: function(){
     return {
+      server: {
+        baseDir: [
+          DIST,
+          path.join(TMP, DIST),
+          path.join(TMP, APP),
+          TMP,
+          APP,
+          'client/bower_components'
+        ]
+      },
       ghostMode: false,
       notify: false,
       port: 3000,
@@ -69,16 +79,7 @@ module.exports = {
       // Note: this uses an unsigned certificate which on first access
       //       will present a certificate warning in the browser.
       // https: true,
-      server: {
-        baseDir: [
-          DIST,
-          path.join(TMP, DIST),
-          path.join(TMP, APP),
-          TMP,
-          APP,
-          'client/bower_components'
-        ]
-      }
+
     }
   },
 
@@ -102,7 +103,5 @@ module.exports = {
       annotations: true,
     }
   },
-
-
 }
 

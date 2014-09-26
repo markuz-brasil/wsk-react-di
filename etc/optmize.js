@@ -58,8 +58,17 @@ var aliasify = require('aliasify').configure({
 // TODO: add comments
 gulp.task('browserify', ['assets:js'], function(next){
   // need to create bundles dir before browserify needs
-  fs.mkdirSync(path.join(ROOT, DIST))
-  fs.mkdirSync(path.join(ROOT, DIST, '/bundles'))
+  try {
+    fs.mkdirSync(path.join(ROOT, DIST))
+    fs.mkdirSync(path.join(ROOT, DIST, '/bundles'))
+  }
+  catch (err) {
+    // ignoring if file already exists :)
+    if (err.errno !== 47) {
+      throw err
+    }
+  }
+
 
   return browserify(browserifyConfig)
     .plugin(factor, {
@@ -72,7 +81,6 @@ gulp.task('browserify', ['assets:js'], function(next){
     .transform(aliasify)
     .bundle()
     .pipe(source('common.js'))
-    // .pipe($.unpathify())
     .pipe(gulp.dest(path.join(ROOT, DIST, '/bundles')))
 });
 

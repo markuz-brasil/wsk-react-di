@@ -1,5 +1,5 @@
 #! /usr/bin/env sh
-export PATH=node_modules/.bin:$PATH
+# export PATH=node_modules/.bin:$PATH
 
 function restart () {
   while :;do
