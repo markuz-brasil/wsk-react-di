@@ -33,9 +33,10 @@ var CFG = require('./config');
 var ROOT = CFG.root
 var TMP = CFG.tmp
 var APP = CFG.app
+var CLIENT = CFG.client
 var LIBS = CFG.libs
 var DIST = CFG.dist
-var SRC = '{'+ APP +','+ LIBS +'}/**/*'
+var SRC = '{'+ APP +',public}/**/*' // this is a hack
 var ES5 = CFG.es5
 
 // TODO: add comments
@@ -80,11 +81,6 @@ gulp.task('assets:esx', function(next){
 
     .pipe($.traceur(CFG.traceur()))
     .on('error', CFG.throw)
-    .pipe(thr(function(vfs,e,n){
-      vfs.path = vfs.path.replace('.js', '.es6.js')
-      vfs.path = vfs.path.replace('.esx', '')
-      n(null, vfs)
-    }))
 
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(TMP))
@@ -102,13 +98,13 @@ gulp.task('assets:copy-js', function(next){
     }))
 
     .pipe(gulp.dest(path.join(TMP, ES5, LIBS)))
-    .pipe($.size({title: 'js'}))
+    .pipe($.size({title: 'copy-js'}))
 });
 
 // TODO: add comments
 gulp.task('assets:libs', function(next){
   return gulp.src([
-      'client' +'/node_modules/{di/src,zone.js}/*.js',
+      CLIENT +'/node_modules/{di/src,zone.js}/*.js',
     ])
     .pipe($.cached('assets:libs', {optimizeMemory: true}))
 
@@ -127,9 +123,10 @@ gulp.task('assets:libs', function(next){
 // TODO: add comments
 gulp.task('assets:es5', function(next){
   return gulp.src([
-      SRC +'.es6.js',
-      TMP +'/**/*.es6.js',
+      TMP +'/**/*.js',
+      '!'+ TMP+'/'+ES5 +'/**/*',
     ])
+
     .pipe($.cached('assets:es5', {optimizeMemory: true}))
 
     .pipe($.regenerator())
@@ -138,10 +135,6 @@ gulp.task('assets:es5', function(next){
     .pipe($.sourcemaps.init({loadMaps: true}))
     .pipe($.traceur({sourceMaps: true}))
     .on('error', CFG.throw)
-    .pipe(thr(function(vfs,e,n){
-      vfs.path = vfs.path.replace('.es6.js', '.js')
-      n(null, vfs)
-    }))
 
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(path.join(TMP, ES5)))
@@ -156,10 +149,6 @@ gulp.task('assets:react', function(next){
 
     .pipe($.react({sourceMap: true}))
     .on('error', CFG.throw)
-    .pipe(thr(function(vfs,e,n){
-      vfs.path = vfs.path.replace('.js', '.es6.js')
-      n(null, vfs)
-    }))
 
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(TMP))

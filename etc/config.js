@@ -22,7 +22,8 @@
 var path = require('path')
 
 var TMP = 'tmp'
-var APP = 'client/app'
+var CLIENT = 'client'
+var APP = path.join(CLIENT, 'app')
 var LIBS = 'libs'
 var DIST = path.join(TMP, 'dist')
 var ES5 = 'es5'
@@ -39,6 +40,7 @@ module.exports = {
   root: ROOT,
   tmp: TMP,
   app: APP,
+  client: CLIENT,
   libs: LIBS,
   dist: DIST,
   es5: ES5,
@@ -56,7 +58,7 @@ module.exports = {
     'bb >= 10'
   ],
   throw : function(err) {
-    throw err
+    throw Error(err)
   },
 
   browserSync: function(){
