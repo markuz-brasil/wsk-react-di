@@ -43,7 +43,7 @@ var SRC = '{'+ APP +','+ LIBS +'}/**/*'
 var browserifyConfig = {
   entries: [
     path.join(ROOT, TMP, ES5, APP),
-    path.join(ROOT, TMP, ES5, APP, 'kitchen'),
+    path.join(ROOT, TMP, ES5, APP, 'components/kitchen'),
     path.join(ROOT, TMP, ES5, APP, 'public/zone-extras'),
   ],
   debug: true,
