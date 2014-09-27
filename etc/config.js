@@ -94,7 +94,7 @@ module.exports = {
     return  {
       // modules: 'commonjs',
       sourceMaps: true,
-      outputLanguage: 'es6',
+      outputLanguage: 'es5',
       // ES6
       // symbols: true, // buggy
       blockBinding: true, // noisy

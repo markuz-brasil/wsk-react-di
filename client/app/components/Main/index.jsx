@@ -1,10 +1,12 @@
-import {BaseCtrl} from '../Core'
-import {Card, CardCtrl} from '../Card'
-
 import {Injector} from 'di';
 
-var injector = new Injector([])
-var Card = injector.get(CardCtrl)
+import {BaseCtrl} from '../Core'
+import {Card, MockBody, MockTitle, CardCtrl} from '../Card'
+
+
+var CardMockBody = new Injector([MockBody]).get(CardCtrl)
+var CardMockTitle = new Injector([MockTitle]).get(CardCtrl)
+var CardReal = new Injector([]).get(CardCtrl)
 
 export class AppCtrl extends BaseCtrl {
   constructor () { return super() }
@@ -12,9 +14,9 @@ export class AppCtrl extends BaseCtrl {
   render() {
     return (
       <div>
-        <Card />
-        <Card />
-        <Card />
+        <CardMockBody />
+        <CardMockTitle />
+        <CardReal />
         <Card />
       </div>
     );

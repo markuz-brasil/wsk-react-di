@@ -1,53 +1,20 @@
-import {BaseCtrl, BaseState} from '../Core'
 import {annotate, Inject, Injector} from 'di'
-
-export class Body {
-  html () {
-    return Math.random()
-  }
-}
-
-export class CardBody extends BaseCtrl {
-  constructor (obj) { return super(obj) }
-  render () { return <div> .. {this.html()} .. </div> }
-}
-annotate(CardBody, new Inject(Body))
-
-export class Title {
-  html () {
-    return Math.random()
-  }
-}
-
-export class CardTitle extends BaseCtrl {
-  constructor (obj) { return super(obj) }
-  render () { return <div> {this.html()} </div> }
-}
-annotate(CardTitle, new Inject(Title))
-
-
-export class CardState extends BaseState {
-  constructor(body = CardBody, title = CardTitle) {
-    return super({
-      Body: body, Title: title
-    })
-  }
-}
-annotate(CardState, new Inject(CardBody, CardTitle))
+import {BaseCtrl} from '../Core'
+import {CardState} from './state'
 
 export class CardCtrl extends BaseCtrl {
-  constructor (state) { return super(state) }
+  constructor (cardState) { return super(cardState) }
 
   render() {
     return (
        <div className="card-wrap">
           <div className="panel-heading">
               <h3 className="panel-title">
-                <this.state.Title />
+                {this.state.title.toString()}
               </h3>
           </div>
           <div className="panel-body">
-            <this.state.Body />
+            {this.state.body.toString()}
           </div>
         </div>
     );
@@ -55,4 +22,6 @@ export class CardCtrl extends BaseCtrl {
 }
 annotate(CardCtrl, new Inject(CardState))
 
+export var Card = new Injector([]).get(CardCtrl)
+export {MockBody, MockTitle} from './state'
 
