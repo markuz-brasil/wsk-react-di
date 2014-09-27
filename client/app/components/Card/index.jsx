@@ -23,5 +23,5 @@ export class CardCtrl extends BaseCtrl {
 annotate(CardCtrl, new Inject(CardState))
 
 export var Card = new Injector([]).get(CardCtrl)
-export {MockBody, MockTitle} from './state'
+// export {MockBody, MockTitle} from './state'
 

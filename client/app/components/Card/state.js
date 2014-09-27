@@ -34,4 +34,15 @@ export class CardState extends BaseState {
   }
 }
 
+@Provide(CardState)
+@Inject(MockBody, MockTitle)
+export class MockCardState extends BaseState {
+  constructor(body, title) {
+    return super({ body: body, title: title })
+  }
+}
+
+
+
+
 
