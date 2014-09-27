@@ -1,24 +1,22 @@
 export function mergeCtx (obj = {}) {
-    var ctx = {}
+  var ctx = {}
 
-    for (var key in obj) {
-      ctx[key] = obj[key]
-    }
+  for (var key in obj) {
+    ctx[key] = obj[key]
+  }
 
-    for (var key in this) {
-      ctx[key] = this[key]
-    }
+  for (var key in this) {
+    ctx[key] = this[key]
+  }
 
-    return ctx
+  return ctx
 }
 
 export class BaseCtrl {
   constructor (obj = {}) {
     return React.createClass(mergeCtx.call(this, obj))
   }
-
   render() { return <div> .. BaseCtrl .. </div> }
-
 }
 
 export class BaseState {
