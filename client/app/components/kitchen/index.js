@@ -8,6 +8,7 @@ function main() {
   var kitchen = injector.get(Kitchen);
 
   kitchen.makeBreakfast();
+
 }
 
 main();

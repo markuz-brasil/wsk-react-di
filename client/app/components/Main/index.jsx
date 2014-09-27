@@ -1,35 +1,24 @@
-import {Card} from '../Card'
-import {BaseCtrl} from '../core'
+import {BaseCtrl} from '../Core'
+import {Card, CardCtrl} from '../Card'
+
 import {Injector} from 'di';
 
-class CardBody extends BaseCtrl {
-  constructor () { return super() }
+var injector = new Injector([])
+var Card = injector.get(CardCtrl)
 
-  render () {
-    return <div> .. {Math.random()} .. </div>
-  }
-}
-
-class AppCtrl extends BaseCtrl {
+export class AppCtrl extends BaseCtrl {
   constructor () { return super() }
 
   render() {
     return (
-      <div >
+      <div>
         <Card />
-        <Card Body={CardBody}/>
-        <Card Body={CardBody}/>
-        <Card Body={CardBody}/>
-        <Card Body={CardBody}/>
+        <Card />
+        <Card />
+        <Card />
       </div>
     );
   }
 }
 
-export function init () {
-  var App = new AppCtrl()
-  var renderApp = () =>
-    React.renderComponent(<App />, document.getElementById('react-app'));
-
-  renderApp();
-}
+export var App = new AppCtrl()

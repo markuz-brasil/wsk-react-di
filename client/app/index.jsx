@@ -1,7 +1,7 @@
-import {init} from './components/Main'
+import {App} from './components/Main'
 
 React.initializeTouchEvents(true)
-init()
+React.renderComponent(<App />, document.getElementById('react-app'));
 
 
 // function* idMaker(){
