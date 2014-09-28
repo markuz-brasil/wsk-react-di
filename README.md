@@ -3,12 +3,6 @@
 |--- |--- |--- |--- |--- |--- |--- |--- |
 
 
-This project is showing off my wsk-react-di with less version of bootstrap (and some jquery hack, off-course :) to create a prototype of super responsive table
-
-You can sort rows in the tables or filter them out by clicking (or touching) at the head of the collumn. It will bring a popover with a list with the checked rows.  
-
-Note that the order on the filter will reflect the current sorting of the table dynamicaly. And that each table are complete isolated from each other. And that I have support for source maps (well, not 100%, reactjs got a bug on their sourcemaps :)
-
 ## Quickstart
 
 ```sh
