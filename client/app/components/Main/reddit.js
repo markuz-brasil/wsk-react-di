@@ -4,7 +4,6 @@ import {CardCtrl} from '../Card'
 import {Body, Title, CardState} from '../Card/state'
 
 var co = require('co')
-require('setimmediate')
 
 export class RedditBody {
   toString () {
@@ -53,14 +52,12 @@ function handleRedditJsonp (json) {
   })
 }
 
-export var fetchReddit = (function(){
-  var counter = 0
-  return co(function* () {
-    try {
-      var data = handleRedditJsonp(yield http.jsonp(redditInitState().url))
-      console.log('trigger action with this data now:', data, data[4], counter++)
-    }
-    catch (err) {throw console.error(err)}
-  })
-})()
+var fetchCounter = 0
+export var fetchReddit = co(function* () {
+  try {
+    var data = handleRedditJsonp(yield http.jsonp(redditInitState().url))
+    console.log('trigger action with this data now:', data, data[4], fetchCounter++)
+  }
+  catch (err) {throw console.error(err)}
+})
 

@@ -1,5 +1,5 @@
 ##### Extra Features
-|[less](http://lesscss.org/) | [Jade](http://jade-lang.com/) | [traceur](https://github.com/google/traceur-compiler) | [Reactjs](http://facebook.github.io/react/index.html) | [Zone](https://github.com/angular/zone.js#74947b6f509b)| [webpack](https://github.com/webpack/webpack)| [casper](http://casperjs.org/) | [mocha](http://visionmedia.github.io/mocha/) |
+|[less](http://lesscss.org/) | [Jade](http://jade-lang.com/) | [traceur](https://github.com/google/traceur-compiler) | [Reactjs](http://facebook.github.io/react/index.html) | [Zone](https://github.com/angular/zone.js#74947b6f509b)| [browserify](http://browserify.org/)| [casper](http://casperjs.org/) | [mocha](http://visionmedia.github.io/mocha/) |
 |--- |--- |--- |--- |--- |--- |--- |--- |
 
 
