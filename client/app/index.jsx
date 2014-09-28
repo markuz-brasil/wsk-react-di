@@ -1,5 +1,4 @@
 import {App} from './components/Main'
-require('setimmediate')
 
 React.initializeTouchEvents(true)
 React.renderComponent(<App />, document.getElementById('react-app'));

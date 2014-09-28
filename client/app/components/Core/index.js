@@ -32,49 +32,59 @@ export class BaseState {
   }
 }
 
-export function httpGet () {
-  return function get (url) {
-    if (!url) { throw new Error('missing url') }
+function get (url) {
+  if (!url) { throw new Error('missing url') }
 
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, false);
+  return new Promise(function(resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, false);
 
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            resolve(JSON.parse(xhr.responseText));
-          } else {
-            reject(new Error(xhr.statusText));
-          }
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          resolve(JSON.parse(xhr.responseText));
+        } else {
+          reject(new Error(xhr.statusText));
         }
-      };
-      xhr.send();
-    });
-  }
+      }
+    };
+    xhr.send();
+  });
 }
 
-export function httpJsonp () {
-  return function jsonp (url) {
-    if (!url) { throw new Error('missing url') }
+export function httpGet () { return get }
 
-    return new Promise(function(resolve, reject){
-      var generatedFunction = `jsonp${Date.now()}${Math.random()}`.replace('.','')
+function jsonp (url) {
+  if (!url) { throw new Error('missing url') }
 
-      window[generatedFunction] = function(json){
-        resolve(json)
-        delete window[generatedFunction]
-        document.body.removeChild(script)
-      };
+  return new Promise(function(resolve, reject){
+    var randFuncName = `jsonp${Date.now()}${Math.random()}`.replace('.','')
+    var script = document.createElement('script');
+    script.type = "text/javascript"
+    script.src = url + randFuncName
 
-      var script = document.createElement('script');
-      script.type = "text/javascript"
-      script.src = url + generatedFunction
-      script.onerror = reject
-      document.body.appendChild(script);
-    })
-  }
+    function clean () {
+      delete window[randFuncName]
+      document.body.removeChild(script)
+    }
+
+    function errHandler (err) {
+      clean()
+      reject(err)
+    }
+
+    window[randFuncName] = function(json){
+      clean()
+      resolve(json)
+    };
+
+    script.onerror = errHandler
+    // upload by append script
+    document.body.appendChild(script);
+  })
 }
+
+export function httpJsonp () { return jsonp }
 
 export class Http {
   constructor (get, jsonp) {
