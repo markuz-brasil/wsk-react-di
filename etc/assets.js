@@ -79,6 +79,9 @@ gulp.task('assets:esx', function(next){
     .pipe($.cached('assets:esx', {optimizeMemory: true}))
     .pipe($.sourcemaps.init({loadMaps: true}))
 
+    .pipe($.regenerator())
+    .on('error', CFG.throw)
+
     .pipe($.traceur(CFG.traceur()))
     .on('error', CFG.throw)
 
@@ -146,6 +149,8 @@ gulp.task('assets:react', function(next){
   return gulp.src([SRC +'.jsx'])
     .pipe($.cached('assets:react', {optimizeMemory: true}))
     .pipe($.sourcemaps.init({loadMaps: true}))
+    .pipe($.regenerator())
+    .on('error', CFG.throw)
 
     .pipe($.react({sourceMap: true}))
     .on('error', CFG.throw)

@@ -1,8 +1,9 @@
-import {Injector} from 'di';
+import {annotate, Inject, Injector} from 'di'
 
-import {BaseCtrl} from '../Core'
+import {BaseCtrl, http} from '../Core'
 import {Card, CardCtrl} from '../Card'
-import {MockBody, MockTitle, MockCardState} from '../Card/state'
+import {MockBody,  MockTitle, MockCardState} from '../Card/state'
+import {AppState, RedditCardState} from './state'
 
 var CardMockBody = new Injector([MockBody]).get(CardCtrl)
 var CardMockTitle = new Injector([MockTitle]).get(CardCtrl)
@@ -10,11 +11,12 @@ var CardMock = new Injector([MockCardState]).get(CardCtrl)
 var CardDefault = new Injector([]).get(CardCtrl)
 
 export class AppCtrl extends BaseCtrl {
-  constructor () { return super() }
+  constructor (appState) { return super(appState) }
 
   render() {
     return (
       <div>
+        <this.state.Elem />
         <CardMockBody />
         <CardMockTitle />
         <CardMock />
@@ -24,5 +26,7 @@ export class AppCtrl extends BaseCtrl {
     );
   }
 }
+annotate(AppCtrl, new Inject(AppState))
 
-export var App = new AppCtrl()
+export var App = new Injector([RedditCardState]).get(AppCtrl)
+
