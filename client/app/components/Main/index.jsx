@@ -3,7 +3,10 @@ import {annotate, Inject, Injector} from 'di'
 import {BaseCtrl, http} from '../Core'
 import {Card, CardCtrl} from '../Card'
 import {MockBody,  MockTitle, MockCardState} from '../Card/state'
-import {AppState, RedditCardState} from './state'
+import {AppState, RedditCardState, fetchReddit} from './state'
+
+fetchReddit()
+fetchReddit()
 
 var CardMockBody = new Injector([MockBody]).get(CardCtrl)
 var CardMockTitle = new Injector([MockTitle]).get(CardCtrl)

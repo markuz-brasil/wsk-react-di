@@ -53,7 +53,7 @@ function handleRedditJsonp (json) {
   })
 }
 
-export var fetchRedditJsonp = (function(){
+export var fetchReddit = (function(){
   var counter = 0
   return co(function* () {
     try {
