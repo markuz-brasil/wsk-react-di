@@ -20,14 +20,14 @@ function handleRedditJsonp (json) {
   })
 }
 
+var url = initState().url
 co(function* () {
   try {
-    var data = handleRedditJsonp(yield http.jsonp(initState().url))
+    var data = handleRedditJsonp(yield http.jsonp(url))
+    console.log('trigger action with this data now:', data, data[4])
   }
-  catch (err) {throw err}
-  console.log('---', data)
+  catch (err) {throw console.error(err)}
 })()
-
 
 export class RedditBody {
   toString () {
@@ -50,9 +50,6 @@ export class RedditCardState extends BaseState {
 }
 annotate(RedditCardState, new Provide(CardState))
 annotate(RedditCardState, new Inject(RedditBody, RedditTitle))
-
-
-// var C = new Injector([RedditCardState]).get(CardCtrl)
 
 export function initState (Card = {}) {
   return {
