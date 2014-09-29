@@ -3,10 +3,10 @@ import {annotate, Inject, Injector} from 'di'
 import {BaseCtrl, http} from '../Core'
 import {Card, CardCtrl} from '../Card'
 import {MockBody,  MockTitle, MockCardState} from '../Card/state'
-import {AppState, RedditCardState, fetchReddit} from './state'
+import {AppState, YouTubeCardState, fetchYouTubeJson} from './state'
 
-fetchReddit()
-fetchReddit()
+fetchYouTubeJson()
+fetchYouTubeJson()
 
 var CardMockBody = new Injector([MockBody]).get(CardCtrl)
 var CardMockTitle = new Injector([MockTitle]).get(CardCtrl)
@@ -31,5 +31,5 @@ export class AppCtrl extends BaseCtrl {
 }
 annotate(AppCtrl, new Inject(AppState))
 
-export var App = new Injector([RedditCardState]).get(AppCtrl)
+export var App = new Injector([YouTubeCardState]).get(AppCtrl)
 

@@ -53,6 +53,7 @@ var aliasify = require('aliasify').configure({
   aliases: {
     di: './'+ path.join(TMP, ES5, LIBS, 'di/src'),
     zone: './'+ path.join(TMP, ES5, LIBS, 'zone.js'),
+    // 'rtts-assert': './'+ path.join(TMP, ES5, LIBS, 'rtts-assert/src/assert'),
     co: './client/node_modules/co',
     setimmediate: './client/node_modules/setimmediate',
   }

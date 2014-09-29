@@ -1,6 +1,5 @@
 import {annotate, Inject, Injector} from 'di'
 
-
 export function mergeCtx (obj = {}) {
   var ctx = {}
 
@@ -59,13 +58,11 @@ function jsonp (url) {
 
   return new Promise(function(resolve, reject){
     var randFuncName = `jsonp${Date.now()}${Math.random()}`.replace('.','')
-    var script = document.createElement('script');
-    script.type = "text/javascript"
-    script.src = url + randFuncName
+    var scriptTag = document.createElement('script');
 
     function clean () {
       delete window[randFuncName]
-      document.body.removeChild(script)
+      document.body.removeChild(scriptTag)
     }
 
     function errHandler (err) {
@@ -73,14 +70,16 @@ function jsonp (url) {
       reject(err)
     }
 
-    window[randFuncName] = function(json){
+    window[randFuncName] = function jsonpCallback (json){
       clean()
       resolve(json)
     };
 
-    script.onerror = errHandler
-    // upload by append script
-    document.body.appendChild(script);
+    scriptTag.type = "text/javascript"
+    scriptTag.src = url + randFuncName
+    scriptTag.onerror = errHandler
+    // begin jsonp call by appending a script tag into the body
+    document.body.appendChild(scriptTag);
   })
 }
 
@@ -96,4 +95,5 @@ annotate(Http, new Inject(httpGet, httpJsonp))
 
 export var http = new Injector([]).get(Http)
 
-
+export {types} from './types'
+export {assert} from './assert'

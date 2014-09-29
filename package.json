@@ -42,7 +42,6 @@
     "mocha-casperjs": "^0.5.1",
     "psi": "^0.1.2",
     "require-dir": "^0.1.0",
-    "rtts-assert": "git://github.com/angular/assert#6caafd2561",
     "run-sequence": "^0.3.6",
     "serve-static": "1.5.3",
     "sinon": "^1.10.3",
