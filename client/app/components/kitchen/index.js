@@ -2,6 +2,7 @@ import {Injector} from 'di';
 import {Kitchen} from './kitchen';
 import {MockHeater} from './mock_heater';
 // import {assert} from '../Core/assert'
+import {test} from '../Core/types-tests'
 
 var co = require('co')
 

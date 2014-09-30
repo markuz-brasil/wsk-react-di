@@ -37,9 +37,9 @@ console.log('%%%%', TYPE_NAMESPACE.get(Num))
 console.log(TYPE_NAMESPACE.get(isNullOrUndefined))
 // export var buf = assert.define(Array, isBuffer)
 
-var counter = 0
-var counter2 = 0
-var badStack = []
+var COUNTER = 0
+var COUNTER2 = 0
+var FAIL_STACK = []
 
 export function testRun (types, sample) {
   var ans = types.map((type, i) => {
@@ -47,18 +47,18 @@ export function testRun (types, sample) {
     return sample[i].map((s) => {
       var res = assert(s).is(type)
       if (res) {
-        console.log(counter2, res,  'type:', type, 'value:', s, sample[i])
+        console.log(COUNTER2, res,  'type:', type, 'value:', s, sample[i])
       }
       else {
-        badStack.push(counter2)
-        console.warn(counter2, res, 'type:', type, 'value:', s, sample[i])
+        FAIL_STACK.push(COUNTER2)
+        console.warn(COUNTER2, res, 'type:', type, 'value:', s, sample[i])
       }
-      counter2++
+      COUNTER2++
       return res
     })
 
   })
-  console.log(counter++, '*** *** ***')
+  console.log(COUNTER++, '*** *** ***')
   console.log(ans, sample)
 }
 
@@ -66,17 +66,7 @@ export function testRun (types, sample) {
 export function test () {
 
 
-testRun( [
-    Array,
-    Boolean,
-    Number,
-    RegExp,
-    String,
-    Object,
-    Date,
-    Error,
-    Function,
-  ], [
+testRun( [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,], [
     [[2, 3, 'd'], [{}, '4', 4], [Date, Function], {wrong: 'kind'}],
     [true, false, true, 0, 1],
     [0, 1, 2, 3, 4, '5'],
@@ -88,17 +78,7 @@ testRun( [
     [() => {}, function (){}, new Function(), 'p'],
   ])
 
-testRun( [
-    Array,
-    Boolean,
-    Number,
-    RegExp,
-    String,
-    Object,
-    Date,
-    Error,
-    Function,
-  ], [
+testRun( [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,], [
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
@@ -110,17 +90,7 @@ testRun( [
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
   ])
 
-testRun( [
-    Array,
-    Boolean,
-    Number,
-    RegExp,
-    String,
-    Object,
-    Date,
-    Error,
-    Function,
-  ], [
+testRun( [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,], [
     [ null, nil, undefined, undef, undefnil, NullOrUndefined, ],
     [ null, nil, undefined, undef, undefnil, NullOrUndefined, ],
     [ null, nil, undefined, undef, undefnil, NullOrUndefined, ],
@@ -134,14 +104,7 @@ testRun( [
   ])
 
 
-testRun( [
-    null,
-    nil,
-    undefined,
-    undef,
-    undefnil,
-    NullOrUndefined,
-  ], [
+testRun( [ null, nil, undefined, undef, undefnil, NullOrUndefined, ], [
     [ null, nil, undefined, undef, undefnil, NullOrUndefined, ],
     [ null, nil, undefined, undef, undefnil, NullOrUndefined, ],
     [ null, nil, undefined, undef, undefnil, NullOrUndefined, ],
@@ -150,14 +113,7 @@ testRun( [
     [ null, nil, undefined, undef, undefnil, NullOrUndefined, ],
   ])
 
-testRun( [
-    null,
-    nil,
-    undefined,
-    undef,
-    undefnil,
-    NullOrUndefined,
-  ], [
+testRun( [ null, nil, undefined, undef, undefnil, NullOrUndefined, ], [
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
@@ -167,6 +123,6 @@ testRun( [
   ])
 
 }
-console.log(badStack)
+console.log(FAIL_STACK)
 
 
