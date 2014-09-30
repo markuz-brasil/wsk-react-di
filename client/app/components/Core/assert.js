@@ -62,23 +62,19 @@ function prettyPrint(value) {
   return ctx.name || value.name || value.toString();
 }
 
-function errorMsg (msg) {
-    throw new Error(msg)
-}
-
 function falsy () {return false}
 
+// base class for all types.
 export class Type {}
 
 export function defineType(T, assert, ctx = {}) {
-  // TYPE_NAMESPACE.counter++
 
-  if (isObject(assert)) {
-    ctx = assert
+  if (isUndefined(assert)) {
     assert = T
   }
 
-  if (isUndefined(assert)) {
+  if (isObject(assert)) {
+    ctx = assert
     assert = T
   }
 
@@ -90,24 +86,17 @@ export function defineType(T, assert, ctx = {}) {
     var token = TYPE_NAMESPACE.get(T)
     token.assert = assert
     Object.assign(token, ctx)
-    // token.rm = rm
-    // token.counter++
   }
   else {
     var token = new Type()
     token.id = T
     token.assert = assert
     Object.assign(token, ctx)
-    // token.counter = 0
     TYPE_NAMESPACE.set(T, token)
   }
 
-  // console.log(TYPE_NAMESPACE.size)
   return token;
 }
-
-defineType(undefined, isUndefined)
-defineType(null, isNull)
 
 function cleanUp (T) {
   var token = TYPE_NAMESPACE.get(T) || T
@@ -117,61 +106,51 @@ function cleanUp (T) {
 }
 
 function isType(value, T, errors) {
-  var token = TYPE_NAMESPACE.get(T) || T
-  var valToken = TYPE_NAMESPACE.get(value) || value
+  var typeToken = TYPE_NAMESPACE.get(T) || T
+  var valueToken = TYPE_NAMESPACE.get(value) || value
   ERR_STACK = errors;
 
-  if (token instanceof Type) {
-    if (token.id === value) {
-      return true
-    }
+  if (typeToken.id === value) { return true }
 
-    var parentStack = ERR_STACK;
-    var isValid;
-    var typeList = []
+  if (!(typeToken instanceof Type)) {
+    cleanUp(T)
+    if (isFunction(T)) { return value instanceof T }
+    return false
+  }
 
-    if (token.types) {
-      var typeList = token.types.slice()
-    }
+  var parentStack = ERR_STACK;
+  var isValid;
 
-    // checking types array and comparing them
-    typeList.push(token.id)
-    typeList.forEach((type) => {
-      if (valToken.types) {
-        valToken.types.forEach((type2) => {
-          if (type === type2) {
-            isValid = true
-          }
-        })
-      }
+  if (valueToken.types) {
+    var tokenTypeList = typeToken.types ? typeToken.types.slice(): []
+    tokenTypeList.push(typeToken.id)
 
+    tokenTypeList.forEach((type1) => {
+      valueToken.types.forEach((type2) => {
+        if (type1 === type2) {
+          isValid = true
+        }
+      })
     })
 
     if (isValid) {return isValid}
-
-    try {
-      isValid = token.assert(value) ;
-    } catch (e) {
-      fail(e.message);
-      isValid = false;
-    }
-
-    ERR_STACK = parentStack;
-
-    if (isUndefined(isValid)){
-      isValid = errors.length === 0;
-    }
-
-    cleanUp(T)
-    return isValid;
   }
+
+  try {
+    isValid = !!typeToken.assert(value) ;
+  } catch (e) {
+    fail(e.message);
+    isValid = false;
+  }
+
+  ERR_STACK = parentStack;
+
+  if (isUndefined(isValid)){
+    isValid = errors.length === 0;
+  }
+
   cleanUp(T)
-
-  if (isFunction(T)) {
-    return value instanceof T
-  }
-
-  return false
+  return isValid;
 }
 
 
@@ -194,15 +173,12 @@ export function checkType(actual, T) {
 // asserting API
 export function assert(value) {
 
-
   if (value instanceof Type) {
     value = value.id
   }
 
-
-  // value = value.type || value
   return {
-    is: function is(...tokens) {
+    is: function is (...tokens) {
       var allErrors = [];
       var errors;
 
@@ -217,6 +193,12 @@ export function assert(value) {
         if (isType(value, token, errors)) {
           return true;
         }
+
+        // reverse the match :)
+        if (token && isType(token, value, errors)) {
+          return true;
+        }
+
 
         // if no errors, merge multiple "is not instance of " into x/y/z ?
         allErrors.push(prettyPrint(value) + ' is not instance of ' + prettyPrint(token))

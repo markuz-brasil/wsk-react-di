@@ -1,5 +1,4 @@
-import {assert, defineType, TYPE_NAMESPACE, removeType} from './assert'
-// import {test} from './types-test'
+import {assert} from './assert'
 
 var {
   isArray,
@@ -16,49 +15,50 @@ var {
   isError,
   isFunction,
   isPrimitive,
-  // isBuffer,
 } = require('./core-is')
 
 // basic types
-export var array = defineType(Array, isArray)
-export var bool = defineType(Boolean, isBoolean)
-export var num = defineType(Number, isNumber)
-export var str = defineType(String, isString)
-export var reg = defineType(RegExp, isRegExp)
-export var obj = defineType(Object, isObject)
-export var date = defineType(Date, isDate)
-export var error = defineType(Error, isError)
-export var fun = defineType(Function, isFunction)
-export var sym = defineType(Symbol, isSymbol)
+export var array = assert.define(Array, isArray)
+export var bool = assert.define(Boolean, isBoolean)
+export var num = assert.define(Number, isNumber)
+export var str = assert.define(String, isString)
+export var reg = assert.define(RegExp, isRegExp)
+export var obj = assert.define(Object, isObject)
+export var date = assert.define(Date, isDate)
+export var error = assert.define(Error, isError)
+export var fun = assert.define(Function, isFunction)
+export var sym = assert.define(Symbol, isSymbol)
 
-export var nil = defineType(null, isNull)
-export var undef = defineType(undefined, isUndefined)
-export var undefnil = defineType(isNullOrUndefined, {types: [null, undefined]})
-export var primitive = defineType(isPrimitive)
-
+export var nil = assert.define(null, isNull)
+export var undef = assert.define(undefined, isUndefined)
+export var undefnil = assert.define(isNullOrUndefined, {types: [null, undefined]})
+export var primitive = assert.define(isPrimitive, {
+  types: [Boolean, Number, String, Symbol, undefined,],
+})
 
 // TODO: write comments
 export function arrayOf(...types) {
-  return defineType('array of ' + types.map(prettyPrint).join('/'), function(value) {
+  return assert.define('array of ' + types.map(prettyPrint).join('/'), function(value) {
     if (assert(value).is(Array)) {
       for (var item of value) {
         assert(item).is(...types);
       }
     }
-  });
+  })
 }
 
 // TODO: write comments
-export function structure(definition, rm = false) {
+export function structure(definition, ctx) {
   var properties = Object.keys(definition);
-  var ret = defineType('object with properties ' + properties.join(', '), function(value) {
+  return assert.define('object with properties ' + properties.join(', '), function(value) {
     if (assert(value).is(Object)) {
       for (var property of properties) {
-        assert(value[property]).is(definition[property]);
+        var res = assert(value[property]).is(definition[property]);
+        if (!res) {return false}
       }
     }
-  }, rm)
-  return ret
+    return true
+  }, ctx)
 }
 
 

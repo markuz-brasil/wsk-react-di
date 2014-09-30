@@ -2,7 +2,7 @@ import {annotate, Injector, Inject, Provide} from 'di';
 // import {assert} from 'rtts-assert'
 
 import {http, BaseState, assert} from '../Core'
-import {string, number, bool, undef, structure} from '../Core/types'
+import {structure} from '../Core/types'
 
 import {CardCtrl} from '../Card'
 import {Body, Title, CardState} from '../Card/state'
@@ -66,11 +66,22 @@ export function youTubeInitState (Card = {}) {
 }
 annotate(youTubeInitState, new Inject(CardCtrl))
 
+assert.define(musicCategory)
+function musicCategory (value) {
+  var isValid
+  value.forEach((v) => {
+    if (v.label && v.label.toLowerCase() === 'music') {
+      isValid = true
+    }
+  })
+  return isValid
+}
 
 function youTubeType () {}
 var token = assert.define(youTubeType, (value) => {
   return assert(value).is(structure({
-    app$control : undef
+    app$control : undefined,
+    category: musicCategory,
   }, {rm: true}))
 })
 
@@ -96,12 +107,12 @@ function handleYouTubeJsonp (json) {
 var fetchCounter = 0
 export var fetchYouTubeJson = co(function* () {
   try {
+    // console.log('begin fetching yt')
     var data = handleYouTubeJsonp(yield http.jsonp(youTubeInitState().url))
   }
   catch (err) {return console.error(err)}
 
   // return data
   console.log('jsonp', data.length, data)
-  // console.log('sample data', fetchCounter++, data[4])
 })
 

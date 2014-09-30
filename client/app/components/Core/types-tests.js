@@ -20,7 +20,7 @@ var {
 import {
  array, bool, num, str, reg,
  obj, date, error, fun, sym,
- nil, undef, undefnil
+ nil, undef, undefnil, primitive
 } from './types'
 
 function Num (){}
@@ -40,6 +40,12 @@ if (TYPE_NAMESPACE.has(Num)) {
   console.warn(Num, 'found on', TYPE_NAMESPACE)
 }
 
+[Boolean, String, Number, Symbol, undefined].forEach((type) => {
+  var res = assert(type).is(primitive)
+  if (!res) {console.log('primitive test failed', type, primitive)}
+})
+
+
 var COUNTER = 0
 var COUNTER2 = 0
 var FAIL_STACK = []
@@ -48,7 +54,6 @@ var FAIL_STACK2 = []
 export function testRun (types, sample, expect) {
 
   var ans = types.map((type, i) => {
-    // console.log(array[i], type)
     return sample[i].map((s, j) => {
       var res = assert(s).is(type)
       var exp = expect[i][j]
@@ -112,14 +117,14 @@ export function test () {
 
   var array00b = [array00, array00, array00, array00, array00, array00, array00, array00, array00,]
   var exp00b = [
-    [true, false, false, false, false, false, false, false, false,],
-    [false, true, false, false, false, false, false, false, false,],
-    [false, false, true, false, false, false, false, false, false,],
-    [false, false, false, true, false, false, false, false, false,],
-    [false, false, false, false, true, false, false, false, false,],
-    [false, false, false, false, false, true, false, false, false,],
-    [false, false, false, false, false, false, true, false, false,],
-    [false, false, false, false, false, false, false, true, false,],
+    [true, false, false, false, false, false, false, false, true,],
+    [false, true, false, false, false, false, false, false, true,],
+    [false, false, true, false, false, false, false, false, true,],
+    [false, false, false, true, false, false, false, false, true,],
+    [false, false, false, false, true, false, false, false, true,],
+    [false, false, false, false, false, true, false, false, true,],
+    [false, false, false, false, false, false, true, false, true,],
+    [false, false, false, false, false, false, false, true, true,],
     [true, true, true, true, true, true, true, true, true],
   ]
 
@@ -139,40 +144,34 @@ export function test () {
   console.log('------------------')
   testRun(array00, array00a, exp00a)
   testRun(array00, array00b, exp00b)
-  testRun(array00, array00c, exp00c) // fails 2 tests
+  testRun(array00, array00c, exp00c)
 
   var array01a = [
-      [[2, 3, 'd'], [{}, '4', 4], [Date, Function], {wrong: 'kind'}],
-      [true, false, true, 0, 1],
-      [0, 1, 2, 3, 4, '5'],
-      [/fg/, /fh/, 9],
-      ['ff', 'dd', 'ss', 4],
-      [{hi: 'there'}, {hello: ['gg']}, {oi: 3}, [], 'll'],
-      [new Date(), new Date(), 'l'],
-      [new Error('ops'), new Error('ops2'), new Date()],
-      [() => {}, function (){}, new Function(), 'p'],
-    ]
+    [[], {}, new Date(), new Error('ops'), () => {}, Date, Function, {wrong: 'kind'}, true, false, 0, 1, 2, 3, '5', /fg/, /fh/, {hello: ['gg']}, ],
+    [[], {}, new Date(), new Error('ops'), () => {}, Date, Function, {wrong: 'kind'}, true, false, 0, 1, 2, 3, '5', /fg/, /fh/, {hello: ['gg']}, ],
+    [[], {}, new Date(), new Error('ops'), () => {}, Date, Function, {wrong: 'kind'}, true, false, 0, 1, 2, 3, '5', /fg/, /fh/, {hello: ['gg']}, ],
+    [[], {}, new Date(), new Error('ops'), () => {}, Date, Function, {wrong: 'kind'}, true, false, 0, 1, 2, 3, '5', /fg/, /fh/, {hello: ['gg']}, ],
+    [[], {}, new Date(), new Error('ops'), () => {}, Date, Function, {wrong: 'kind'}, true, false, 0, 1, 2, 3, '5', /fg/, /fh/, {hello: ['gg']}, ],
+    [[], {}, new Date(), new Error('ops'), () => {}, Date, Function, {wrong: 'kind'}, true, false, 0, 1, 2, 3, '5', /fg/, /fh/, {hello: ['gg']}, ],
+  ]
 
   var exp01a = [
-    [false, false, false, false],
-    [false, false, false, false, false],
-    [false, false, false, false, false, false],
-    [false, false, false],
-    [false, false, false, false],
-    [false, false, false, false, false],
-    [false, false, false],
-    [false, false, false],
-    [false, false, false, false],
+    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, ],
+    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, ],
+    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, ],
+    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, ],
+    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, ],
+    [false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, ],
   ]
 
   var array01b = [array00, array00, array00, array00, array00, array00,]
   var exp01b = [
     [false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, true, false, false, false],
     [false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, true, false, false, false],
+    [false, false, false, false, false, true, false, false, false],
+    [false, false, false, false, false, false, false, false, true],
   ]
 
   var array01c = [array01, array01, array01, array01, array01, array01,]
@@ -196,6 +195,7 @@ export function test () {
     COUNTER2,
     'tests with total fails of',
     FAIL_STACK2.length, 'tests \n\n')
+
 }
 
 
