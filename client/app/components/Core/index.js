@@ -97,4 +97,6 @@ export var http = new Injector([]).get(Http)
 
 export {types} from './types'
 export {assert} from './assert'
+import {test} from './types-tests'
 
+test()
