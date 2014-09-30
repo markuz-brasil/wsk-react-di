@@ -11,10 +11,12 @@ var {isFunction,
   isUndefined,
   isNull,
   isObject,
+  isArray,
   isBoolean } = require('./core-is')
 
 var ERR_STACK = [];
 export var TYPE_NAMESPACE = new Map()
+TYPE_NAMESPACE.counter = 0
 
 function fail(message) {
   ERR_STACK.push(message);
@@ -66,54 +68,67 @@ function errorMsg (msg) {
 
 function falsy () {return false}
 
-export function defineType(T, assert, once = false) {
+export class Type {}
+
+export function defineType(T, assert, rm = false) {
+  // TYPE_NAMESPACE.counter++
+
+  if (isBoolean(assert)) {
+    rm = assert
+    assert = T
+  }
 
   if (isUndefined(assert)) {
     assert = T
   }
 
   if (!isFunction(assert)) {
-    assert = falsy
+    assert = TYPE_NAMESPACE.get(T).assert || falsy
   }
 
-  var token = {}
-  token.type = T
-  token.assert = assert
+  if (TYPE_NAMESPACE.has(T)) {
+    var token = TYPE_NAMESPACE.get(T)
+    token.assert = assert
+    token.rm = rm
+    // token.counter++
+  }
+  else {
+    var token = new Type()
+    token.type = T
+    token.assert = assert
+    token.rm = rm
+    // token.counter = 0
+    TYPE_NAMESPACE.set(T, token)
+  }
 
-  TYPE_NAMESPACE.set(T, token)
-  return T;
+  return token;
 }
 
-function undef () {}
-defineType(undef, isUndefined)
-
-function nil () {}
-defineType(nil, isNull)
+defineType(undefined, isUndefined)
+defineType(null, isNull)
 
 function cleanUp (T) {
-  var ctx = TYPE_NAMESPACE.get(T)
-  if (ctx && ctx.rm) {
-    TYPE_NAMESPACE.delete(T)
+  var token = TYPE_NAMESPACE.get(T) || T
+  if (token && token.rm) {
+    TYPE_NAMESPACE.delete(token.type)
   }
 }
 
 function isType(value, T, errors) {
 
-  if (isUndefined(T)) {
-    T = undef
-  }
+  var token = TYPE_NAMESPACE.get(T) || T
 
-  if (isNull(T)) {
-    T = nil
-  }
-
-  var ctx = TYPE_NAMESPACE.get(T)
-  if (ctx && typeof ctx.assert === 'function') {
+  if (token instanceof Type) {
     var parentStack = ERR_STACK;
     var isValid;
     ERR_STACK = errors;
+
+    if (token.type === value) {
+      return true
+    }
+
     try {
-      isValid = ctx.assert(value) ;
+      isValid = token.assert(value) ;
     } catch (e) {
       fail(e.message);
       isValid = false;
@@ -124,19 +139,23 @@ function isType(value, T, errors) {
     if (isUndefined(isValid)){
       isValid = errors.length === 0;
     }
+
     cleanUp(T)
     return isValid;
   }
-
   cleanUp(T)
-  return value instanceof T;
+
+  if (isFunction(T)) {
+    return value instanceof T
+  }
+
+  return false
 }
 
 
 // assert a type of given value and throw if does not pass
 export function checkType(actual, T) {
   var errors = [];
-  // ERR_STACK = [];
 
   if (!isType(actual, T, errors)) {
     // console.log(JSON.stringify(errors, null, '  '));
@@ -152,6 +171,14 @@ export function checkType(actual, T) {
 
 // asserting API
 export function assert(value) {
+
+
+  if (value instanceof Type) {
+    value = value.type
+  }
+
+
+  // value = value.type || value
   return {
     is: function is(...tokens) {
       var allErrors = [];
@@ -185,5 +212,4 @@ export function assert(value) {
 assert.type = checkType;
 assert.define = defineType;
 assert.fail = fail
-
-
+assert.delete = TYPE_NAMESPACE.delete.bind(TYPE_NAMESPACE)

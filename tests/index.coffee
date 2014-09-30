@@ -10,7 +10,6 @@ describe 'index.html', ->
   it 'expect the page title to be `Web Starter Kit`', ->
     casper.then ->
       expect(@getTitle()).to.equal 'Web Starter Kit'
-
   # it 'expect this test to fail', (done) ->
   #   console.log('console.log also works ...')
   #   casper.then ->
