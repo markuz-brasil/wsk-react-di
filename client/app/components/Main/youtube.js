@@ -71,7 +71,7 @@ function youTubeType () {}
 var token = assert.define(youTubeType, (value) => {
   return assert(value).is(structure({
     app$control : undef
-  }, true))
+  }, {rm: true}))
 })
 
 function handleYouTubeJsonp (json) {

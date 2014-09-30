@@ -33,7 +33,7 @@ export var sym = defineType(Symbol, isSymbol)
 
 export var nil = defineType(null, isNull)
 export var undef = defineType(undefined, isUndefined)
-export var undefnil = defineType(isNullOrUndefined)
+export var undefnil = defineType(isNullOrUndefined, {types: [null, undefined]})
 export var primitive = defineType(isPrimitive)
 
 

@@ -100,3 +100,4 @@ export {assert} from './assert'
 import {test} from './types-tests'
 
 test()
+

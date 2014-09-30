@@ -70,11 +70,11 @@ function falsy () {return false}
 
 export class Type {}
 
-export function defineType(T, assert, rm = false) {
+export function defineType(T, assert, ctx = {}) {
   // TYPE_NAMESPACE.counter++
 
-  if (isBoolean(assert)) {
-    rm = assert
+  if (isObject(assert)) {
+    ctx = assert
     assert = T
   }
 
@@ -89,18 +89,20 @@ export function defineType(T, assert, rm = false) {
   if (TYPE_NAMESPACE.has(T)) {
     var token = TYPE_NAMESPACE.get(T)
     token.assert = assert
-    token.rm = rm
+    Object.assign(token, ctx)
+    // token.rm = rm
     // token.counter++
   }
   else {
     var token = new Type()
-    token.type = T
+    token.id = T
     token.assert = assert
-    token.rm = rm
+    Object.assign(token, ctx)
     // token.counter = 0
     TYPE_NAMESPACE.set(T, token)
   }
 
+  // console.log(TYPE_NAMESPACE.size)
   return token;
 }
 
@@ -110,22 +112,42 @@ defineType(null, isNull)
 function cleanUp (T) {
   var token = TYPE_NAMESPACE.get(T) || T
   if (token && token.rm) {
-    TYPE_NAMESPACE.delete(token.type)
+    TYPE_NAMESPACE.delete(token.id)
   }
 }
 
 function isType(value, T, errors) {
-
   var token = TYPE_NAMESPACE.get(T) || T
+  var valToken = TYPE_NAMESPACE.get(value) || value
+  ERR_STACK = errors;
 
   if (token instanceof Type) {
-    var parentStack = ERR_STACK;
-    var isValid;
-    ERR_STACK = errors;
-
-    if (token.type === value) {
+    if (token.id === value) {
       return true
     }
+
+    var parentStack = ERR_STACK;
+    var isValid;
+    var typeList = []
+
+    if (token.types) {
+      var typeList = token.types.slice()
+    }
+
+    // checking types array and comparing them
+    typeList.push(token.id)
+    typeList.forEach((type) => {
+      if (valToken.types) {
+        valToken.types.forEach((type2) => {
+          if (type === type2) {
+            isValid = true
+          }
+        })
+      }
+
+    })
+
+    if (isValid) {return isValid}
 
     try {
       isValid = token.assert(value) ;
@@ -174,7 +196,7 @@ export function assert(value) {
 
 
   if (value instanceof Type) {
-    value = value.type
+    value = value.id
   }
 
 
