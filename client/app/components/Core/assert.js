@@ -153,7 +153,6 @@ function isType(value, T, errors) {
   return isValid;
 }
 
-
 // assert a type of given value and throw if does not pass
 export function checkType(actual, T) {
   var errors = [];
@@ -198,7 +197,6 @@ export function assert(value) {
         if (token && isType(token, value, errors)) {
           return true;
         }
-
 
         // if no errors, merge multiple "is not instance of " into x/y/z ?
         allErrors.push(prettyPrint(value) + ' is not instance of ' + prettyPrint(token))
