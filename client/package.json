@@ -10,9 +10,7 @@
   },
   "dependencies": {
     "co": "^3.1.0",
-    "core-util-is": "^1.0.1",
     "di": "git://github.com/angular/di.js#d6d42e10727b30d8a9d8d3277fb8a6d40f6ad251",
-    "rtts-assert": "git://github.com/angular/assert#6caafd2561",
     "zone.js": "git://github.com/angular/zone.js#74947b6f509b"
   },
   "engines": {
