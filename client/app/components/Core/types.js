@@ -74,18 +74,21 @@ export function structure(definition, rm = false) {
 
 
 var counter = 0
-
+var counter2 = 0
+var badStack = []
 function test (types, sample) {
   var ans = types.map((type, i) => {
     // console.log(array[i], type)
     return sample[i].map((s) => {
       var res = assert(s).is(type)
       if (res) {
-        console.log(res,  'type:', type, 'value:', s, sample[i])
+        console.log(counter2, res,  'type:', type, 'value:', s, sample[i])
       }
       else {
-        console.warn(res, 'type:', type, 'value:', s, sample[i])
+        badStack.push(counter2)
+        console.warn(counter2, res, 'type:', type, 'value:', s, sample[i])
       }
+      counter2++
       return res
     })
 
@@ -108,14 +111,14 @@ test( [
     Function,
   ], [
     [[2, 3, 'd'], [{}, '4', 4], [Date, Function], {wrong: 'kind'}],
-    [true, false, true],
-    [0, 1, 2, 3, 4],
-    [/fg/, /fh/],
+    [true, false, true, 0, 1],
+    [0, 1, 2, 3, 4, '5'],
+    [/fg/, /fh/, 9],
     ['ff', 'dd', 'ss', 4],
-    [{hi: 'there'}, {hello: ['gg']}, {oi: 3}],
-    [new Date(), new Date()],
-    [new Error('ops'), new Error('ops2')],
-    [() => {}, function (){}, new Function()],
+    [{hi: 'there'}, {hello: ['gg']}, {oi: 3}, []],
+    [new Date(), new Date(), 'l'],
+    [new Error('ops'), new Error('ops2'), new Date()],
+    [() => {}, function (){}, new Function(), 'p'],
   ])
 
 test( [
@@ -196,6 +199,6 @@ test( [
    [Array, Boolean, Number, RegExp, String, Object, Date, Error, Function,],
   ])
 
-
+console.log(badStack)
 
 
