@@ -56,6 +56,8 @@ var aliasify = require('aliasify').configure({
     // 'rtts-assert': './'+ path.join(TMP, ES5, LIBS, 'rtts-assert/src/assert'),
     co: './client/node_modules/co',
     setimmediate: './client/node_modules/setimmediate',
+    'core-util-is': './client/node_modules/core-util-is',
+    'deep-diff': './client/node_modules/deep-diff',
   }
 })
 

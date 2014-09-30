@@ -2,7 +2,7 @@ import {annotate, Inject, Injector} from 'di'
 
 import {BaseCtrl, http} from '../Core'
 import {Card, CardCtrl} from '../Card'
-import {MockBody,  MockTitle, MockCardState} from '../Card/state'
+import {MockBody, MockTitle, MockCardState} from '../Card/state'
 import {AppState, YouTubeCardState, fetchYouTubeJson} from './state'
 
 fetchYouTubeJson()
@@ -19,6 +19,7 @@ export class AppCtrl extends BaseCtrl {
   render() {
     return (
       <div>
+        <this.state.Elem />
         <this.state.Elem />
         <CardMockBody />
         <CardMockTitle />

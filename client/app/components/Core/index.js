@@ -15,8 +15,8 @@ export function mergeCtx (obj = {}) {
 }
 
 export class BaseCtrl {
-  constructor (obj = {}) {
-    return React.createClass(mergeCtx.call(this, obj))
+  constructor (ctrlState = {}) {
+    return React.createClass(mergeCtx.call(this, ctrlState))
   }
   render() { return React.DOM.div(null, " .. BaseCtrl .. ") }
 }
@@ -97,3 +97,4 @@ export var http = new Injector([]).get(Http)
 
 export {types} from './types'
 export {assert} from './assert'
+

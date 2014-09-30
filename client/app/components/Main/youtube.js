@@ -2,7 +2,7 @@ import {annotate, Injector, Inject, Provide} from 'di';
 // import {assert} from 'rtts-assert'
 
 import {http, BaseState, assert} from '../Core'
-import {string, number, bool, undef} from '../Core/types'
+import {string, number, bool, undef, structure} from '../Core/types'
 
 import {CardCtrl} from '../Card'
 import {Body, Title, CardState} from '../Card/state'
@@ -23,31 +23,55 @@ export class YouTubeTitle {
 }
 annotate(YouTubeTitle, new Provide(Title))
 
+function mockjsonp (url) {
+  return new Promise(function(res, rej){
+    setTimeout(function(){
+      res('mockjsonp-'+ url +'-'+ Math.random())
+    }, 0)
+  })
+}
+
+// change to fn
+export class FetchYouTubeData {
+  constructor(state) {
+    return mockjsonp(state.url)
+  }
+}
+annotate(FetchYouTubeData, new Inject(youTubeState))
+
+// change to fn
 export class YouTubeCardState extends BaseState {
-  constructor(body, title) {
-    return super({ body: body, title: title })
+  constructor(body, title, promise) {
+    return super({ body: body, title: title, promise: promise })
   }
 }
 annotate(YouTubeCardState, new Provide(CardState))
-annotate(YouTubeCardState, new Inject(YouTubeBody, YouTubeTitle))
+annotate(YouTubeCardState, new Inject(YouTubeBody, YouTubeTitle, FetchYouTubeData))
+
+
+export function youTubeState () {
+  return {
+    url: "http://gdata.youtube.com/feeds/api/standardfeeds/most_popular?v=2&max-results=50&alt=json-in-script&format=5&callback=",
+    id: 'youtube-'+ Math.random(),
+  }
+}
+
 
 export function youTubeInitState (Card = {}) {
   return {
     url: "http://gdata.youtube.com/feeds/api/standardfeeds/most_popular?v=2&max-results=50&alt=json-in-script&format=5&callback=",
     Elem: Card ,
+    id: 'youtube-'+ Math.random(),
   }
 }
 annotate(youTubeInitState, new Inject(CardCtrl))
 
-console.log('--', assert.isType('0', string))
-console.log('--', assert.isType(10, number))
-console.log('--', assert.isType(true, bool))
-console.log('--', assert.isType(undefined, undef))
-
 
 function youTubeType () {}
-assert.define(youTubeType, (value) => {
-  return !value.app$control
+var token = assert.define(youTubeType, (value) => {
+  return assert(value).is(structure({
+    app$control : undef
+  }))
 })
 
 function handleYouTubeJsonp (json) {
@@ -57,8 +81,8 @@ function handleYouTubeJsonp (json) {
   ]
 
   return json.feed.entry.filter((obj) => {
-      // filtering restrited content out
-      return assert.isType(obj, youTubeType)
+      // filtering restrited (Copyrighted) content out
+      return assert(obj).is(youTubeType)
     })
     .map((obj) => {
       var ctx = {}
@@ -67,7 +91,6 @@ function handleYouTubeJsonp (json) {
       })
       return ctx
     })
-
 }
 
 var fetchCounter = 0

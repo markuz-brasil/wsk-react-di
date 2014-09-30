@@ -6,6 +6,9 @@ export class CardCtrl extends BaseCtrl {
   constructor (cardState) { return super(cardState) }
 
   render() {
+    // this.state.promise.then(function(val){
+    //   console.log('###', val)
+    // })
     return (
        <div className="card-wrap">
           <div className="panel-heading">
