@@ -2,7 +2,6 @@ import {annotate, Injector, Inject, Provide} from 'di';
 // import {assert} from 'rtts-assert'
 
 import {http, BaseState, assert} from '../Core'
-import {structure} from '../Core/types'
 
 import {CardCtrl} from '../Card'
 import {Body, Title, CardState} from '../Card/state'
@@ -69,8 +68,8 @@ annotate(youTubeInitState, new Inject(CardCtrl))
 assert.define(musicCategory)
 function musicCategory (value) {
   var isValid
-  value.forEach((v) => {
-    if (v.label && v.label.toLowerCase() === 'music') {
+  value.forEach((d) => {
+    if (d.label && d.label.toLowerCase() === 'music') {
       isValid = true
     }
   })
@@ -79,10 +78,10 @@ function musicCategory (value) {
 
 function youTubeType () {}
 var token = assert.define(youTubeType, (value) => {
-  return assert(value).is(structure({
+  return assert(value).isStructure({
     app$control : undefined,
     category: musicCategory,
-  }, {rm: true}))
+  })
 })
 
 function handleYouTubeJsonp (json) {

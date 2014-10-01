@@ -36,29 +36,4 @@ export var primitive = assert.define(isPrimitive, {
   types: [Boolean, Number, String, Symbol, undefined,],
 })
 
-// TODO: write comments
-export function arrayOf(...types) {
-  return assert.define('array of ' + types.map(prettyPrint).join('/'), function(value) {
-    if (assert(value).is(Array)) {
-      for (var item of value) {
-        assert(item).is(...types);
-      }
-    }
-  })
-}
-
-// TODO: write comments
-export function structure(definition, ctx) {
-  var properties = Object.keys(definition);
-  return assert.define('object with properties ' + properties.join(', '), function(value) {
-    if (assert(value).is(Object)) {
-      for (var property of properties) {
-        var res = assert(value[property]).is(definition[property]);
-        if (!res) {return false}
-      }
-    }
-    return true
-  }, ctx)
-}
-
 

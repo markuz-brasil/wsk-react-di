@@ -53,13 +53,13 @@ var FAIL_STACK2 = []
 
 export function testRun (types, sample, expect) {
 
-  var ans = types.map((type, i) => {
-    return sample[i].map((s, j) => {
+  types.forEach((type, i) => {
+    sample[i].forEach((s, j) => {
       var res = assert(s).is(type)
       var exp = expect[i][j]
       if (res === exp) {
         COUNTER2++
-        return res
+        return
       }
 
       var v = s
@@ -76,7 +76,6 @@ export function testRun (types, sample, expect) {
       FAIL_STACK2.push(COUNTER2)
       console.warn(COUNTER2++, i, j, 'exp:', exp, 'got:', res, 't:', t, 'v:', v)
       // console.warn(COUNTER2++, i, j, 't:', t, 'v:', v, 'exp:', exp, 'got:', res, 'type:', type, 'sample', s)
-      return res
     })
 
   })
@@ -189,12 +188,22 @@ export function test () {
   testRun(array01, array01b, exp01b)
   testRun(array01, array01c, exp01c)
 
+  console.log('\n\n----- isListOf ----\n')
+  console.log(assert([5, 6, 9]).isListOf([Number, String])                         , "[5, 6, 9] isListOf [Number, String]")
+  console.log(assert([5, '6', 9]).isListOf([Number, String])                       , "[5, '6', 9] isListOf [Number, String]")
+  console.log(assert([() => {}, new Date(), {}]).isListOf([Number, String, Date])  , "[() => {}, new Date(), {}] isListOf [Number, String, Date]")
+  console.log(assert([null, {}]).isListOf([Function, null])                        , "[null, {}] isListOf [Function, null]" )
+  console.log(!assert([null, {}]).isListOf([Function, undefined])                  , "[null, {}] ! isListOf [Function, undefined]")
+  console.log(!assert([[], {}, undefined]).isListOf([Function, null])              , "[[], {}, undefined] ! isListOf [Function, null]")
+  console.log(assert([[], {}, undefined]).isListOf([String, undefined])            , "[[], {}, undefined] isListOf [String, undefined]")
+
   console.log('\n\n tests took:',
     new Date() - t0,
     'ms to complete',
     COUNTER2,
     'tests with total fails of',
     FAIL_STACK2.length, 'tests \n\n')
+
 
 }
 
