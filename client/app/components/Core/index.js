@@ -17,11 +17,17 @@ export class BaseState {
   }
 }
 
-export {Http, httpJsonp, httpGet, http} from './utils'
+export {
+  HttpProvider,
+  httpJsonpProvider,
+  httpGetProvider,
+  http
+} from './utils'
 
 export {types} from './types'
-export {assert} from './assert'
-import {test} from './types-tests'
+export {assert} from './types/assert'
 
+import {test, test2} from './types/specs'
+test2()
 test() //types
 

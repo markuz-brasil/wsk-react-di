@@ -1,6 +1,6 @@
 import {annotate, Inject, Injector} from 'di'
 import {BaseCtrl} from '../Core'
-import {CardState} from './state'
+import {CardState} from './annotations'
 
 export class CardCtrl extends BaseCtrl {
   constructor (cardState) { return super(cardState) }

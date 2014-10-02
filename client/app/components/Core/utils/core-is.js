@@ -21,73 +21,60 @@
 
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
-function isArray(ar) {
+export function isArray(ar) {
   return Array.isArray(ar);
 }
-exports.isArray = isArray;
 
-function isBoolean(arg) {
+export function isBoolean(arg) {
   return typeof arg === 'boolean';
 }
-exports.isBoolean = isBoolean;
 
-function isNull(arg) {
+export function isNull(arg) {
   return arg === null;
 }
-exports.isNull = isNull;
 
-function isNullOrUndefined(arg) {
+export function isNullOrUndefined(arg) {
   return arg == null;
 }
-exports.isNullOrUndefined = isNullOrUndefined;
 
-function isNumber(arg) {
+export function isNumber(arg) {
   return typeof arg === 'number';
 }
-exports.isNumber = isNumber;
 
-function isString(arg) {
+export function isString(arg) {
   return typeof arg === 'string';
 }
-exports.isString = isString;
 
-function isSymbol(arg) {
+export function isSymbol(arg) {
   return typeof arg === 'symbol';
 }
-exports.isSymbol = isSymbol;
 
-function isUndefined(arg) {
+export function isUndefined(arg) {
   return arg === void 0;
 }
-exports.isUndefined = isUndefined;
 
-function isRegExp(re) {
+export function isRegExp(re) {
   return isObject(re) && objectToString(re) === '[object RegExp]';
 }
-exports.isRegExp = isRegExp;
 
-function isObject(arg) {
+export function isObject(arg) {
   return typeof arg === 'object' && arg !== null;
 }
-exports.isObject = isObject;
 
-function isDate(d) {
+export function isDate(d) {
   return isObject(d) && objectToString(d) === '[object Date]';
 }
-exports.isDate = isDate;
 
-function isError(e) {
+export function isError(e) {
   return isObject(e) &&
       (objectToString(e) === '[object Error]' || e instanceof Error);
 }
-exports.isError = isError;
 
-function isFunction(arg) {
+export function isFunction(arg) {
   return typeof arg === 'function';
 }
-exports.isFunction = isFunction;
 
-function isPrimitive(arg) {
+export function isPrimitive(arg) {
   return arg === null ||
          typeof arg === 'boolean' ||
          typeof arg === 'number' ||
@@ -95,12 +82,10 @@ function isPrimitive(arg) {
          typeof arg === 'symbol' ||  // ES6 symbol
          typeof arg === 'undefined';
 }
-exports.isPrimitive = isPrimitive;
 
-// function isBuffer(arg) {
+// export function isBuffer(arg) {
 //   return Buffer.isBuffer(arg);
 // }
-// exports.isBuffer = isBuffer;
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);

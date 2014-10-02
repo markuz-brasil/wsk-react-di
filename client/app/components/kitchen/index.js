@@ -1,8 +1,8 @@
-import {Injector} from 'di';
-import {Kitchen} from './kitchen';
-import {MockHeater} from './mock_heater';
+import {Injector} from 'di'
+import {Kitchen} from './kitchen'
+import {MockHeater} from './mock_heater'
 // import {assert} from '../Core/assert'
-import {test} from '../Core/types-tests'
+import {test} from '../Core/types/specs'
 
 var co = require('co')
 
