@@ -12,7 +12,7 @@ $ npm install --global gulp bower phantomjs
 This will install Gulp, Bower and Phantomjs globally. Depending on your user account, you may need to gain elevated permissions using `sudo` (i.e `sudo npm install --global gulp`). Next, install the local dependencies Web Starter Kit requires:
 
 ```sh
-$ npm install && bower install
+$ npm install
 ```
 
 That's it! You should now have everything needed to use the Gulp tools in Web Starter Kit.
@@ -24,14 +24,14 @@ You can now use Gulp with the following commands to stay productive during devel
 #### Watch For Changes & Automatically Refresh Across Devices
 
 ```sh
-$ gulp serve dev
+$ gulp watch dev serve
 ```
 Now direct your browser to `http://localhost:3000/`
 
 #### Watch For Changes, Fully build it & Automatically Re-Run Tests on PhantomJS
 
 ```sh
-$ gulp serve watch build test
+$ gulp watch test build serve
 ```
 
 #### Build & Optimize
