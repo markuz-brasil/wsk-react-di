@@ -21,12 +21,17 @@ That's it! You should now have everything needed to use the Gulp tools in Web St
 
 You can now use Gulp with the following commands to stay productive during development:
 
+#### Build & Optimize
+
+```sh
+$ gulp
+```
+
 #### Watch For Changes & Automatically Refresh Across Devices
 
 ```sh
 $ gulp watch dev serve
 ```
-Now direct your browser to `http://localhost:3000/`
 
 #### Watch For Changes, Fully build it & Automatically Re-Run Tests on PhantomJS
 
@@ -34,13 +39,9 @@ Now direct your browser to `http://localhost:3000/`
 $ gulp watch test build serve
 ```
 
-#### Build & Optimize
+Now direct your browser to `http://localhost:3000/`
 
-```sh
-$ gulp
-```
-
-Build and optimize the current project, ready for deployment. This includes linting as well as image, script, stylesheet and HTML optimization and minification.
+Build and optimize the current project, ready for deployment. This includes ~ linting as well as image, script, stylesheet and HTML optimization and minification. ~
 
 
 
