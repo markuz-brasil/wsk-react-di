@@ -28,6 +28,6 @@ export {types} from './types'
 export {assert} from './types/assert'
 
 import {test, test2} from './types/specs'
-test2()
+// test2() // this tests old assert
 test() //types
 

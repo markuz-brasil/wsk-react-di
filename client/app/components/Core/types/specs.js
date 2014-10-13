@@ -148,7 +148,7 @@ export function test2 () {
     [false, false, false, false, false, false, false, true, true,],
     [true, true, true, true, true, true, true, true, true],
   ]
-
+// debugger
   var array00c = [array01, array01, array01, array01, array01, array01, array01, array01, array01,]
   var exp00c = [
     [false, false, false, false, false, false,],
