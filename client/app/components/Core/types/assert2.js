@@ -14,7 +14,7 @@ export class Token {
   isEqual (value) { return this.equal(this.base, value) }
 }
 
-export function assert (base) {
+export function assert2 (base) {
 
   return new Token(base, rankCheck, equalCheck)
 }

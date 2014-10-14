@@ -1,13 +1,9 @@
-import {assert, types, Token} from './assert2'
+import {assert2, types, Token} from './assert2'
+import {Type, STORAGE, typeCheck, assert, define } from './Type'
 
-import {Type, STORAGE, typeCheck } from './Type'
+import {assertStruct} from './Type-struct'
 
-
-var isArray = assert([]).is
-var typeSys =  new Type
-var assertType = typeSys.assert
-var defineType = typeSys.define
-var storageType = typeSys.storage
+var isArray = assert2([]).is
 
 export function test () {
   testTypes()
@@ -48,7 +44,7 @@ function testTypes () {
     [true, false, false, false],
     [false, true, false, true],
   ]
-  testAssertions(A0, A1, A2, assertType)
+  testAssertions(A0, A1, A2, assert)
 
   console.log('*** assert(SomeFunc).is(null) ***')
   A0 = [ fn0, fn1, fn2 ]
@@ -59,11 +55,11 @@ function testTypes () {
     [false, false, true, false, false, false, false ],
     [false, false, false, false, false, false, true ],
   ]
-  testAssertions(A0, A1, A2, assertType)
+  testAssertions(A0, A1, A2, assert)
 
   console.log('*** assert(null).is(assert(null)) ***')
   A0 = [true, 10, 'a', null, {}, () => {}, [], 'b']
-  A1 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
+  A1 = [assert(true), assert(10), assert('a'), assert(null), assert({}), assert(() => {}), assert([]), assert('b')]
   A2 = [
     [true, false, false, false, false, false, false, false],
     [false, true, false, false, false, false, false, false],
@@ -74,10 +70,10 @@ function testTypes () {
     [false, false, false, false, false, false, true, false],
     [false, false, true, false, false, false, false, true],
   ]
-  testAssertions(A0, A1, A2, assertType)
+  testAssertions(A0, A1, A2, assert)
 
   console.log('*** assert(assert(null)).is(null) ***')
-  A0 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
+  A0 = [assert(true), assert(10), assert('a'), assert(null), assert({}), assert(() => {}), assert([]), assert('b')]
   A1 = [true, 10, 'a', null, {}, () => {}, [], 'b']
   A2 = [
     [true, false, false, false, false, false, false, false],
@@ -89,11 +85,11 @@ function testTypes () {
     [false, false, false, false, false, false, true, false],
     [false, false, true, false, false, false, false, true],
   ]
-  testAssertions(A0, A1, A2, assertType)
+  testAssertions(A0, A1, A2, assert)
 
   console.log('*** assert(assert(null)).is(assert(null)) ***')
-  A0 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
-  A1 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
+  A0 = [assert(true), assert(10), assert('a'), assert(null), assert({}), assert(() => {}), assert([]), assert('b')]
+  A1 = [assert(true), assert(10), assert('a'), assert(null), assert({}), assert(() => {}), assert([]), assert('b')]
   A2 = [
     [true, false, false, false, false, false, false, false],
     [false, true, false, false, false, false, false, false],
@@ -104,10 +100,10 @@ function testTypes () {
     [false, false, false, false, false, false, true, false],
     [false, false, true, false, false, false, false, true],
   ]
-  testAssertions(A0, A1, A2, assertType)
+  testAssertions(A0, A1, A2, assert)
 
   console.log('*** self reference test ***')
-  testAssertions(typeList, typeList, makeKeyTable(), assertType)
+  testAssertions(typeList, typeList, makeKeyTable(), assert)
 
   testStruct()
 }
@@ -118,8 +114,8 @@ function testStruct () {
   console.log('\n\n--- testing struct ---\n\n')
   console.log('*** assert(assert(null)).is(assert(null)) ***')
 
-  A0 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
-  A1 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
+  A0 = [assert(true), assert(10), assert('a'), assert(null), assert({}), assert(() => {}), assert([]), assert('b')]
+  A1 = [assert(true), assert(10), assert('a'), assert(null), assert({}), assert(() => {}), assert([]), assert('b')]
   A2 = [
     [true, false, false, false, false, false, false, false],
     [false, true, false, false, false, false, false, false],
@@ -130,7 +126,7 @@ function testStruct () {
     [false, false, false, false, false, false, true, false],
     [false, false, true, false, false, false, false, true],
   ]
-  testAssertions(A0, A1, A2, assertType)
+  testAssertions(A0, A1, A2, assert)
 }
 
 var objNull = Object.create(null)
@@ -244,24 +240,25 @@ function testAssertions (listA, listB, keyTable, assert, COUNTER = 0) {
 
 function runPerf() {
   console.log('--- perf ---')
-  // JIT warm up
-  perf(assert, typeList)
-  perf(assert, typeList)
-  console.log('\n\n:: "native" typed assert (stateless)::\n\n', perf(assert, typeList), '\n')
 
   // JIT warm up
-  perf(assertType, typeList)
-  perf(assertType, typeList)
-  console.log('\n\n:: undefined typed assert (stateless)::\n\n', perf(assertType, typeList), '\n')
+  perf(assert2, typeList)
+  perf(assert2, typeList)
+  console.log('\n\n:: "native" typed assert (stateless)::\n\n', perf(assert2, typeList), '\n')
+
+  // JIT warm up
+  perf(assert, typeList)
+  perf(assert, typeList)
+  console.log('\n\n:: undefined typed assert (stateless)::\n\n', perf(assert, typeList), '\n')
 
   for (var val0 of typeList) {
-    defineType(val0)
+    define(val0)
   }
 
   // JIT warm up
-  perf(assertType, typeList)
-  perf(assertType, typeList)
-  console.log('\n\n:: defined typed assert (statefull)::\n\n', perf(assertType, typeList), '\n')
+  perf(assert, typeList)
+  perf(assert, typeList)
+  console.log('\n\n:: defined typed assert (statefull)::\n\n', perf(assert, typeList), '\n')
 
   // for (var item of storageType.values()) {
   //   console.log(item)
