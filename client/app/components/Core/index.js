@@ -29,5 +29,5 @@ export {assert} from './types/assert'
 
 import {test, test2} from './types/specs'
 // test2() // this tests old assert
-test() //types
+setTimeout(test, 0) //types
 

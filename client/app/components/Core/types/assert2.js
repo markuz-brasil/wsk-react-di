@@ -15,6 +15,7 @@ export class Token {
 }
 
 export function assert (base) {
+
   return new Token(base, rankCheck, equalCheck)
 }
 
@@ -25,6 +26,7 @@ export function rank (value) {
     (typeof value === 'boolean')|0,
     (typeof value === 'number')|0,
     (typeof value === 'string')|0,
+    (typeof value === 'function')|0,
 
     (value === void 0)|0,
     (value === null)|0,
@@ -34,9 +36,8 @@ export function rank (value) {
     (value instanceof RegExp)|0,
     (value instanceof Date)|0,
     (value instanceof Error)|0,
-    (value instanceof Function)|0,
 
-  ].join('')|0
+  ].join('')
 }
 
 export function rankCheck (val0, val1) { return !!(rank(val0) === rank(val1)) }

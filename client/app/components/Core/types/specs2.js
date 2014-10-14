@@ -7,10 +7,14 @@ var isArray = assert([]).is
 var typeSys =  new Type
 var assertType = typeSys.assert
 var defineType = typeSys.define
+var storageType = typeSys.storage
 
 export function test () {
   testTypes()
   runPerf()
+  console.log('\n\nnext, test define\n\n')
+
+  console.log(parseInt('f0', 36), parseInt('E9', 36))
 }
 
 class NoPrimitiveType {}
@@ -32,7 +36,7 @@ function testTypes () {
 
   var A0, A1, A2
 
-  console.log('*** assert(null).is(SomeType) ***')
+  console.log('*** assert(null).is(SomeFunc) ***')
   A0 = [true, 10, 'a', null, {}, () => {}, [],]
   A1 = [ fn0, fn1, fn2, fn3, ]
   A2 = [
@@ -46,7 +50,7 @@ function testTypes () {
   ]
   testAssertions(A0, A1, A2, assertType)
 
-  console.log('*** assert(SomeType).is(null) ***')
+  console.log('*** assert(SomeFunc).is(null) ***')
   A0 = [ fn0, fn1, fn2 ]
   A1 = [true, 10, 'a', null, {}, () => {}, []]
   A2 = [
@@ -56,8 +60,6 @@ function testTypes () {
     [false, false, false, false, false, false, true ],
   ]
   testAssertions(A0, A1, A2, assertType)
-
-
 
   console.log('*** assert(null).is(assert(null)) ***')
   A0 = [true, 10, 'a', null, {}, () => {}, [], 'b']
@@ -105,11 +107,35 @@ function testTypes () {
   testAssertions(A0, A1, A2, assertType)
 
   console.log('*** self reference test ***')
-  testAssertions(typeList, typeList, ans, assertType)
+  testAssertions(typeList, typeList, makeKeyTable(), assertType)
+
+  testStruct()
+}
+
+function testStruct () {
+  var A0, A1, A2
+
+  console.log('\n\n--- testing struct ---\n\n')
+  console.log('*** assert(assert(null)).is(assert(null)) ***')
+
+  A0 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
+  A1 = [assertType(true), assertType(10), assertType('a'), assertType(null), assertType({}), assertType(() => {}), assertType([]), assertType('b')]
+  A2 = [
+    [true, false, false, false, false, false, false, false],
+    [false, true, false, false, false, false, false, false],
+    [false, false, true, false, false, false, false, true],
+    [false, false, false, true, false, false, false, false],
+    [false, false, false, false, true, false, false, false],
+    [false, false, false, false, false, true, false, false],
+    [false, false, false, false, false, false, true, false],
+    [false, false, true, false, false, false, false, true],
+  ]
+  testAssertions(A0, A1, A2, assertType)
 }
 
 var objNull = Object.create(null)
-objNull.hi = 'world'
+objNull.hi$ = NaN
+objNull.$hi = '$world'
 
 var typeList = [
   0, 1, 2, 3, 0, 1, 2, true, false, true, false,
@@ -124,54 +150,56 @@ var typeList = [
   'string', 'another', 'string',
 ]
 
-var ans = [
-/* 00: 0 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 01: 1 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 02: 2 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 03: 3 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 04: 0 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 05: 1 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 06: 2 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 07: true */    [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 08: false */   [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 09: true */    [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 10: false */   [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 11: Math.PI */ [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 12: Math.E */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 13: Math.PI */ [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 14: 2.34 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 15: Math.E */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 16: null */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 17: null */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 18: undefined */ [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 19: void 0 */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 20: NaN */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 21: NaN */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 22: Number.NEGATIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 23: Number.POSITIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 24: Number.NEGATIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 25: Number.POSITIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 26: [] */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 27: [{}] */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 28: {} */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
-/* 29: NaN */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 30: NaN */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-/* 31: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
-/* 32: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
-/* 33: function place (){} */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false,],
-/* 34: function(){} */           [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false,],
-/* 35: new Error */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false, false,],
-/* 36: new Date */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false,],
-/* 37: new RegExp */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false,],
-/* 38: new Error */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false, false,],
-/* 39: new Date  */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false,],
-/* 40: new RegExp */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false,],
-/* 41: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
-/* 42: 'another' */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
-/* 43: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
-]
+function makeKeyTable () {
+  return [
+  /* 00: 0 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 01: 1 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 02: 2 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 03: 3 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 04: 0 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 05: 1 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 06: 2 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 07: true */    [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 08: false */   [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 09: true */    [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 10: false */   [false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 11: Math.PI */ [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 12: Math.E */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 13: Math.PI */ [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 14: 2.34 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 15: Math.E */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 16: null */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 17: null */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 18: undefined */ [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 19: void 0 */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 20: NaN */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 21: NaN */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 22: Number.NEGATIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 23: Number.POSITIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 24: Number.NEGATIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 25: Number.POSITIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 26: [] */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 27: [{}] */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 28: {} */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 29: NaN */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 30: NaN */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 31: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 32: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 33: function place (){} */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false,],
+  /* 34: function(){} */           [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false,],
+  /* 35: new Error */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false, false,],
+  /* 36: new Date */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false,],
+  /* 37: new RegExp */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false,],
+  /* 38: new Error */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false, false,],
+  /* 39: new Date  */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false,],
+  /* 40: new RegExp */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false,],
+  /* 41: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
+  /* 42: 'another' */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
+  /* 43: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
+  ]
+}
 
-function testAssertions (listA, listB, ans, assert, COUNTER = 0) {
+function testAssertions (listA, listB, keyTable, assert, COUNTER = 0) {
   var counter = 0
   var t0 = new Date
 
@@ -182,7 +210,7 @@ function testAssertions (listA, listB, ans, assert, COUNTER = 0) {
 
     var token = assert(val0)
     listB.forEach((val1, key1) => {
-      var expectedAns = ans[key0][key1]
+      var expectedAns = keyTable[key0][key1]
 
       if (expectedAns === 0) { return }
 
@@ -215,15 +243,16 @@ function testAssertions (listA, listB, ans, assert, COUNTER = 0) {
 }
 
 function runPerf() {
+  console.log('--- perf ---')
   // JIT warm up
   perf(assert, typeList)
   perf(assert, typeList)
-  console.log('\n:: vannila assert ::\n\n', perf(assert, typeList), '\n')
+  console.log('\n\n:: "native" typed assert (stateless)::\n\n', perf(assert, typeList), '\n')
 
   // JIT warm up
   perf(assertType, typeList)
   perf(assertType, typeList)
-  console.log('\n:: typed assert ::\n\n', perf(assertType, typeList), '\n')
+  console.log('\n\n:: undefined typed assert (stateless)::\n\n', perf(assertType, typeList), '\n')
 
   for (var val0 of typeList) {
     defineType(val0)
@@ -232,7 +261,11 @@ function runPerf() {
   // JIT warm up
   perf(assertType, typeList)
   perf(assertType, typeList)
-  console.log('\n:: cached typed assert ::\n\n', perf(assertType, typeList), '\n')
+  console.log('\n\n:: defined typed assert (statefull)::\n\n', perf(assertType, typeList), '\n')
+
+  // for (var item of storageType.values()) {
+  //   console.log(item)
+  // }
 }
 
 function perf (assert, list) {
@@ -277,30 +310,5 @@ function perf (assert, list) {
   t1 = new Date
   res.push(`map-cached assertion speed: ${(list.length * list.length)/(t1 - t0)|0} assertions/ms`)
 
-
-  // var typeSys2 =  new Type
-  // var assertType2 = typeSys2.assert
-  // var defineType2 = typeSys2.define
-
-  // for (var val0 of typeList) {
-  //   defineType2(val0)
-  // }
-
-  // var isItList2 = typeList.map((v0) => {
-  //   return assertType2(v0).is.bind(assertType2(v0))
-  // })
-
-  // t0 = new Date
-  // for (var value of typeList) {
-  //   for (var isIt of isItList2) {
-  //     isIt(value) // almost twice as fast as non cached version
-  //   }
-  // }
-  // t1 = new Date
-
-  // res.push(`cached type assertion speed:  ${(typeList.length * typeList.length)/(t1 - t0)|0} assertions/ms`)
-
   return res.join('\n')
 }
-
-
