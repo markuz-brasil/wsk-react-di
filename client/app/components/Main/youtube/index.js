@@ -4,14 +4,15 @@ import {http, assert} from '../../Core'
 var co = require('co')
 
 import {youTubeInitState} from './annotations'
-// import {ytType, musicCategoryType} from './types'
 
-var ytType = {
-    // app$control: [void 0, null], // filtering restrited (Copyrighted) content out
-    // category: [{term: "Music"}, {term: "Comedy"}],
-    app$control: void 0, // filtering restrited (Copyrighted) content out
-    category: [{term: "Music"}],
-  }
+var youtubeType = {
+  category: [{term: "Music"}, {term: "Comedy"}],
+  app$control: [void 0, null],
+}
+
+// app$control: void 0, // filtering restrited (Copyrighted) content out
+// category: [{term: ""}], // term can be any string :)
+// category: [{term: "Music"}],
 
 function handleJsonp (json) {
   var sections = [
@@ -19,9 +20,7 @@ function handleJsonp (json) {
     'yt$rating', 'title', 'published', 'updated'
   ]
 
-  return json.feed.entry.filter((obj, i) => {
-      return assert(obj).is(ytType)
-    })
+  return json.feed.entry.filter(assert(youtubeType).is)
     .map((obj) => {
       var ctx = {}
       sections.forEach((section) => {
@@ -34,7 +33,6 @@ function handleJsonp (json) {
 var fetchCounter = 0
 export var fetchYouTubeJson = co(function* () {
   try {
-    // console.log('begin fetching yt')
     var data = handleJsonp(yield http.jsonp(youTubeInitState().url))
   }
   catch (err) {return console.error(err)}

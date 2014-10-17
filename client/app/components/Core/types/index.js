@@ -9,6 +9,7 @@ export class TypeToken {
     this.equal = isFunction(equalFunc) ? equalFunc : defaultEqual
 
     this.is = defaultIs.bind(this)
+    this.isnt = defaultIsnt.bind(this)
     this.isEqual = defaultIsEqual.bind(this)
   }
 }
@@ -55,16 +56,18 @@ assert.ctor = ctor
 function isFunction (item) { return typeof item === 'function' }
 function isObject (item) { return typeof item === 'object' && item !== null }
 function isString(item) { return typeof item === 'string' }
+var isArray = Array.isArray
 
-function defaultIs (value) { return this.assert(value, this.base) }
-function defaultIsEqual (value) { return this.equal(value, this.base) }
+function defaultIs (value) { return !!this.assert(value, this.base) }
+function defaultIsnt (value) { return !this.assert(value, this.base) }
+function defaultIsEqual (value) { return !!this.equal(value, this.base) }
 function defaultEqual (value, base) { return value === base }
 
-function defineToken (type, assertFunc = defaultAssert, equalFunc = defaultEqual, token) {
+function defineToken (type, assertFunc = defaultAssert, equalFunc = defaultEqual) {
   if (type instanceof TypeToken) { return type }
   if (this.storage.has(type)) { return this.storage.get(type)}
 
-  token = token || new TypeToken(type, assertFunc, equalFunc)
+  var token = new TypeToken(type, assertFunc, equalFunc)
   this.storage.set(type, Object.freeze(token))
   return token
 }
@@ -83,6 +86,32 @@ function defaultAssert (value, base) {
   if (base instanceof TypeToken) { baseIs = base.is; base = base.base }
   if (value instanceof TypeToken) { valueIs = value.is; value = value.base }
   if (value === base) { return true }
+
+  if (isString(value) && isString(base) && value !== '' && base !== '') {
+    return value === base
+  }
+
+  if (isArray(value) && value.length) {
+    if (listAssert(value, base) === true) { return true}
+    isValid = false
+  }
+
+  if (isArray(base) && base.length) {
+    if (listAssert(base, value) === true) { return true}
+    isValid = false
+  }
+
+  if (!isArray(value) && isObject(value) && Object.keys(value).length && !(value instanceof TypeToken)) {
+    if (structAssert(value, base) === true) { return true }
+    isValid = false
+  }
+
+  if (!isArray(base) && isObject(base) && Object.keys(base).length && !(base instanceof TypeToken)) {
+    if (structAssert(base, value) === true) { return true }
+    isValid = false
+  }
+
+  if (isValid === false) { return false }
 
   if (isFunction(valueIs)) {
     isValid = valueIs(base)
@@ -108,26 +137,6 @@ function defaultAssert (value, base) {
     if (isValid === false) { return false }
   }
 
-  if (Array.isArray(value) && value.length) {
-    return listAssert(value, base)
-  }
-
-  if (Array.isArray(base) && base.length) {
-    return listAssert(base, value)
-  }
-
-  if (isObject(value) && Object.keys(value).length && !(value instanceof TypeToken)) {
-    return structAssert(value, base)
-  }
-
-  if (isObject(base) && Object.keys(base).length && !(base instanceof TypeToken)) {
-    return structAssert(base, value)
-  }
-
-  if (isString(value) && value !== '' && isString(base) && base !== '') {
-    return value === base
-  }
-
   return rank(base) === rank(value)
 }
 
@@ -138,14 +147,13 @@ function listAssert (typeList, value) {
     }
   }
 
-  if (Array.isArray(value)) {
+  if (isArray(value)) {
     for (var item in value) {
       if (assert(value[item]).is(typeList) === true) {
         return true
       }
     }
   }
-
   return false
 }
 
@@ -157,6 +165,7 @@ function structAssert (typeStruct, value) {
       return false
     }
   }
+
   return true
 }
 

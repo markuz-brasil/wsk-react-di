@@ -8,7 +8,6 @@ export function test () {
   testTypes()
   runPerf()
   testStruct()
-
 }
 
 class NoPrimitiveType {}
@@ -61,12 +60,12 @@ function testTypes () {
   A2 = [
     [true, false, false, false, false, false, false, false],
     [false, true, false, false, false, false, false, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, true, false, false, false, false, false],
     [false, false, false, true, false, false, false, false],
     [false, false, false, false, true, false, false, false],
     [false, false, false, false, false, true, false, false],
     [false, false, false, false, false, false, true, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, false, false, false, false, false, true],
   ]
   testAssertions(A0, A1, A2, assert)
 
@@ -76,12 +75,12 @@ function testTypes () {
   A2 = [
     [true, false, false, false, false, false, false, false],
     [false, true, false, false, false, false, false, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, true, false, false, false, false, false],
     [false, false, false, true, false, false, false, false],
     [false, false, false, false, true, false, false, false],
     [false, false, false, false, false, true, false, false],
     [false, false, false, false, false, false, true, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, false, false, false, false, false, true],
   ]
   testAssertions(A0, A1, A2, assert)
 
@@ -91,12 +90,12 @@ function testTypes () {
   A2 = [
     [true, false, false, false, false, false, false, false],
     [false, true, false, false, false, false, false, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, true, false, false, false, false, false],
     [false, false, false, true, false, false, false, false],
     [false, false, false, false, true, false, false, false],
     [false, false, false, false, false, true, false, false],
     [false, false, false, false, false, false, true, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, false, false, false, false, false, true],
   ]
   testAssertions(A0, A1, A2, assert)
 
@@ -119,12 +118,12 @@ function testStruct () {
   A2 = [
     [true, false, false, false, false, false, false, false],
     [false, true, false, false, false, false, false, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, true, false, false, false, false, false],
     [false, false, false, true, false, false, false, false],
-    [true, false, false, false, true, false, false, false],
+    [false, false, false, false, true, false, false, false],
     [false, false, false, false, false, true, false, false],
     [false, false, false, false, false, false, true, false],
-    [false, false, true, false, false, false, false, true],
+    [false, false, false, false, false, false, false, true],
   ]
   console.log('testing strucs 0')
   testAssertions(A0, A1, A2, assert)
@@ -170,7 +169,6 @@ while (--c) {
   structList.push(ss[1])
 }
 
-
 function makeKeyTable () {
   return [
   /* 00: 0 */    [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
@@ -199,13 +197,13 @@ function makeKeyTable () {
   /* 23: Number.POSITIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
   /* 24: Number.NEGATIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
   /* 25: Number.POSITIVE_INFINITY */  [true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-  /* 26: [] */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-  /* 27: [{}] */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-  /* 28: {} */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 26: [] */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 27: [{}] */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 28: {} */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
   /* 29: NaN */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
   /* 30: NaN */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false,],
-  /* 31: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
-  /* 32: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 31: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
+  /* 32: Object.create(null) */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false,],
   /* 33: function place (){} */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false,],
   /* 34: function(){} */           [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false,],
   /* 35: new Error */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false, false,],
@@ -214,9 +212,9 @@ function makeKeyTable () {
   /* 38: new Error */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false, false,],
   /* 39: new Date  */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false, false,],
   /* 40: new RegExp */  [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, false, false, false,],
-  /* 41: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
-  /* 42: 'another' */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
-  /* 43: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true,],
+  /* 41: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, true,],
+  /* 42: 'another' */   [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false,],
+  /* 43: 'string' */    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, true,],
   ]
 }
 

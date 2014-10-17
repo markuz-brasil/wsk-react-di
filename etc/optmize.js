@@ -43,7 +43,6 @@ var SRC = '{'+ APP +','+ LIBS +'}/**/*'
 var browserifyConfig = {
   entries: [
     path.join(ROOT, TMP, ES5, APP),
-    path.join(ROOT, TMP, ES5, APP, 'components/kitchen'),
     path.join(ROOT, TMP, ES5, APP, 'public/zone-extras'),
   ],
   debug: true,
@@ -53,11 +52,7 @@ var aliasify = require('aliasify').configure({
   aliases: {
     di: './'+ path.join(TMP, ES5, LIBS, 'di/src'),
     zone: './'+ path.join(TMP, ES5, LIBS, 'zone.js'),
-    // 'rtts-assert': './'+ path.join(TMP, ES5, LIBS, 'rtts-assert/src/assert'),
     co: './client/node_modules/co',
-    setimmediate: './client/node_modules/setimmediate',
-    'core-util-is': './client/node_modules/core-util-is',
-    'deep-diff': './client/node_modules/deep-diff',
   }
 })
 
@@ -79,7 +74,7 @@ gulp.task('browserify', function(next){
     .plugin(factor, {
       o: [
         './'+ path.join(DIST, '/bundles', 'app.js'),
-        './'+ path.join(DIST, '/bundles', 'kitchen.js'),
+        // './'+ path.join(DIST, '/bundles', 'kitchen.js'),
         './'+ path.join(DIST, '/bundles', 'zone-extras.js'),
       ]
     })
