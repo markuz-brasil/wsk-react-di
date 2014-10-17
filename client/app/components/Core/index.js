@@ -24,10 +24,10 @@ export {
   http
 } from './utils'
 
-export {types} from './types'
-export {assert} from './types/assert'
+// export {types} from './types'
+export {assert} from './types'
 
-import {test, test2} from './types/specs'
+import {test} from './types/specs'
 // test2() // this tests old assert
 setTimeout(test, 0) //types
 

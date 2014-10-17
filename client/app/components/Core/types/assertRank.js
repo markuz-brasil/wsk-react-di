@@ -1,5 +1,5 @@
 
-export class Token {
+export class RankToken {
   constructor (base, assert, equal) {
     this.rank = rank(base)
     this.base = base
@@ -14,9 +14,9 @@ export class Token {
   isEqual (value) { return this.equal(this.base, value) }
 }
 
-export function assert2 (base) {
+export function assertRank (base) {
 
-  return new Token(base, rankCheck, equalCheck)
+  return new RankToken(base, rankCheck, equalCheck)
 }
 
 export function rank (value) {

@@ -1,5 +1,5 @@
 
-import {assert} from '../../Core'
+// import {assert} from '../../Core'
 
 assert.define(musicCategoryType)
 export function musicCategoryType (value) {
@@ -13,12 +13,20 @@ export function musicCategoryType (value) {
 }
 
 assert.define(ytType)
-export function ytType (value) {
-  return assert(value).isStructure({
-    app$control : undefined,
-    category: musicCategoryType,
-  })
+export function ytType (base) {
+  if (!assert(base.app$control).is(void 0) &&
+    assert(base.category).is(musicCategoryType)) {
+    return true
+  }
+  return false
+  // console.log('^^^^', base.app$control, assert(base.category).is(musicCategoryType))
+
 }
+//   return assert.is({
+//     app$control : undefined,
+//     category: musicCategoryType,
+//   })
+// }
 
 // assert.define(ytType, (value) => {
 //   return assert(value).isStructure({

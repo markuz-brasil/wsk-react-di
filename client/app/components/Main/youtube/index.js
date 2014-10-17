@@ -4,7 +4,14 @@ import {http, assert} from '../../Core'
 var co = require('co')
 
 import {youTubeInitState} from './annotations'
-import {ytType, musicCategoryType} from './types'
+// import {ytType, musicCategoryType} from './types'
+
+var ytType = {
+    // app$control: [void 0, null], // filtering restrited (Copyrighted) content out
+    // category: [{term: "Music"}, {term: "Comedy"}],
+    app$control: void 0, // filtering restrited (Copyrighted) content out
+    category: [{term: "Music"}],
+  }
 
 function handleJsonp (json) {
   var sections = [
@@ -12,8 +19,7 @@ function handleJsonp (json) {
     'yt$rating', 'title', 'published', 'updated'
   ]
 
-  return json.feed.entry.filter((obj) => {
-      // filtering restrited (Copyrighted) content out
+  return json.feed.entry.filter((obj, i) => {
       return assert(obj).is(ytType)
     })
     .map((obj) => {

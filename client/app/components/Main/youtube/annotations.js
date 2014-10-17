@@ -8,14 +8,14 @@ var co = require('co')
 
 class YouTubeBody {
   toString () {
-    return 'body2: '+ Math.random()
+    return 'yt body: '+ Math.random()
   }
 }
 annotate(YouTubeBody, new Provide(Body))
 
 class YouTubeTitle {
   toString () {
-    return 'title2: '+ Math.random()
+    return 'yt title: '+ Math.random()
   }
 }
 annotate(YouTubeTitle, new Provide(Title))
