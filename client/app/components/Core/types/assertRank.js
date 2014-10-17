@@ -1,7 +1,6 @@
 
 export class RankToken {
   constructor (base, assert, equal) {
-    this.rank = rank(base)
     this.base = base
     this.assert = assert
     this.equal = equal

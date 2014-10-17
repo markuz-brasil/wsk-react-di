@@ -1,5 +1,5 @@
 import {assertRank} from './assertRank'
-import {Type, STORAGE, typeCheck, assert, define, assertStruct} from './index'
+import {assert, define} from './index'
 
 
 var isArray = assertRank([]).is
@@ -129,7 +129,7 @@ function testStruct () {
   console.log('testing strucs 0')
   testAssertions(A0, A1, A2, assert)
 
-  var ty = new Type
+  var ty = assert.ctor()
 
   for (var val0 of A0) {
     ty.define(val0, ty.assert(val0).assert)
@@ -271,7 +271,7 @@ function runPerf() {
   var structL = [...structList, ...structList,]
   // JIT warm up
   var t0 = new Date()
-  var ty = new Type
+  var ty = assert.ctor()
 
   perf(assertRank, typeL)
   perf(assertRank, typeL)

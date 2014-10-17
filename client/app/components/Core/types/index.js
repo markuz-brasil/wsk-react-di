@@ -2,12 +2,9 @@
 export class TypeToken {
   constructor (type, assertFunc, equalFunc) {
     if (!(this instanceof TypeToken)) { return new TypeToken(type, assertFunc, equalFunc) }
-
-    this.rank = rank(type)
-    this.base = type
-
     if (isFunction(type) && !isFunction(assertFunc)) { assertFunc = type }
 
+    this.base = type
     this.assert = isFunction(assertFunc) ? assertFunc : defaultAssert
     this.equal = isFunction(equalFunc) ? equalFunc : defaultEqual
 
@@ -36,8 +33,8 @@ export function rank (value) {
   ].join('')
 }
 
-export function Type (storage) {
-  if (this instanceof Type) { return Type(storage) }
+function ctor (storage) {
+  if (this instanceof ctor) { return ctor(storage) }
   var ctx = {storage: (storage instanceof Map) ? storage : new Map}
 
   return {
@@ -47,11 +44,13 @@ export function Type (storage) {
   }
 }
 
-var {assert, define, storage} = new Type
+var {assert, define, storage} = ctor()
 export {assert, define, storage}
+
 assert.define = define
 assert.storage = storage
-
+assert.TypeToken
+assert.ctor = ctor
 
 function isFunction (item) { return typeof item === 'function' }
 function isObject (item) { return typeof item === 'object' && item !== null }
@@ -80,6 +79,7 @@ function assertToken (base) {
 function defaultAssert (value, base) {
   var isValid, baseIs, valueIs
   if (value === base) { return true }
+
   if (base instanceof TypeToken) { baseIs = base.is; base = base.base }
   if (value instanceof TypeToken) { valueIs = value.is; value = value.base }
   if (value === base) { return true }
