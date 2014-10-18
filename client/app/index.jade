@@ -25,43 +25,30 @@ head
     //    <link rel="canonical" href="http://www.example.com/">
 
     // build:js scripts/init.js
+    script(src='bundles/es6-shim.js')
     script(src='libs/zone.js/zone.js')
-    script(src='libs/regenerator/index.js')
-    script(src='traceur/traceur.min.js')
-    script(src='react/react-with-addons.js')
+    script(src='bundles/zone-extras.js')
     // endbuild
 
     // build:js scripts/zone-extra-dev.js
-    script(src='bundles/zone-extras.js')
     // endbuild
 
     //build:css styles/components/main.min.css
     
 
-    //- link(rel='stylesheet', href='h5bp.css')
-    //- link(rel='stylesheet', href='bs.css')
-    //- link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.css')
-    //- link(rel='stylesheet', href='bootstrap/dist/css/bootstrap-theme.css')
     link(rel='stylesheet', href='index.css')
-    //- link(rel='stylesheet', href='styles/components.css')
-    //- link(rel='stylesheet', href='styles/main.css')
     //endbuild
 
   body
     #react-app
       
     // build:js scripts/bundle.min.js
-    
-    script(src='jquery/dist/jquery.js')
-    script(src='bootstrap/dist/js/bootstrap.js')
+    //- script(src='jquery/dist/jquery.js')
+    //- script(src='bootstrap/dist/js/bootstrap.js')
 
-    //- script(src='c1.chunk.js')
-    //- script(src='c2.chunk.js')
-    script(src='bundles/common.js')
+    script(src='bundles/libs.js')
     script(src='bundles/app.js')
-    //- script(src='bundles/kitchen.js')
-    //- script(src='p2.chunk.js')
-    //- script(src='p3.chunk.js')
+    script(src='bundles/spec.js')
     // endbuild
 
     // Google Analytics: change UA-XXXXX-X to be your site's ID

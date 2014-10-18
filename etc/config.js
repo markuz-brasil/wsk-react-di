@@ -58,6 +58,7 @@ module.exports = {
     'bb >= 10'
   ],
   throw : function(err) {
+    console.log(err, '\n=====\n', err.message, '\n========\n')
     throw Error(err)
   },
 
@@ -67,7 +68,7 @@ module.exports = {
         baseDir: [
           DIST,
           path.join(TMP, DIST),
-          path.join(TMP, ES5),
+          path.join(TMP),
           path.join(TMP, APP),
           path.join(APP, 'public'),
           'client/bower_components'

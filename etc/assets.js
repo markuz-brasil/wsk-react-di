@@ -20,7 +20,6 @@
 'use strict';
 var path = require('path')
 var exec = require('child_process').exec
-
 // Include Gulp & Tools We'll Use
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
@@ -44,9 +43,10 @@ gulp.task('assets', function(next){
   runSequence(['assets:less', 'assets:jade', 'assets:js'], next)
 })
 
+
 // TODO: add comments
 gulp.task('assets:js', function(next){
-  runSequence(['assets:esx', 'assets:react', 'assets:copy-js', 'assets:libs'], 'assets:es5', 'browserify', next)
+  runSequence(['assets:es6', 'assets:libs'], ['browserify', 'browserify:shims'], next)
 })
 
 // Compile and Automatically Prefix Stylesheets
@@ -73,103 +73,28 @@ gulp.task('assets:jade', function(){
     .pipe($.size({title: 'jade'}))
 });
 
-// TODO: add comments
-gulp.task('assets:esx', function(next){
-  return gulp.src([SRC +'.js'])
-    .pipe($.cached('assets:esx', {optimizeMemory: true}))
+gulp.task('assets:es6', function () {
+  return gulp.src([SRC +'.js', SRC +'.jsx'])
+    .pipe($.cached('assets:next', {optimizeMemory: true}))
     .pipe($.sourcemaps.init({loadMaps: true}))
-
-    .pipe($.regenerator())
-    .on('error', CFG.throw)
-
-    .pipe($.traceur(CFG.traceur()))
-    .on('error', CFG.throw)
-
+    .pipe($.rename(function(path){path.extname = ".js"}))
+    .pipe($['6to5']()).on('error', CFG.throw)
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(TMP))
-    .pipe($.size({title: 'esx'}))
-});
-
-gulp.task('assets:copy-js', function(next){
-  return gulp.src([
-      ROOT +'/node_modules/gulp-regenerator/node_modules/regenerator/runtime/dev.js'
-    ])
-    .pipe($.cached('assets:copy-js', {optimizeMemory: true}))
-    .pipe(thr(function(vfs,e,n){
-      vfs.path = vfs.base + 'regenerator/index.js'
-      n(null, vfs)
-    }))
-
-    .pipe(gulp.dest(path.join(TMP, ES5, LIBS)))
-    .pipe($.size({title: 'copy-js'}))
-});
+    .pipe($.size({title: 'next'}))
+})
 
 // TODO: add comments
-gulp.task('assets:libs', function(next){
+gulp.task('assets:libs', function(){
   return gulp.src([
       CLIENT +'/node_modules/{di/src,zone.js}/*.js',
     ])
     .pipe($.cached('assets:libs', {optimizeMemory: true}))
-
-    .pipe($.regenerator())
-    .on('error', CFG.throw)
-
     .pipe($.sourcemaps.init({loadMaps: true}))
-    .pipe($.traceur({sourceMaps: true}))
-    .on('error', CFG.throw)
-
+    .pipe($.rename(function(path){path.extname = ".js"}))
+    .pipe($['6to5']()).on('error', CFG.throw)
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(path.join(TMP, ES5, LIBS)))
+    .pipe(gulp.dest(path.join(TMP, LIBS)))
     .pipe($.size({title: 'libs'}))
-});
-
-// TODO: add comments
-gulp.task('assets:es5', function(next){
-  return gulp.src([
-      TMP +'/**/*.js',
-      '!'+ TMP+'/'+ES5 +'/**/*',
-    ])
-
-    .pipe($.cached('assets:es5', {optimizeMemory: true}))
-
-    .pipe($.regenerator())
-    .on('error', CFG.throw)
-
-    .pipe($.sourcemaps.init({loadMaps: true}))
-    .pipe($.traceur({sourceMaps: true}))
-    .on('error', CFG.throw)
-
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(path.join(TMP, ES5)))
-    .pipe($.size({title: 'es5'}))
-});
-
-// TODO: add comments
-gulp.task('assets:react', function(next){
-  return gulp.src([SRC +'.jsx'])
-    .pipe($.cached('assets:react', {optimizeMemory: true}))
-    .pipe($.sourcemaps.init({loadMaps: true}))
-    .pipe($.regenerator())
-    .on('error', CFG.throw)
-
-    .pipe($.react({sourceMap: true}))
-    .on('error', CFG.throw)
-
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(TMP))
-    .pipe($.size({title: 'react'}))
-});
-
-// TODO: add comments
-gulp.task('assets:test', function(next){
-  var cmd = './node_modules/.bin/mocha-casperjs tests/index.coffee'
-
-  cmd = exec(cmd, {cwd: ROOT});
-  cmd.stdout.pipe(process.stdout);
-  cmd.stderr.pipe(process.stderr);
-  cmd.on('close', function(err){
-    if (err) { console.log('test exit code:', err)}
-    next()
-  })
 });
 
