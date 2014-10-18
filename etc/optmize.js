@@ -103,8 +103,8 @@ var browserifyConfigShims = {
 var aliasifyShims = require('aliasify').configure({
   aliases: {
     zone: './'+ path.join(TMP, LIBS, 'zone.js'),
-    'es6-shim': './client/node_modules/gulp-6to5/node_modules/6to5/node_modules/es6-shim/es6-shim.js',
-    'regenerator-runtime': './client/node_modules/gulp-6to5/node_modules/6to5/node_modules/regenerator/runtime.js',
+    'es6-shim': './client/node_modules/6to5/node_modules/es6-shim/es6-shim.js',
+    'regenerator-runtime': './client/node_modules/6to5/node_modules/regenerator/runtime.js',
   },
 })
 
