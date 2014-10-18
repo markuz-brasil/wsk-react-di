@@ -6,7 +6,7 @@
 ## Quickstart
 
 ```sh
-$ npm install --global gulp bower phantomjs
+$ npm install --global gulp phantomjs
 ```
 
 This will install Gulp, Bower and Phantomjs globally. Depending on your user account, you may need to gain elevated permissions using `sudo` (i.e `sudo npm install --global gulp`). Next, install the local dependencies Web Starter Kit requires:
