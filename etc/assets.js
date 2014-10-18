@@ -98,3 +98,15 @@ gulp.task('assets:libs', function(){
     .pipe($.size({title: 'libs'}))
 });
 
+// TODO: add comments
+gulp.task('assets:test', function(next){
+  var cmd = './node_modules/.bin/mocha-casperjs tests/index.coffee'
+
+  cmd = exec(cmd, {cwd: ROOT});
+  cmd.stdout.pipe(process.stdout);
+  cmd.stderr.pipe(process.stderr);
+  cmd.on('close', function(err){
+    if (err) { console.log('test exit code:', err)}
+    next()
+  })
+});
