@@ -5,15 +5,16 @@
   "main": "public/index.html",
   "author": "markuz brasil",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cp -R ../node_modules/gulp-6to5/node_modules/6to5 node_modules/."
   },
   "dependencies": {
-    "assert": "git://github.com/markuz-brasil/assert#39e417b69f2ac4d0399f0c235641df5101174e23",
-    "bootstrap": "^3.2.0",
+    "assert": "git://github.com/markuz-brasil/assert",
+    "bootstrap": ">=3.2.0",
     "co": ">=3.1.0",
-    "di": "git://github.com/angular/di.js#d6d42e10727b30d8a9d8d3277fb8a6d40f6ad251",
+    "di": "git://github.com/angular/di.js",
     "react": ">=0.11.2",
-    "zone.js": "git://github.com/angular/zone.js#74947b6f509b"
+    "zone.js": "git://github.com/angular/zone.js"
   },
   "engines": {
     "node": ">=0.10.0"
