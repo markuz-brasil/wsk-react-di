@@ -1,5 +1,4 @@
-// require('./components/libs')
-// import {App} from './components/Main'
+
 "use strict"
 import {co, React, Injector} from 'libs'
 import {BaseView} from 'core'

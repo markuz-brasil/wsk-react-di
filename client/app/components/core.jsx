@@ -1,9 +1,7 @@
-// require('./components/libs')
-// import {App} from './components/Main'
 "use strict"
+
 import {co, React, Injector} from 'libs'
 console.log('**** core')
-
 
 // this base class just provides a wrapper around React.createClass
 export class BaseView {
@@ -19,7 +17,7 @@ var baseViewMethods = {
   },
 
   getInitialState () {
-    console.log('base state init')
+    console.log('injecting state')
     return this.ctx
   }
 }
@@ -35,6 +33,7 @@ function mergeCtx (...objs) {
 }
 
 function getCtx (obj) {
+
   var ctx = {}, base = {}
    Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).forEach((prop) => {
     if (!base[prop]) {

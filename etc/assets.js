@@ -53,11 +53,11 @@ gulp.task('assets:js', function(next){
 gulp.task('assets:less', function () {
   return gulp.src([APP +'/index.{less,css}'])
     .pipe($.cached('less', {optimizeMemory: true}))
-    .pipe($.sourcemaps.init())
+    // .pipe($.sourcemaps.init())
     .pipe($.less())
     .pipe($.autoprefixer(CFG.cssPrefixer))
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest( path.join(TMP, APP) ))
+    // .pipe($.sourcemaps.write())
+    .pipe(gulp.dest(path.join(TMP, APP) ))
     .pipe($.size({title: 'less'}));
 });
 

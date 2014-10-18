@@ -29,8 +29,6 @@ var runSequence = require('run-sequence');
 var thr = require('through2').obj
 var source = require('vinyl-source-stream')
 var browserify = require('browserify')
-var factor = require('factor-bundle')
-var unpack = require('browser-unpack')
 
 var CFG = require('./config');
 var ROOT = CFG.root
@@ -53,7 +51,9 @@ var aliasify = require('aliasify').configure({
   aliases: {
     di: './'+ path.join(TMP, LIBS, 'di/src'),
     co: './client/node_modules/co',
-    react: './client/bower_components/react/react-with-addons.js',
+    assert: './client/node_modules/assert',
+    react: './client/node_modules/react/addons.js',
+    // react: './client/bower_components/react/react-with-addons.js',
 
     spec: './'+ path.join(TMP, 'client/app/components/spec'),
     libs: './'+ path.join(TMP, 'client/app/components/libs'),
@@ -77,7 +77,7 @@ gulp.task('browserify', function(next){
   }
 
   return browserify(browserifyConfig)
-    .plugin(factor, {
+    .plugin('factor-bundle', {
       o: [
         './'+ path.join(DIST, '/bundles', 'app.js'),
         './'+ path.join(DIST, '/bundles', 'spec.js'),
