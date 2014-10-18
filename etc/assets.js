@@ -81,7 +81,7 @@ gulp.task('assets:es6', function () {
     .pipe($['6to5']()).on('error', CFG.throw)
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(TMP))
-    .pipe($.size({title: 'next'}))
+    .pipe($.size({title: 'es6'}))
 })
 
 // TODO: add comments
