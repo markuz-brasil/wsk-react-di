@@ -43,5 +43,6 @@ Now direct your browser to `http://localhost:3000/`
 
 Build and optimize the current project, ready for deployment. This includes ~ linting as well as image, script, stylesheet and HTML optimization and minification. ~
 
-
+### License
+[MIT](https://github.com/markuz-brasil/wsk-react-di/blob/master/LICENSE)
 
