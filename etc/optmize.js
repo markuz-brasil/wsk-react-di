@@ -35,7 +35,6 @@ var aliasify = require('aliasify').configure({
     co: './client/node_modules/co',
     assert: './client/node_modules/assert',
     react: './client/node_modules/react/addons.js',
-    // react: './client/bower_components/react/react-with-addons.js',
 
     spec: './'+ path.join(TMP, 'client/app/components/spec'),
     libs: './'+ path.join(TMP, 'client/app/components/libs'),
@@ -85,6 +84,8 @@ var browserifyConfigShims = {
 var aliasifyShims = require('aliasify').configure({
   aliases: {
     zone: './'+ path.join(TMP, LIBS, 'zone.js'),
+    assert: './client/node_modules/assert',
+    setimmediate: './client/node_modules/setimmediate/setImmediate.js',
     'es6-shim': './client/node_modules/6to5/node_modules/es6-shim/es6-shim.js',
     'regenerator-runtime': './client/node_modules/6to5/node_modules/regenerator/runtime.js',
   },

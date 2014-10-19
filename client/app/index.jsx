@@ -1,14 +1,14 @@
-// require('./components/libs')
-// import {App} from './components/Main'
 "use strict"
-import {co, React, Injector} from 'libs'
-import {App} from 'main'
+import { React } from 'libs'
+import { Main } from 'main'
 
-console.log('**** pre render app')
+// console.log('**** pre render Main')
+var t0 = new Date
 
 React.initializeTouchEvents(true)
-React.renderComponent(<App />, document.getElementById('react-app'));
+React.renderComponent(<Main />, document.getElementById('react-app'));
 
-console.log('**** post render app')
+var t1 = new Date
+console.log(`**** post render Main (${t1 - t0}ms)`)
 
 
