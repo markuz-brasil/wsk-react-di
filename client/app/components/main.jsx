@@ -113,7 +113,7 @@ annotate(ElemWrap, new TransientScope)
 annotate(ElemWrap, new Inject(ReactStore, StatusElem))
 function ElemWrap (store, status) {
   return function ElemWrap () {
-    return <div key='Elem'> {"This is the state status:"} status  </div>
+    return <div key='ElemWrap'> {"This is the state status:"} status  </div>
   }
 }
 
