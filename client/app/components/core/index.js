@@ -6,7 +6,7 @@ export {
 } from './utils'
 
 export {
-  createReactClass,
+  createReactCtrl,
   ReactStore,
   ReactClass,
   ReactContex,

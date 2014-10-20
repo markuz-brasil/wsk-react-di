@@ -8,7 +8,7 @@ import {
   ReactElem,
   ReactAsyncState,
   ReactSyncState,
-  createReactClass
+  createReactCtrl
 } from 'core'
 
 var {
@@ -21,7 +21,8 @@ var {
 } = di
 
 export function Main (...args) {
-  return createReactClass(args, [Elem, InitState, Store])
+  return createReactCtrl(args, [RootElem, InitState, Store])
+  // return createReactCtrl(args)
 }
 
 var mainStore = new Map
@@ -29,69 +30,96 @@ annotate(Store, new Provide(ReactStore))
 export function Store () { return mainStore }
 
 annotate(InitState, new Provide(ReactState))
-annotate(InitState, new InjectLazy(getDataSync))
-function InitState (lazyDataSync) {
-  stateInjector.get(ReactState)
-  return lazyDataSync()
+annotate(InitState, new Inject(ReactStore))
+annotate(InitState, new InjectLazy(syncState))
+function InitState (store, lazySyncState) {
+  if (!store.injector) {
+    store.injector = new Injector([State, Store])
+  }
+  store.injector.get(ReactState)
+  return lazySyncState()
 }
 
-annotate(getDataSync, new TransientScope)
-annotate(getDataSync, new Provide(ReactSyncState))
-annotate(getDataSync, new Inject(ReactStore))
-function getDataSync (store) {
-  if (!store.has(getDataSync)) {
-    store.set(getDataSync, {counter: 0})
+annotate(State, new TransientScope)
+annotate(State, new Provide(ReactState))
+annotate(State, new Inject(ReactStore))
+annotate(State, new InjectLazy(syncState, asyncState))
+export function State (store, lazySyncState, lazyAsyncState) {
+  lazyAsyncState().then(store.setState)
+  return lazySyncState()
+}
+
+annotate(syncState, new TransientScope)
+annotate(syncState, new Inject(ReactStore))
+function syncState (store) {
+  if (!store.has(syncState)) {
+    store.set(syncState, {counter: 0})
+  }
+  store.get(syncState).counter++
+  store.get(syncState).t0 = new Date
+  var msg = {
+    ctx: `sync (${store.get(syncState).counter}) lazy injected state (${new Date - store.get(syncState).t0}ms)`,
   }
 
-  store.get(getDataSync).counter++
-  store.get(getDataSync).t0 = new Date
-  var msg = { ctx: `sync (${store.get(getDataSync).counter}) lazy injected state (${new Date - store.get(getDataSync).t0}ms)`,}
-
-  if (!store.get(getDataAsync).resolvedOnce) { store.setState(msg) }
+  if (!store.has(asyncState) || !store.get(asyncState).resolvedOnce) { store.setState(msg) }
   return msg
 }
 
 annotate(fetchJsonp, new TransientScope)
-annotate(getDataAsync, new TransientScope)
-annotate(getDataAsync, new Provide(ReactAsyncState))
-annotate(getDataAsync, new Inject(fetchJsonp, ReactStore))
-function getDataAsync (promise, store) {
+annotate(asyncState, new TransientScope)
+annotate(asyncState, new Inject(fetchJsonp, ReactStore))
+function asyncState (promise, store) {
 
-  if (!store.has(getDataAsync)) {
-    store.set(getDataAsync, {
+  if (!store.has(asyncState)) {
+    store.set(asyncState, {
       counter: 0,
       limit: 10,
       resolvedOnce: false
     })
   }
 
-  store.get(getDataAsync).t0 = new Date
+  store.get(asyncState).t0 = new Date
 
   return new Promise((resolve, reject) => {
-    if (store.get(getDataAsync).counter < store.get(getDataAsync).limit) {
+    if (store.get(asyncState).counter < store.get(asyncState).limit) {
       setTimeout(() => {
-        if (store.get(getDataAsync).counter < store.get(getDataAsync).limit) {
-          stateInjector.get(ReactState)
+        if (store.get(asyncState).counter < store.get(asyncState).limit) {
+          store.injector.get(ReactState)
         }
       }, 500)
     }
 
-    store.get(getDataAsync).counter++
+    store.get(asyncState).counter++
 
     co(function* () {
       try { var json = yield promise }
       catch (err) {console.error(err)}
-      store.get(getDataAsync).resolvedOnce = true
-      resolve({ ctx: `async (${store.get(getDataAsync).counter}) lazy injected state (${new Date - store.get(getDataAsync).t0}ms) --- ${json}`,})
+      store.get(asyncState).resolvedOnce = true
+      resolve({
+        ctx: `async (${store.get(asyncState).counter}) lazy injected state (${new Date - store.get(asyncState).t0}ms) --- ${json}`,
+      })
     })()
   })
 }
 
-annotate(Elem, new TransientScope)
-annotate(Elem, new Provide(ReactElem))
-annotate(Elem, new Inject(ReactStore))
-function Elem (lazyStore) {
-    return <div> {`... Main :: ${lazyStore.self.state.ctx} :: ...`} </div>
+annotate(StatusElem, new TransientScope)
+annotate(StatusElem, new Provide(ReactElem))
+annotate(StatusElem, new Inject(ReactStore))
+function StatusElem (store) {
+  return <div key='StatusElem'> {store.self.state.ctx} </div>
 }
 
-var stateInjector = new Injector([getDataAsync, getDataSync, Store])
+annotate(ElemWrap, new TransientScope)
+annotate(ElemWrap, new Inject(ReactStore, StatusElem))
+function ElemWrap (store, status) {
+  return function ElemWrap () {
+    return <div key='Elem'> {"This is the state status:"} status  </div>
+  }
+}
+
+annotate(RootElem, new TransientScope)
+annotate(RootElem, new Provide(ReactElem))
+annotate(RootElem, new Inject(ReactStore, ElemWrap))
+function RootElem (store, wrap) {
+  return <div key='RootElem'> wrap() </div>
+}
