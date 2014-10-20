@@ -20,12 +20,15 @@ export function getNonEnumProps (obj) {
   return target
 }
 
+var counter = 0
 export function fetchJsonp () {
   var t0 = new Date
+
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      resolve(`done doing some async op in (${new Date - t0}ms)`)
+      counter++
+      resolve(`done (${counter}) doing some async op in (${new Date - t0}ms)`)
     // }, Math.random()*100 |0)
-    }, 1000)
+    }, 2000)
   })
 }

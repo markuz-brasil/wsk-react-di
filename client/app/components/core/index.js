@@ -7,6 +7,10 @@ export {
 
 export {
   createReactClass,
+  ReactStore,
+  ReactClass,
+  ReactContex,
+  ReactState,
   ReactSyncState,
   ReactAsyncState,
   ReactElem

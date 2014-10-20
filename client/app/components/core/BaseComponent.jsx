@@ -1,55 +1,60 @@
 "use strict"
 
 import { React, di } from 'libs'
-var {annotate, Inject, InjectLazy, Injector } = di
+var {annotate, Inject, InjectLazy, Injector, TransientScope } = di
 
 export function createReactClass (args, deps = []) {
   return new Injector(deps).get(ReactClass)(...args)
 }
 
-export function ReactSyncState () {
-  var t0 = new Date
-  return function  reactSyncState() {
-    return { ctx: `lazy injected ReactSyncState (${new Date - t0}ms)`,}
-  }
-}
-
-export function ReactAsyncState (lazyGetAsyncData) {
-  var t0 = new Date
-  return function reactAsyncState (self) {
-    return Promise.resolve({
-      ctx: `lazy injected ReactAsyncState (${new Date - t0}ms)`
-    })
-  }
-}
-
-export function ReactElem () {
-  var t0 = new Date
-  return function reactElem (self) {
-    console.log(`... ReactElem :: ${self.state.ctx} :: (${new Date - t0}ms) ...`)
-    return <div> {} </div>
-  }
-}
-
 annotate(ReactClass, new InjectLazy(ReactContext))
-function ReactClass (lazyCtx) {
+export function ReactClass (lazyCtx) {
   return React.createClass(lazyCtx())
 }
 
+var store = {}
+export function ReactStore () {
+  return store
+}
+
+annotate(ReactContext, new Inject(ReactStore))
 annotate(ReactContext, new InjectLazy(ReactElem, ReactState))
-function ReactContext (lazyElem, lazyState) {
+export function ReactContext (store, lazyElem, lazyState) {
   return {
-    render () { return lazyElem()(this) },
-    getInitialState () { return lazyState()(this) }
+    render () { return lazyElem() },
+    getInitialState () {
+      store.self = this
+      store.setState = this.setState.bind(this)
+      return lazyState() }
   }
 }
 
+annotate(ReactState, new TransientScope)
+annotate(ReactState, new Inject(ReactStore))
 annotate(ReactState, new InjectLazy(ReactSyncState, ReactAsyncState))
-function ReactState (lazySyncState, lazyAsyncState) {
-  return function reactState (self) {
-    lazyAsyncState()(self).then(self.setState.bind(self))
-    return lazySyncState()(self)
-  }
+export function ReactState (store, lazySyncState, lazyAsyncState) {
+  lazyAsyncState().then(store.setState)
+  return lazySyncState()
+}
+
+export function ReactSyncState () {
+  var t0 = new Date
+  return { ctx: `lazy injected ReactSyncState (${new Date - t0}ms)`,}
+}
+
+export function ReactAsyncState () {
+  var t0 = new Date
+  return Promise.resolve({
+    ctx: `lazy injected ReactAsyncState (${new Date - t0}ms)`
+  })
+}
+
+annotate(ReactElem, new TransientScope)
+annotate(ReactElem, new Inject(ReactStore))
+export function ReactElem (store) {
+  var t0 = new Date
+  console.log(`... ReactElem :: ${store.self.state.ctx} :: (${new Date - t0}ms) ...`)
+  return <div> {} </div>
 }
 
 
