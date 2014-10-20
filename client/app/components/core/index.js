@@ -1,10 +1,14 @@
 "use strict"
 
-export { BaseCtx, BaseView, BaseCtor } from './BaseView'
 export {
-  mergeObject,
+  mergeObjs,
   getNonEnumProps,
   fetchJsonp
 } from './utils'
 
-
+export {
+  createReactClass,
+  ReactSyncState,
+  ReactAsyncState,
+  ReactElem
+} from './BaseComponent'

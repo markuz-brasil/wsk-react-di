@@ -2,7 +2,6 @@
 import { React } from 'libs'
 import { Main } from 'main'
 
-// console.log('**** pre render Main')
 var t0 = new Date
 
 React.initializeTouchEvents(true)

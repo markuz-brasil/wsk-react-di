@@ -1,7 +1,7 @@
 "use strict"
 
 
-export function mergeObject (...objs) {
+export function mergeObjs (...objs) {
   var target = objs[1]
   for (var k0 in objs) {
     for (var k1 in objs[k0]) {
@@ -27,6 +27,7 @@ export function fetchJsonp () {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(`done doing some async op in (${new Date - t0}ms)`)
-    }, Math.random()*1000 |0)
+    // }, Math.random()*100 |0)
+    }, 1000)
   })
 }
