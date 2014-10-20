@@ -1,6 +1,5 @@
 
-import {co, React, Injector} from 'libs'
+import {co, React, di} from 'libs'
 
-console.log('****', 'spec')
 
 

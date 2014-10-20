@@ -1,6 +1,5 @@
 "use strict"
 
-
 export function mergeObjs (...objs) {
   var target = objs[1]
   for (var k0 in objs) {
@@ -20,7 +19,6 @@ export function getNonEnumProps (obj) {
   })
   return target
 }
-
 
 export function fetchJsonp () {
   var t0 = new Date

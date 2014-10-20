@@ -1,4 +1,5 @@
 "use strict"
+
 import { React, di } from 'libs'
 var {annotate, Inject, InjectLazy, Injector } = di
 

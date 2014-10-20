@@ -19,7 +19,7 @@ annotate(FetchSync, new Provide(ReactSyncState))
 function FetchSync () {
   var t0 = new Date
   return function fetchSync (self) {
-    return { ctx: `lazy injected state (${new Date - t0}ms)`,}
+    return { ctx: `sync lazy injected state (${new Date - t0}ms)`,}
   }
 }
 
@@ -30,8 +30,11 @@ function FetchAsync (promise) {
   return function fetchAsync (self) {
     return new Promise((resolve, reject) => {
       co(function* () {
-        var json = yield promise
-        resolve({ ctx: `async lazy injected state (${new Date - t0}ms) -- ${json}`,})
+
+        try { var json = yield promise }
+        catch (err) {console.error(err)}
+
+        resolve({ ctx: `async lazy injected state (${new Date - t0}ms) --- ${json}`,})
       })()
     })
   }
@@ -39,7 +42,6 @@ function FetchAsync (promise) {
 
 annotate(Elem, new Provide(ReactElem))
 function Elem () {
-  var t0 = new Date
   return function elem (self) {
     return <div> {`... Main :: ${self.state.ctx} :: ...`} </div>
   }
