@@ -39,40 +39,50 @@ annotate(getDataSync, new TransientScope)
 annotate(getDataSync, new Provide(ReactSyncState))
 annotate(getDataSync, new Inject(ReactStore))
 function getDataSync (store) {
-  var t0 = new Date
   if (!store.has(getDataSync)) {
     store.set(getDataSync, {counter: 0})
   }
-  store.get(getDataSync).counter++
-  var msg = { ctx: `sync (${store.get(getDataSync).counter}) lazy injected state (${new Date - t0}ms)`,}
 
-  if (!store.get(getDataAsync).counter) { store.setState(msg) }
+  store.get(getDataSync).counter++
+  store.get(getDataSync).t0 = new Date
+  var msg = { ctx: `sync (${store.get(getDataSync).counter}) lazy injected state (${new Date - store.get(getDataSync).t0}ms)`,}
+
+  if (!store.get(getDataAsync).resolvedOnce) { store.setState(msg) }
   return msg
 }
 
+annotate(fetchJsonp, new TransientScope)
 annotate(getDataAsync, new TransientScope)
 annotate(getDataAsync, new Provide(ReactAsyncState))
 annotate(getDataAsync, new Inject(fetchJsonp, ReactStore))
 function getDataAsync (promise, store) {
-  var t0 = new Date
 
   if (!store.has(getDataAsync)) {
-    store.set(getDataAsync, {counter: 0})
+    store.set(getDataAsync, {
+      counter: 0,
+      limit: 10,
+      resolvedOnce: false
+    })
   }
 
+  store.get(getDataAsync).t0 = new Date
+
   return new Promise((resolve, reject) => {
-    if (store.get(getDataAsync).counter < 10) {
+    if (store.get(getDataAsync).counter < store.get(getDataAsync).limit) {
       setTimeout(() => {
-        stateInjector.get(ReactState)
+        if (store.get(getDataAsync).counter < store.get(getDataAsync).limit) {
+          stateInjector.get(ReactState)
+        }
       }, 500)
     }
+
+    store.get(getDataAsync).counter++
 
     co(function* () {
       try { var json = yield promise }
       catch (err) {console.error(err)}
-
-      store.get(getDataAsync).counter++
-      resolve({ ctx: `async (${store.get(getDataAsync).counter}) lazy injected state (${new Date - t0}ms) --- ${json}`,})
+      store.get(getDataAsync).resolvedOnce = true
+      resolve({ ctx: `async (${store.get(getDataAsync).counter}) lazy injected state (${new Date - store.get(getDataAsync).t0}ms) --- ${json}`,})
     })()
   })
 }
