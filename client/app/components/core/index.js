@@ -14,4 +14,4 @@ export {
   ReactSyncState,
   ReactAsyncState,
   ReactElem
-} from './BaseComponent'
+} from './BaseCtrl'
