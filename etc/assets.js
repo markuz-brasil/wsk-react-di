@@ -2,93 +2,125 @@
 
 var path = require('path')
 var exec = require('child_process').exec
+var fs = require('fs')
+
 // Include Gulp & Tools We'll Use
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
+var del = require('del');
 var runSequence = require('run-sequence');
 var thr = require('through2').obj
-var source = require('vinyl-source-stream')
-var browserify = require('browserify')
+var aliasify = require('aliasify')
 
 var CFG = require('./config');
-var ROOT = CFG.root
+var SRC = CFG.src
 var TMP = CFG.tmp
-var APP = CFG.app
-var CLIENT = CFG.client
-var LIBS = CFG.libs
-var DIST = CFG.dist
-var SRC = '{'+ APP +',public}/**/*' // this is a hack
-var ES5 = CFG.es5
+var PUB = CFG.pub
+var VENDORS = CFG.vendors
+
+var aliasifyVendors = aliasify.configure({
+  aliases: {
+    di: './'+ TMP +'/es6/node_modules/di/src',
+    co: './'+ SRC +'/node_modules/co',
+    assert: './'+ SRC +'/node_modules/assert',
+    react: './'+ SRC +'/node_modules/react/addons',
+    less: './'+ SRC +'/node_modules/less',
+    setimmediate: './'+ SRC +'/node_modules/setimmediate/setImmediate',
+    'es6-shim': './'+ SRC +'/node_modules/6to5/node_modules/es6-shim/es6-shim',
+    'regenerator-runtime': './'+ SRC +'/node_modules/6to5/node_modules/regenerator/runtime',
+  },
+})
+
+var aliasifyBundle = aliasify.configure({
+  aliases: {
+    libs: './'+ TMP +'/es6/src/core/libs',
+    runtime: './'+ TMP +'/es6/src/core/runtime',
+    main: './'+ TMP +'/es6/src/main',
+    core: './'+ TMP +'/es6/src/core',
+  },
+})
 
 // TODO: add comments
 gulp.task('assets', function(next){
-  runSequence(['assets:less', 'assets:jade', 'assets:js'], next)
+  runSequence(['assets:js', 'assets:jade'], next)
 })
-
 
 // TODO: add comments
 gulp.task('assets:js', function(next){
-  runSequence(['assets:es6', 'assets:libs'], ['browserify', 'browserify:shims'], next)
+  runSequence('assets:es6', ['assets:vendors', 'assets:bundle'], next)
 })
-
-// Compile and Automatically Prefix Stylesheets
-gulp.task('assets:less', function () {
-  return gulp.src([APP +'/index.{less,css}'])
-    .pipe($.cached('less', {optimizeMemory: true}))
-    // .pipe($.sourcemaps.init())
-    .pipe($.less())
-    .pipe($.autoprefixer(CFG.cssPrefixer))
-    // .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(path.join(TMP, APP) ))
-    .pipe($.size({title: 'less'}));
-});
 
 // TODO: add comments
 gulp.task('assets:jade', function(){
-  return gulp.src([SRC +'.jade'])
-    .pipe($.cached('jade', {optimizeMemory: true}))
-    .pipe($.sourcemaps.init())
+  return gulp.src([
+      SRC +'/index.jade'
+    ])
+    .pipe($.cached('assets:jade', {optimizeMemory: true}))
     .pipe($.jade({pretty: true}))
     .on('error', CFG.throw)
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(TMP))
+    .pipe(gulp.dest(PUB))
     .pipe($.size({title: 'jade'}))
 });
 
-gulp.task('assets:es6', function () {
-  return gulp.src([SRC +'.js', SRC +'.jsx'])
-    .pipe($.cached('assets:next', {optimizeMemory: true}))
-    .pipe($.sourcemaps.init({loadMaps: true}))
-    .pipe($.rename(function(path){path.extname = ".js"}))
-    .pipe($['6to5']()).on('error', CFG.throw)
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(TMP))
-    .pipe($.size({title: 'es6'}))
+gulp.task('assets:js', function (next) {
+  runSequence('assets:es6', 'assets:bundle', next)
 })
 
 // TODO: add comments
-gulp.task('assets:libs', function(){
+gulp.task('clean:es6', del.bind(null, [TMP +'/es6']));
+gulp.task('assets:es6', function(next){
   return gulp.src([
-      CLIENT +'/node_modules/{di/src,zone.js}/*.js',
+      SRC +'/{index,src/**/*,node_modules/di/src/**/*}.{js,jsx}',
     ])
-    .pipe($.cached('assets:libs', {optimizeMemory: true}))
+    .pipe($.cached('assets:es6', {optimizeMemory: true}))
     .pipe($.sourcemaps.init({loadMaps: true}))
     .pipe($.rename(function(path){path.extname = ".js"}))
     .pipe($['6to5']()).on('error', CFG.throw)
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest(path.join(TMP, LIBS)))
-    .pipe($.size({title: 'libs'}))
-});
+    .pipe(gulp.dest(TMP +'/es6'))
+    .pipe($.size({title: 'js:es6'}))
+})
 
 // TODO: add comments
-gulp.task('assets:test', function(next){
-  var cmd = './node_modules/.bin/mocha-casperjs tests/index.coffee'
+gulp.task('clean:bundle', del.bind(null, [TMP +'/bundle']));
+gulp.task('assets:bundle', function(next){
+  return gulp.src([
+      TMP + '/es6/index.js',
+    ])
+    .pipe($.browserify({debug: true, transform: [aliasifyBundle, 'brfs'],}))
+    .on('error', CFG.throw)
+    .pipe($.sourcemaps.init({loadMaps: true}))
+    .pipe($.uglify())
+    .on('error', CFG.throw)
+    .pipe($.sourcemaps.write('./maps'))
+    .pipe(gulp.dest(PUB))
+    .pipe($.size({title: 'js:bundle'}))
+})
 
-  cmd = exec(cmd, {cwd: ROOT});
-  cmd.stdout.pipe(process.stdout);
-  cmd.stderr.pipe(process.stderr);
-  cmd.on('close', function(err){
-    if (err) { console.log('test exit code:', err)}
-    next()
-  })
-});
+// TODO: add comments
+gulp.task('clean:vendors', del.bind(null, [VENDORS]));
+gulp.task('assets:vendors', ['clean:vendors', 'assets:es6'], function(next){
+  return gulp.src([
+      TMP + '/es6/src/vendors/libs.js',
+      TMP + '/es6/src/vendors/runtime.js',
+      TMP + '/es6/src/vendors/shims.js',
+    ])
+    // .pipe($.cached('assets:vendors', {optimizeMemory: true}))
+    .pipe(thr(function (vfs, enc, next){
+      var id = 'ModuleNamespace.'+ path.basename(vfs.path).replace(/\.js$/, '')
+      gulp.src(vfs.path)
+        .pipe($.browserify({debug: true, transform: [aliasifyVendors], standalone: id}))
+        .pipe(thr(function (vfs, e, n){
+          next(null, vfs)
+          n()
+        }))
+    }))
+    .pipe($.sourcemaps.init({loadMaps: true}))
+    .pipe($.uglify())
+    .pipe($.sourcemaps.write('./maps'))
+    .pipe(gulp.dest(VENDORS))
+    .pipe($.size({title: 'js:vendors'}))
+})
+
+
+

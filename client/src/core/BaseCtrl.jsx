@@ -1,6 +1,8 @@
 "use strict"
 
-import { React, di } from 'libs'
+import { React, less } from 'runtime'
+import { co, di } from 'libs'
+
 var {annotate, Inject, InjectLazy, Injector, TransientScope } = di
 
 export function createReactCtrl (injector) {
@@ -11,7 +13,7 @@ annotate(ReactContext, new Inject(ReactStore))
 annotate(ReactContext, new InjectLazy(ReactElem, ReactState))
 export function ReactContext (store, lazyElem, lazyState) {
   return {
-    render () { return lazyElem() },
+    render () {return lazyElem() },
 
     getInitialState () {
       if (typeof store === 'object' && store !== null) {

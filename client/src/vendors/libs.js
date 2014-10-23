@@ -1,10 +1,9 @@
+
 import * as co from 'co'
-import * as React from 'react'
 import * as di from 'di'
 
-export { React, co, di }
+export { co, di }
 export { assert } from 'assert'
-
 
 // export {
 //   Injector,

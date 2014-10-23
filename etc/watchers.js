@@ -13,81 +13,48 @@ var cyan = $.util.colors.cyan
 
 var CFG = require('./config');
 var TMP = CFG.tmp
-var APP = CFG.app
-var LIBS = CFG.libs
+var SRC = CFG.src
 
 var TASKS = CFG.tasks
 
 // Watch Files For Changes & reload
 var FILES = {
-  html: path.join(APP, '**/*.{jade,html}'),
-  css: path.join(APP, '**/*.{less,css}'),
+  html: [ SRC +'/**/*.{jade,html}', ],
   js: [
-    path.join(APP, '**/*.{js,jsx}'),
-    path.join(LIBS, '**/*.{js,jsx}')
+    SRC +'/{index,src/**/*,!vendors}.{js,jsx}',
   ],
-  tasks: ['gulpfile.js', 'etc/**/*.js'],
-  test: [
-    path.join('tests', '**/*.{js,jsx,coffee,less,css,jade,html}')
-  ]
+  vendors: [
+    SRC +'/src/vendors/*.{js,jsx}',
+  ],
+  tasks: [ 'gulpfile.js', 'etc/**/*.js', ],
 }
 
-
 function runTasks () {
-  var args = Array.prototype.slice.call(arguments)
+  var args = [].slice.call(arguments)
 
   return function (evt) {
     if ('changed' !== evt.type) { return }
     // bug on runSequece.
-    // this JSON trick is cleanest way to deep copy an obj.
+    // this JSON trick is cleanest way to deep copy a JSON.
     runSequence.apply(runSequence, JSON.parse(JSON.stringify(args)))
   }
 }
 
-
 function assets (TASKS) {
   log("Starting '"+ cyan('watch:assets') +"'...")
 
-  if (TASKS.build) {
-    gulp.watch(FILES.html, runTasks('assets:jade', 'optimize', 'reload'))
-    gulp.watch(FILES.css, runTasks('assets:less', 'optimize', 'reload'))
-    gulp.watch(FILES.js, runTasks('assets:js', 'optimize', 'reload'))
-  }
-  else {
-    gulp.watch(FILES.html, runTasks('assets:jade', 'reload'))
-    gulp.watch(FILES.css, runTasks('assets:less', 'reload'))
-    gulp.watch(FILES.js, runTasks('assets:js', 'reload'))
-  }
-
+  gulp.watch(FILES.js, runTasks('assets:js', 'reload'))
+  // gulp.watch(FILES.vendors, runTasks('assets:vendors', 'reload'))
+  gulp.watch(FILES.html, runTasks('assets:jade', 'reload'))
 }
 
 function gulpfile (TASKS) {
   log("Starting '"+ cyan('watch:gulpfile') +"'...")
 
   gulp.watch(FILES.tasks, runTasks('restart'))
-
-}
-
-function test (TASKS) {
-  log("Starting '"+ cyan('watch:tests') +"'...")
-
-  if (TASKS.build) {
-    gulp.watch(FILES.html, runTasks('assets:jade', 'optimize', ['assets:test', 'reload']))
-    gulp.watch(FILES.css, runTasks('assets:less', 'optimize', ['assets:test', 'reload']))
-    gulp.watch(FILES.js, runTasks('assets:js', 'optimize', ['assets:test', 'reload']))
-    gulp.watch(FILES.test, runTasks('assets:test'))
-  }
-  else {
-    gulp.watch(FILES.html, runTasks('assets:jade', ['assets:test', 'reload']))
-    gulp.watch(FILES.css, runTasks('assets:less', ['assets:test', 'reload']))
-    gulp.watch(FILES.js, runTasks('assets:js', ['assets:test', 'reload']))
-    gulp.watch(FILES.test, runTasks('assets:test'))
-  }
-
 }
 
 module.exports = {
-  test: test,
   assets: assets,
   gulpfile: gulpfile,
 }

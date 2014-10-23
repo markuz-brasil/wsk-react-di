@@ -15,9 +15,10 @@ var cyan = $.util.colors.cyan
 var watch = require('./etc/watchers');
 
 var CFG = require('./etc/config');
+
 var TMP = CFG.tmp
-var APP = CFG.app
-var DIST = CFG.dist
+var PUB = CFG.pub
+var SRC = CFG.src
 
 var TASKS = CFG.tasks
 
@@ -27,57 +28,20 @@ try { require('require-dir')('etc'); } catch (err) {
 }
 
 // Clean Output Directory
-gulp.task('clean', del.bind(null, [TMP, DIST]));
+gulp.task('clean', del.bind(null, [TMP, PUB]));
 
 // TODO: add comments
 gulp.task('default', ['build'])
 
 // TODO: add comments
-gulp.task('dev', ['clean'], function(next){
+gulp.task('build', ['clean'], function(next){
   runSequence('assets', function(){
-
-    if (browserSync.active && !TASKS.build) { gulp.start('reload') }
-
-    if (TASKS.test && !TASKS.build) {
-      runSequence('assets:test', function(){
-        if (!TASKS.serve) {browserSync.exit()}
-      })
-    }
-
-    next()
-  })
-})
-
-// TODO: add comments
-gulp.task('build', ['dev'], function(next){
-  runSequence('optimize', function(){
-
     if (browserSync.active) { gulp.start('reload') }
-
-    if (TASKS.test) {
-      runSequence('assets:test', function(){
-        if (!TASKS.serve) {browserSync.exit()}
-      })
-    }
     next()
   })
 })
 
 // TODO: add comments
-gulp.task('watch', function(next){
-  watch.gulpfile()
-
-  if (TASKS.test) {
-    watch.test(TASKS)
-  }
-  else {
-    watch.assets(TASKS)
-  }
-
-  next()
-})
-
-// Watch Files For Changes & Reload
 gulp.task('serve', function (next) {
   var opts = CFG.browserSync()
   opts.browser = 'skip'
@@ -101,8 +65,10 @@ gulp.task('restart', function(){
   process.exit(0)
 })
 
-// TODO: add comments
-gulp.task('test', ['serve', 'dev'])
-
-
+// // TODO: add comments
+gulp.task('watch', function(next){
+  watch.gulpfile()
+  watch.assets(TASKS)
+  next()
+})
 

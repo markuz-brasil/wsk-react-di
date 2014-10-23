@@ -1,6 +1,8 @@
 
 "use strict"
-import { co, React, di } from 'libs'
+import { React, less } from 'runtime'
+import { co, di } from 'libs'
+
 import {
   fetchJsonp,
   ReactStore,
@@ -25,7 +27,7 @@ annotate(InitState, new Inject(ReactStore))
 annotate(InitState, new InjectLazy(SyncState))
 export function InitState (store, lazySyncState) {
 
-  store.set(SyncState, {counter: 0})
+  store.set(SyncState, {counter: -1})
   store.set(AsyncState, {
     counter: 0,
     limit: 10,
@@ -70,11 +72,17 @@ function AsyncState (store, promise) {
   return new Promise((resolve, reject) => {
     if (store.get(AsyncState).counter < store.get(AsyncState).limit) {
 
+      // setImmediate(() => {
+      //   if (store.get(AsyncState).counter < store.get(AsyncState).limit) {
+      //     store.injector.get(State)
+      //   }
+      // })
+
       setTimeout(() => {
         if (store.get(AsyncState).counter < store.get(AsyncState).limit) {
           store.injector.get(State)
         }
-      }, 500)
+      }, 100)
     }
 
     store.get(AsyncState).counter++

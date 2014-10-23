@@ -11,86 +11,48 @@ var ES5 = 'es5'
 var ROOT = process.cwd()
 var APP_TMP = path.join(TMP, path.basename(APP))
 
-var TASKS = {}
+var CFG = {
+  pub: 'tmp/public',
+  tmp: 'tmp',
+  src: 'client',
+  vendors: 'client/vendors',
+  tasks: {},
+}
+
+var SRC = CFG.src
+var VENDORS = CFG.vendors
+var PUB = CFG.pub
+
+CFG.throw = console.error.bind(console)
 process.argv.forEach(function(task, i){
   if (i < 2) {return}
-  TASKS[task] = true
+  CFG.tasks[task] = true
 })
 
-module.exports = {
-  root: ROOT,
-  tmp: TMP,
-  app: APP,
-  client: CLIENT,
-  libs: LIBS,
-  dist: DIST,
-  es5: ES5,
-  tasks: TASKS,
+CFG.browserSync = function browserSync () {
+  return {
+    server: {
+      baseDir: [
+        SRC +'/public',
+        VENDORS,
+        PUB,
+      ]
+    },
+    ghostMode: false,
+    notify: false,
+    port: 3000,
+    // browser: 'chrome',
+    // browser: 'skip',
 
-  cssPrefixer: [
-    'ie >= 10',
-    'ie_mob >= 10',
-    'ff >= 30',
-    'chrome >= 34',
-    'safari >= 7',
-    'opera >= 23',
-    'ios >= 7',
-    'android >= 4.4',
-    'bb >= 10'
-  ],
-  throw : function(err) {
-    console.log(err, '\n=====\n', err.message, '\n========\n')
-    throw Error(err)
-  },
+    // forces full page reload on css changes.
+    // injectChanges: false,
 
-  browserSync: function(){
-    return {
-      server: {
-        baseDir: [
-          DIST,
-          path.join(TMP, DIST),
-          path.join(TMP),
-          path.join(TMP, APP),
-          path.join(APP, 'public'),
-          'client/bower_components'
-        ]
-      },
-      ghostMode: false,
-      notify: false,
-      port: 3000,
-      // browser: 'chrome',
-      // browser: 'skip',
-
-      // forces full page reload on css changes.
-      // injectChanges: false,
-
-      // Run as an https by uncommenting 'https: true'
-      // Note: this uses an unsigned certificate which on first access
-      //       will present a certificate warning in the browser.
-      // https: true,
-
-    }
-  },
-
-  traceur: function() {
-    return  {
-      // modules: 'commonjs',
-      sourceMaps: true,
-      outputLanguage: 'es5',
-      // ES6
-      // symbols: true, // buggy
-      blockBinding: true, // noisy
-      // ES7
-      asyncFunctions: true, // noisy
-      exponentiation: true,
-      arrayComprehension: true,
-      // generatorComprehension: true, // noisy
-      // options for DI
-      types: true,
-      typeAssertions: true,
-      typeAssertionModule: 'rtts-assert',
-      annotations: true,
-    }
-  },
+    // Run as an https by uncommenting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    // https: true,
+  }
 }
+
+module.exports = CFG
 
