@@ -15,7 +15,7 @@ var CFG = {
   pub: 'tmp/public',
   tmp: 'tmp',
   src: 'client',
-  vendors: 'client/vendors',
+  vendors: 'tmp/vendors',
   tasks: {},
 }
 

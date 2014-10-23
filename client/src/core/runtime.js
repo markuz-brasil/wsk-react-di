@@ -1,2 +1,2 @@
-var { React, less } = window.ModuleNamespace.runtime
+var { React, less } = window.BundleNamespace.runtime
 export { React, less }

@@ -11,6 +11,7 @@ var reload = browserSync.reload;
 var log = $.util.log
 var red = $.util.colors.red
 var cyan = $.util.colors.cyan
+var mag = $.util.colors.magenta
 
 var watch = require('./etc/watchers');
 
@@ -41,6 +42,7 @@ gulp.task('build', ['clean'], function(next){
   })
 })
 
+var BS
 // TODO: add comments
 gulp.task('serve', function (next) {
   var opts = CFG.browserSync()
@@ -48,6 +50,7 @@ gulp.task('serve', function (next) {
 
   browserSync(opts, function(err, bs){
     if (err) {throw err}
+    BS = bs
     log("Loaded '"+ cyan('browserSync') +"'...")
     next()
   });
@@ -56,6 +59,8 @@ gulp.task('serve', function (next) {
 // TODO: add comments
 gulp.task('reload', function(next){
   browserSync.reload()
+  BS.logger.info('Local URL: '+ mag(BS.options.urls.local))
+  BS.logger.info('External URL: '+ mag(BS.options.urls.external))
   next()
 });
 

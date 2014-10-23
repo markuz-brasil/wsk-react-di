@@ -20,11 +20,14 @@ var TASKS = CFG.tasks
 // Watch Files For Changes & reload
 var FILES = {
   html: [ SRC +'/**/*.{jade,html}', ],
-  js: [
-    SRC +'/{index,src/**/*,!vendors}.{js,jsx}',
+  // js: [
+  //   SRC +'/{index,src/**/*,!vendors}.{js,jsx}',
+  // ],
+  bundle: [
+    SRC +'/{index,src/**/*}.{js,jsx}',
   ],
   vendors: [
-    SRC +'/src/vendors/*.{js,jsx}',
+    SRC +'/vendors/*.{js,jsx}',
   ],
   tasks: [ 'gulpfile.js', 'etc/**/*.js', ],
 }
@@ -43,14 +46,13 @@ function runTasks () {
 function assets (TASKS) {
   log("Starting '"+ cyan('watch:assets') +"'...")
 
-  gulp.watch(FILES.js, runTasks('assets:js', 'reload'))
-  // gulp.watch(FILES.vendors, runTasks('assets:vendors', 'reload'))
+  gulp.watch(FILES.bundle, runTasks('assets:es6', 'assets:bundle', 'reload'))
+  gulp.watch(FILES.vendors, runTasks('assets:es6', 'assets:vendors', 'reload'))
   gulp.watch(FILES.html, runTasks('assets:jade', 'reload'))
 }
 
 function gulpfile (TASKS) {
   log("Starting '"+ cyan('watch:gulpfile') +"'...")
-
   gulp.watch(FILES.tasks, runTasks('restart'))
 }
 
