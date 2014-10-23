@@ -15,7 +15,7 @@ This will install Gulp globally. Depending on your user account, you may need to
 $ npm install
 ```
 
-That's it! You should now have everything needed to use the Gulp tools in wsk-react-di.
+That's it! You should now have everything needed to begin hacking on wsk-react-di.
 
 ### Gulp Commands
 
