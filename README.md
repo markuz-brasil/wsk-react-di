@@ -9,13 +9,13 @@
 $ npm install --global gulp
 ```
 
-This will install Gulp, Bower and Phantomjs globally. Depending on your user account, you may need to gain elevated permissions using `sudo` (i.e `sudo npm install --global gulp`). Next, install the local dependencies Web Starter Kit requires:
+This will install Gulp globally. Depending on your user account, you may need to gain elevated permissions using `sudo` (i.e `sudo npm install --global gulp`). Next, install the local dependencies wsk-react-di requires:
 
 ```sh
 $ npm install
 ```
 
-That's it! You should now have everything needed to use the Gulp tools in Web Starter Kit.
+That's it! You should now have everything needed to use the Gulp tools in wsk-react-di.
 
 ### Gulp Commands
 
