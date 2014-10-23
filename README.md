@@ -3,7 +3,7 @@
 |--- |--- |--- |--- |--- |--- |--- |---
 
 
-## Quickstart
+#### Quickstart
 
 ```sh
 $ npm install --global gulp
@@ -17,17 +17,17 @@ $ npm install
 
 That's it! You should now have everything needed to begin hacking on wsk-react-di.
 
-### Gulp Commands
+#### Gulp Commands
 
 You can now use Gulp with the following commands to stay productive during development:
 
-#### Build & Optimize
+##### Build & Optimize
 
 ```sh
 $ gulp
 ```
 
-#### Watch For Changes & Automatically Refresh Across Devices
+##### Watch For Changes & Automatically Refresh Across Devices
 
 ```sh
 $ gulp watch serve build
@@ -37,6 +37,6 @@ Now direct your browser to `http://localhost:3000/`
 
 Build and optimize the current project, ready for deployment. This includes ~ linting as well as image, script, stylesheet and HTML optimization and minification. ~
 
-### License
+#### License
 [MIT](https://github.com/markuz-brasil/wsk-react-di/blob/master/LICENSE)
 
