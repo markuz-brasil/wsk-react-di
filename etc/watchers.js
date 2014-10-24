@@ -2,7 +2,6 @@
 
 var path = require('path')
 
-// Include Gulp & Tools We'll Use
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
@@ -14,21 +13,13 @@ var cyan = $.util.colors.cyan
 var CFG = require('./config');
 var TMP = CFG.tmp
 var SRC = CFG.src
-
 var TASKS = CFG.tasks
 
 // Watch Files For Changes & reload
 var FILES = {
   html: [ SRC +'/**/*.{jade,html}', ],
-  // js: [
-  //   SRC +'/{index,src/**/*,!vendors}.{js,jsx}',
-  // ],
-  bundle: [
-    SRC +'/{index,src/**/*}.{js,jsx}',
-  ],
-  vendors: [
-    SRC +'/vendors/*.{js,jsx}',
-  ],
+  bundle: [ SRC +'/{index,src/**/*}.{js,jsx}',],
+  vendors: [ SRC +'/vendors/*.{js,jsx}', ],
   tasks: [ 'gulpfile.js', 'etc/**/*.js', ],
 }
 
@@ -46,8 +37,8 @@ function runTasks () {
 function assets (TASKS) {
   log("Starting '"+ cyan('watch:assets') +"'...")
 
-  gulp.watch(FILES.bundle, runTasks('assets:es6', 'assets:bundle', 'reload'))
-  gulp.watch(FILES.vendors, runTasks('assets:es6', 'assets:vendors', 'reload'))
+  gulp.watch(FILES.bundle, runTasks('assets:client', 'reload'))
+  gulp.watch(FILES.vendors, runTasks('assets:vendors', 'reload'))
   gulp.watch(FILES.html, runTasks('assets:jade', 'reload'))
 }
 
@@ -60,5 +51,3 @@ module.exports = {
   assets: assets,
   gulpfile: gulpfile,
 }
-
-

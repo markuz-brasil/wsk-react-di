@@ -1,3 +1,3 @@
 
-var {co, di, assert } = window.BundleNamespace.libs
+var {co, di, assert } = window.BundleNamespace.coreLibs
 export {co, di, assert}

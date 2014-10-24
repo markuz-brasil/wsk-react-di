@@ -15,13 +15,36 @@ var CFG = {
   pub: 'tmp/public',
   tmp: 'tmp',
   src: 'client',
-  vendors: 'tmp/vendors',
+  vendors: {},
+  to5: {},
   tasks: {},
 }
-
 var SRC = CFG.src
-var VENDORS = CFG.vendors
+var TMP = CFG.tmp
 var PUB = CFG.pub
+
+CFG.to5.entries = SRC +'/index.js'
+CFG.to5.aliases = {
+  libs: './'+ SRC +'/src/core/libs',
+  runtime: './'+ SRC +'/src/core/runtime',
+  main: './'+ SRC +'/src/main',
+  core: './'+ SRC +'/src/core',
+}
+
+CFG.vendors.src = 'tmp/vendors'
+CFG.vendors.entries = SRC + '/vendors/{core-libs,runtime,shims}.js'
+CFG.vendors.aliases ={
+  di: './'+ TMP +'/di',
+  co: './'+ SRC +'/node_modules/co',
+  assert: './'+ SRC +'/node_modules/assert',
+  react: './'+ SRC +'/node_modules/react/addons',
+  less: './'+ SRC +'/node_modules/less',
+  setimmediate: './'+ SRC +'/node_modules/setimmediate/setImmediate',
+  'es6-shim': './'+ SRC +'/node_modules/6to5/node_modules/es6-shim/es6-shim',
+  'regenerator-runtime': './'+ SRC +'/node_modules/6to5/node_modules/regenerator/runtime',
+}
+
+var VENDORS = CFG.vendors.src
 
 CFG.throw = console.error.bind(console)
 process.argv.forEach(function(task, i){
@@ -32,17 +55,13 @@ process.argv.forEach(function(task, i){
 CFG.browserSync = function browserSync () {
   return {
     server: {
-      baseDir: [
-        SRC +'/public',
-        VENDORS,
-        PUB,
-      ]
+      baseDir: [ SRC +'/public', VENDORS, PUB ]
     },
     ghostMode: false,
     notify: false,
     port: 3000,
+    browser: 'skip',
     // browser: 'chrome',
-    // browser: 'skip',
 
     // forces full page reload on css changes.
     // injectChanges: false,
@@ -55,4 +74,3 @@ CFG.browserSync = function browserSync () {
 }
 
 module.exports = CFG
-

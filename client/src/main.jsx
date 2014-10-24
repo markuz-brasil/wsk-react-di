@@ -1,14 +1,15 @@
 
 "use strict"
 
-import { React, less } from 'runtime'
+import { React } from 'runtime'
 import { co, di } from 'libs'
 
 import {
   ReactStore,
   ReactState,
   ReactElem,
-  createReactCtrl
+  createReactCtrl,
+  renderStyle
 } from 'core'
 
 import { Store, InitState } from './state'
@@ -24,37 +25,28 @@ var {
   TransientScope
 } = di
 
-export function Main (...args) {
+export function main () {
+  return <Main />
+}
+
+function Main (...args) {
   var injector = new Injector([RootElem, InitState, Store])
   Store().injector = injector
   return createReactCtrl(injector)(...args)
   // return createReactCtrl(new Injector([]))(...args)
 }
 
-function RenderStyles (str) {
-  return new Promise((resolve, reject) => {
-    setImmediate(() =>{
-      less.render(str, {compress: true}, function (err, css) {
-        if (err) { return reject(err) }
-        resolve(css)
-      })
-    })
-  })
-}
-
 annotate(InitState, new Inject(RootStyles))
 annotate(RootStyles, new Inject(ReactStore))
 function RootStyles (store) {
-  RenderStyles(`
-    #react-app {
-      background: linear-gradient(to bottom, lighten(#f5f5f5, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
-      border-radius: 0px;
-      margin-bottom: 0px;
-    }
+  renderStyle(`
+    background: linear-gradient(to bottom, lighten(#f5f5f5, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
+    border-radius: 0px;
+    margin-bottom: 0px;
   `).then((css) => {
     store.get(RootElem).style = css
     store.context.forceUpdate()
-  })
+  }, console.error.bind(console))
 
   return {style: "#react-app{display:none}"}
 }
@@ -79,7 +71,3 @@ function RootElem (store, styles) {
     </div>
   )
 }
-
-
-
-

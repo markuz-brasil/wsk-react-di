@@ -1,4 +1,16 @@
 "use strict"
+import { less } from 'runtime'
+
+export function renderStyle (str) {
+  return new Promise((resolve, reject) => {
+    setImmediate(() =>{
+      less.render(`#react-app { ${str} }`, {compress: true}, function (err, css) {
+        if (err) { return reject(err) }
+        resolve(css)
+      })
+    })
+  })
+}
 
 export function mergeObjs (...objs) {
   var target = objs[1]

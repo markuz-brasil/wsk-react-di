@@ -1,5 +1,6 @@
 
 export {
+  renderStyle,
   mergeObjs,
   getNonEnumProps,
   fetchJsonp

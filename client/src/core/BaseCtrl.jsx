@@ -1,9 +1,15 @@
 "use strict"
 
-import { React, less } from 'runtime'
+import { React } from 'runtime'
 import { co, di } from 'libs'
 
-var {annotate, Inject, InjectLazy, Injector, TransientScope } = di
+var {
+  annotate,
+  Inject,
+  InjectLazy,
+  Injector,
+  TransientScope
+} = di
 
 export function createReactCtrl (injector) {
   return React.createClass(injector.get(ReactContext))
@@ -47,6 +53,3 @@ export function ReactState (store) {
 
   return { ctx: `lazy injected ReactSyncState (${new Date - t0}ms)`,}
 }
-
-
-
