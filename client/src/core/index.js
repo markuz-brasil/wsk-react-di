@@ -8,10 +8,10 @@ export {
 
 export {
   createReactCtrl,
+  createReactStyle,
   ReactStore,
   ReactClass,
   ReactContex,
   ReactState,
-  ReactStyle,
   ReactElem
 } from './BaseCtrl'

@@ -15,6 +15,14 @@ export function createReactCtrl (injector) {
   return React.createClass(injector.get(ReactContext))
 }
 
+export function createReactStyle (str) {
+  return React.createClass({
+    render () {
+      return <div dangerouslySetInnerHTML={{__html: `<style> ${str} </style>` }} />
+    },
+  })
+}
+
 annotate(ReactContext, new Inject(ReactStore))
 annotate(ReactContext, new InjectLazy(ReactElem, ReactState))
 export function ReactContext (store, lazyElem, lazyState) {
@@ -52,9 +60,4 @@ export function ReactState (store) {
   }, 0)
 
   return { ctx: `lazy injected ReactSyncState (${new Date - t0}ms)`,}
-}
-
-export function ReactStyle (str) {
-  return <div key="style-wrap" dangerouslySetInnerHTML={{__html:
-          `<style key="styles" > ${str} </style>` }} />
 }

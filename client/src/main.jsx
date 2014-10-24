@@ -9,7 +9,7 @@ import {
   ReactState,
   ReactElem,
   createReactCtrl,
-  ReactStyle,
+  createReactStyle,
   renderStyle
 } from 'core'
 
@@ -58,11 +58,11 @@ annotate(RootElem, new Inject(ReactStore, RootStyles))
 function RootElem (store, styles) {
   if (!store.has(RootElem)) { store.set(RootElem, styles) }
 
+  var RootStyles = createReactStyle(store.get(RootElem).style)
   return (
-    <div key='RootElem'>
-      <ReactStyle(store.get(RootElem).style) />
-
-      <div key='ElemWrap'>
+    <div>
+      <RootStyles key='RootStyle' />
+      <div key='RootElem'>
         {"This is the state status:"}
         <div key='StatusElem'> {store.context.state.status} </div>
       </div>
