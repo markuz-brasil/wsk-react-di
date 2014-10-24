@@ -53,3 +53,8 @@ export function ReactState (store) {
 
   return { ctx: `lazy injected ReactSyncState (${new Date - t0}ms)`,}
 }
+
+export function ReactStyle (str) {
+  return <div key="style-wrap" dangerouslySetInnerHTML={{__html:
+          `<style key="styles" > ${str} </style>` }} />
+}

@@ -12,7 +12,6 @@ export {
   ReactClass,
   ReactContex,
   ReactState,
-  ReactSyncState,
-  ReactAsyncState,
+  ReactStyle,
   ReactElem
 } from './BaseCtrl'
