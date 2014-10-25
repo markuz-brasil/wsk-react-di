@@ -36,7 +36,7 @@ function bundleClosure (opt, next) {
   opt.title = opt.title || opt.basename
 
   browserify({debug: opt.sourcemaps, extensions: ['.js', '.jsx']})
-    .transform(to5Browserify)
+    .transform(to5Browserify.configure({blacklist: ['forOf']}))
     .on('error', next)
     .transform(aliasify.configure({
       aliases: opt.aliases,
@@ -74,7 +74,7 @@ function bundleNamespace (opt, next) {
       standalone: opt.standalone,
       extensions: ['.js', '.jsx'],
     })
-    .transform(to5Browserify)
+    .transform(to5Browserify.configure({blacklist: ['forOf']}))
     .on('error', next)
     .transform(aliasify.configure({
       aliases: opt.aliases,
@@ -107,7 +107,7 @@ function bundleCommonjs (opt, next) {
   return gulp.src(opt.entry)
     .pipe($.cached('assets:commonjs', {optimizeMemory: true}))
     .pipe($.sourcemaps.init({loadMaps: opt.sourcemaps}))
-    .pipe($['6to5']()).on('error', next)
+    .pipe($['6to5']({blacklist: ['forOf']})).on('error', next)
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest(opt.dest))
     .pipe($.size({title: 'cjs: '+ opt.title}))
