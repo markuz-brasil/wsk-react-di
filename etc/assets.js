@@ -35,7 +35,7 @@ function bundleClosure (opt, next) {
   opt.dest = opt.dest || '.'
   opt.title = opt.title || opt.basename
 
-  browserify({debug: opt.sourcemaps, extensions: ['.js', '.jsx']})
+  return browserify({debug: opt.sourcemaps, extensions: ['.js', '.jsx']})
     .transform(to5Browserify.configure({blacklist: ['forOf']}))
     .on('error', next)
     .transform(aliasify.configure({
@@ -48,9 +48,9 @@ function bundleClosure (opt, next) {
     .bundle()
     .on('error', next)
     .pipe(vinylify(opt.basename))
-    .pipe($.sourcemaps.init({loadMaps: opt.sourcemaps}))
-    .pipe($.uglify())
-    .pipe($.sourcemaps.write('./maps'))
+    // .pipe($.sourcemaps.init({loadMaps: opt.sourcemaps}))
+    // .pipe($.uglify())
+    // .pipe($.sourcemaps.write('./maps'))
     .pipe(gulp.dest(opt.dest))
     .pipe($.size({title: 'js: '+ opt.title}))
     .pipe($.gzip())
@@ -69,7 +69,7 @@ function bundleNamespace (opt, next) {
   opt.title = opt.title || opt.basename
   opt.standalone = opt.standalone || opt.basename.split('.')[0]
 
-  browserify({
+  return browserify({
       debug: opt.sourcemaps,
       standalone: opt.standalone,
       extensions: ['.js', '.jsx'],
@@ -87,7 +87,7 @@ function bundleNamespace (opt, next) {
     .on('error', next)
     .pipe(vinylify(opt.basename))
     .pipe($.sourcemaps.init({loadMaps: opt.sourcemaps}))
-    .pipe($.uglify())
+    // .pipe($.uglify())
     .pipe($.sourcemaps.write('./maps'))
     .pipe(gulp.dest(opt.dest))
     .pipe($.size({title: 'js: '+ opt.title}))
@@ -129,11 +129,12 @@ gulp.task('assets:jade', function(){
     .pipe($.size({title: 'jade'}))
 });
 
+// TODO: add comments
 gulp.task('assets:js', function (next) {
   runSequence(['assets:client', 'assets:vendors'], next)
 })
 
-//
+// TODO: add comments
 gulp.task('clean:client', del.bind(null, [TMP +'/to5']));
 gulp.task('assets:client', function(){
   return gulp.src(CFG.to5.entries)
@@ -192,7 +193,7 @@ gulp.task('assets:di', function(next){
     title: 'di',
   }
 
-  bundleCommonjs(opt, function (err) {
+  return bundleCommonjs(opt, function (err) {
     if (err) return console.error(err)
     next()
   })
