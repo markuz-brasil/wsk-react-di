@@ -4,6 +4,9 @@
 import { React } from 'runtime'
 import { co, di } from 'libs'
 
+
+export {init} from 'core'
+
 import {
   ReactStore,
   ReactState,

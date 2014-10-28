@@ -47,10 +47,10 @@ export function fetchJsonp () {
 
 
 
-function* async () {}
-function sync () {}
+// function* async () {}
+// function sync () {}
 
-console.log(Object.getPrototypeOf(async))
+// console.log(Object.getPrototypeOf(async))
 
-console.log(async instanceof Object.getPrototypeOf(function *(){}).constructor)
-console.log(sync instanceof Object.getPrototypeOf(function *(){}).constructor)
+// console.log(async instanceof Object.getPrototypeOf(function *(){}).constructor)
+// console.log(sync instanceof Object.getPrototypeOf(function *(){}).constructor)

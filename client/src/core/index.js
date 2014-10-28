@@ -10,6 +10,7 @@ export {
   createReactCtrl,
   createReactStyle,
   ReactStore,
+  init,
   ReactClass,
   ReactContex,
   ReactState,
