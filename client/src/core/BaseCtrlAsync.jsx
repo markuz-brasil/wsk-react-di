@@ -48,6 +48,7 @@ function * ReactContext (store, lazyElem, lazyState) {
         store.context = this
         store.state = state
         setImmediate(()=>{
+          store.setState = store.context.setState.bind(this)
           store.injector.get(ReactNextState)
         })
 
@@ -97,15 +98,16 @@ function ReactNextState (store) {
   store.pagePaints++
   if (store.pagePaints <= 1000) {
     c0(store.injector.get(ReactState))((state) => {
-      store.context.setState(state)
-      if (store.pagePaints % 10 === 0) {
-        // On sync mode it may blow the stack
-        // or it is too fast and the browser drops most of the frames
-        return setImmediate(()=>{
-          store.injector.get(ReactNextState)
-        })
+      store.setState(state)
+      // On sync mode it may blow the stack
+      // or it is too fast and the browser drops most of the frames
+      if (store.pagePaints % 9 !== 0) {
+        return store.injector.get(ReactNextState)
       }
-      store.injector.get(ReactNextState)
+
+      setImmediate(()=>{
+        store.injector.get(ReactNextState)
+      })
     })
   }
 }
