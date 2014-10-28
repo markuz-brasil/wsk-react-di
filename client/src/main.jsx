@@ -9,7 +9,6 @@ import {
   ReactState,
   ReactElem,
   createReactCtrl,
-  createReactStyle,
   renderStyle
 } from 'core'
 
@@ -26,6 +25,14 @@ var {
   TransientScope
 } = di
 
+function createReactStyle (str) {
+  return React.createClass({
+    render () {
+      return <div dangerouslySetInnerHTML={{__html: `<style> ${str} </style>` }} />
+    },
+  })
+}
+
 export function main () {
   return <Main />
 }
@@ -33,8 +40,8 @@ export function main () {
 function Main (...args) {
   var injector = new Injector([RootElem, InitState, Store])
   Store().injector = injector
-  return createReactCtrl(injector)(...args)
-  // return createReactCtrl(new Injector([]))(...args)
+  // return createReactCtrl(injector)(...args)
+  return createReactCtrl(new Injector([]))(...args)
 }
 
 annotate(InitState, new Inject(RootStyles))
