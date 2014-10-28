@@ -5,7 +5,7 @@ import { React } from 'runtime'
 import { co, di } from 'libs'
 
 
-export {init} from 'core'
+export {createReactCtrl} from 'core'
 
 import {
   ReactStore,
