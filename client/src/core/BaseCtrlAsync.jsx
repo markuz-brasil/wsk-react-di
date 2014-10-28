@@ -42,19 +42,19 @@ function * ReactContext (store, lazyElem, lazyState) {
   var state = yield lazyState()
 
   return {
-      render () { return lazyElem() },
+    render () { return lazyElem() },
 
-      getInitialState () {
-        store.context = this
-        store.state = state
-        setImmediate(()=>{
-          store.setState = store.context.setState.bind(this)
-          store.injector.get(ReactNextState)
-        })
+    getInitialState () {
+      store.context = this
+      store.state = state
+      setImmediate(() => {
+        store.setState = store.context.setState.bind(this)
+        store.injector.get(ReactNextState)
+      })
 
-        return state
-      }
+      return state
     }
+  }
 }
 
 var _store = {
@@ -80,10 +80,10 @@ annotate(ReactStateAsync, new TransientScope)
 annotate(ReactStateAsync, new Inject(ReactStore))
 annotate(ReactStateAsync, new InjectLazy(ReactStyle))
 function * ReactStateAsync (store, lazyStyle) {
-  return yield new Promise((res, rej)=>{
+  return yield new Promise((resolve, rej)=>{
     store.t0 = store.t0 || new Date
     setTimeout(()=>{
-      res(Object.assign(store.state, {
+      resolve(Object.assign(store.state, {
         style: lazyStyle,
         msg: () => `... async lazy injected ${store.pagePaints} times
           (${( store.pagePaints*1000/(new Date - store.t0))|0} FPS) ...`,
