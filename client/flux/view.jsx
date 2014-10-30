@@ -17,38 +17,41 @@ export {
   ReactView
 }
 
-function * ReactStyle () {
-  return yield renderStyle `
-    background: linear-gradient(to bottom, lighten(#55f5ab, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
-  `
-}
+// function * ReactStyle () {
+//   return yield renderStyle `
+//     background: linear-gradient(to bottom, lighten(#55f5ab, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
+//   `
+// }
 
 function randColor () {
   return (Math.random() * (255 - 0))|0 + 0
 }
 
+function randPer () {
+  return (Math.random() * (100 - 0))|0 + 0
+
+}
+
 var _store = {}
 
-annotate(ReactStyleRand, new TransientScope)
-annotate(ReactStyleRand, new Provide(ReactStyle))
-var counter = 0
-
-function ReactStyleRand () {
+function ReactStyle () {
   return function * ReactStyleRand () {
+    var x0 = randPer()
     var style = `
+      color: rgb(${randColor()}, ${randColor()}, ${randColor()});
       background: linear-gradient(
         to bottom,
-        lighten(rgb(${randColor()}, ${randColor()}, ${randColor()}), 20%) 0%,
-        darken(rgb(${randColor()}, ${randColor()}, ${randColor()}), 3%) 70%,
-        darken(rgb(${randColor()}, ${randColor()}, ${randColor()}), 3%) 71%,
-        lighten(rgb(${randColor()}, ${randColor()}, ${randColor()}), 10%) 100%
+        lighten(rgb(${randColor()}, ${randColor()}, ${randColor()}), ${randPer()}%) 0%,
+        darken(rgb(${randColor()}, ${randColor()}, ${randColor()}), ${randPer()}%) ${x0}%,
+        darken(rgb(${randColor()}, ${randColor()}, ${randColor()}), ${randPer()}%) ${x0+1}%,
+        lighten(rgb(${randColor()}, ${randColor()}, ${randColor()}), ${randPer()}%) 100%
       );
     `
     _store.style = yield renderStyle(style)
   }
 }
 
-annotate(ReactView, new Inject(ReactStyleRand))
+annotate(ReactView, new Inject(ReactStyle))
 function * ReactView (style) {
   yield style
   return function () {
