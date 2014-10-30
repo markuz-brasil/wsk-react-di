@@ -15,8 +15,7 @@ var {
 export {
   ReactStore,
   ReactState,
-  ReactStateAsync,
-  ReactNextState
+  ReactStateAsync
 }
 
 var _store = {
@@ -50,21 +49,6 @@ function * ReactStateAsync (store) {
     msg: () => `... async lazy injected ${store.pagePaints} times
       (${( store.pagePaints*1000/(new Date - store.t0))|0} FPS) ...`,
   })
-}
-
-annotate(ReactNextState, new TransientScope)
-annotate(ReactNextState, new Inject(ReactStore))
-function * ReactNextState (store) {
-  store.pagePaints++
-  if (store.pagePaints > 1000) return
-  store.setState(yield store.injector.get(ReactState))
-
-
-  // On sync mode it may blow the stack
-  // or it is too fast and the browser drops most of the frames
-  var next = c0(store.injector.get(ReactNextState))
-  if (store.pagePaints % 9 !== 0) return next()
-  setImmediate(next)
 }
 
 

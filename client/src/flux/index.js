@@ -12,14 +12,14 @@ import {
 import {
   ReactStore,
   ReactState,
-  ReactStateAsync,
-  ReactNextState
+  ReactStateAsync
 } from './state'
 
 var {
   annotate,
   Inject,
   Injector,
+  TransientScope
 } = di
 
 // There is a bug on 6to5. It doesnt handle exporting generators well.
@@ -38,17 +38,17 @@ export {
   ReactView
 }
 
+var _injector
 function createReactCtrl (injector) {
-  injector = injector || new Injector([ReactState])
-  // injector = injector || new Injector([ReactStateAsync])
-  ReactStore().injector = injector
+  _injector = injector || new Injector([ReactState])
+  // _injector = injector || new Injector([ReactStateAsync])
 
   return function * ReactCtrl () {
-    return React.createClass(yield injector.get(ReactContext))
+    return React.createClass(yield _injector.get(ReactContext))
   }
 }
 
-// TODO: combine ReactStore, ReactState, ReactNextState into one big ReactState
+// TODO: combine ReactStore, ReactState, into one big ReactStore
 annotate(ReactContext, new Inject(ReactView, ReactStore, ReactState, ReactNextState))
 function * ReactContext (view, store, state, next) {
   var initState = yield state
@@ -67,3 +67,19 @@ function * ReactContext (view, store, state, next) {
     },
   }
 }
+
+annotate(ReactNextState, new TransientScope)
+annotate(ReactNextState, new Inject(ReactStore))
+function * ReactNextState (store) {
+  store.pagePaints++
+  if (store.pagePaints > 1000) return
+
+  store.setState(yield _injector.get(ReactState))
+
+  // On sync mode it may blow the stack
+  // or it is too fast and the browser drops most of the frames
+  var next = c0(_injector.get(ReactNextState))
+  if (store.pagePaints % 9 !== 0) return next()
+  setImmediate(next)
+}
+
