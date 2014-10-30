@@ -1,8 +1,7 @@
 "use strict"
 
 import { React } from 'runtime'
-import { c0, di } from 'libs'
-
+import { di } from 'libs'
 
 var {
   annotate,
@@ -23,14 +22,6 @@ function * ReactStyle () {
   return { background: '#cbcbcb'}
 }
 
-annotate(ReactStyleAsync, new Provide(ReactStyle))
-function * ReactStyleAsync () {
-  // 0.1 sec long async op
-  // take a look at co's API
-  yield (next) => setTimeout(next, 100)
-  return { background: '#cbbdbe'}
-}
-
 annotate(ReactView, new TransientScope)
 annotate(ReactView, new Inject(ReactStyle))
 function * ReactView (style) {
@@ -40,3 +31,10 @@ function * ReactView (style) {
   }
 }
 
+annotate(ReactStyleAsync, new Provide(ReactStyle))
+function * ReactStyleAsync () {
+  // 0.1 sec long async op
+  // take a look at co's API for help
+  yield (next) => setTimeout(next, 100)
+  return { background: '#cbbdbe'}
+}

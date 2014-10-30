@@ -1,7 +1,6 @@
 "use strict"
 
-import { React } from 'runtime'
-import { c0, di } from 'libs'
+import { di } from 'libs'
 
 var {
   annotate,
@@ -20,7 +19,7 @@ export {
 
 var _store = {
   pagePaints: 0,
-  state: {}
+  state: {},
 }
 function ReactStore () { return _store }
 
@@ -41,8 +40,8 @@ annotate(ReactStateAsync, new Inject(ReactStore))
 function * ReactStateAsync (store) {
   store.t0 = store.t0 || new Date
 
-  // 1 sec long async op
-  // take a look at co's API
+  // 0.5 sec long async op
+  // take a look at co's API for help
   yield (next) => setTimeout(next, 500)
 
   return Object.assign(store.state, {

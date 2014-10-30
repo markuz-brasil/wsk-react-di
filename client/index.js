@@ -11,8 +11,8 @@ React.initializeTouchEvents(true)
 
 c0(function * () {
   var t0 = new Date
-  var ViewCtrl = yield createReactCtrl()
 
+  var ViewCtrl = React.createClass(yield createReactCtrl())
   React.renderComponent(<ViewCtrl />, document.getElementById('react-app'));
 
   var t1 = new Date

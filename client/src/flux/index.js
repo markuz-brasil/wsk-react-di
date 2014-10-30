@@ -1,6 +1,5 @@
 "use strict"
 
-import { React } from 'runtime'
 import { c0, di } from 'libs'
 
 import {
@@ -31,7 +30,7 @@ export {
   ReactStore,
   ReactState,
   ReactStateAsync,
-  ReactNextState,
+  ReactNext,
 
   ReactStyle,
   ReactStyleAsync,
@@ -44,42 +43,46 @@ function createReactCtrl (injector) {
   // _injector = injector || new Injector([ReactStateAsync])
 
   return function * ReactCtrl () {
-    return React.createClass(yield _injector.get(ReactContext))
+    return yield _injector.get(ReactContext)
   }
 }
 
 // TODO: combine ReactStore, ReactState, into one big ReactStore
-annotate(ReactContext, new Inject(ReactView, ReactStore, ReactState, ReactNextState))
+annotate(ReactContext, new Inject(ReactView, ReactStore, ReactState, ReactNext))
 function * ReactContext (view, store, state, next) {
-  var initState = yield state
+  // pre-rendering the view (less into css)
+  // pre generating initial state
   var render = yield view
+  var initState = yield state
 
-  return {
-    render () { return render.call(this) },
+  return Object.assign({render}, {
     getInitialState () {
+      // wiring the context back to the store
       store.context = this
       store.state = initState
       setImmediate(() => {
         store.setState = store.context.setState.bind(this)
-        c0(next)()
+        next()
+        // c0(next)()
       })
       return initState
     },
-  }
+  })
 }
 
-annotate(ReactNextState, new TransientScope)
-annotate(ReactNextState, new Inject(ReactStore))
-function * ReactNextState (store) {
-  store.pagePaints++
-  if (store.pagePaints > 1000) return
+annotate(ReactNext, new TransientScope)
+annotate(ReactNext, new Inject(ReactStore, ReactState))
+function ReactNext (store, state) {
+  return c0(function * () {
+    store.pagePaints++
+    if (store.pagePaints > 1000) return
 
-  store.setState(yield _injector.get(ReactState))
-
-  // On sync mode it may blow the stack
-  // or it is too fast and the browser drops most of the frames
-  var next = c0(_injector.get(ReactNextState))
-  if (store.pagePaints % 9 !== 0) return next()
-  setImmediate(next)
+    store.setState(yield state)
+    // On sync mode it may blow the stack
+    // or it is too fast and the browser drops most of the frames
+    var next = _injector.get(ReactNext)
+    if (store.pagePaints % 9 !== 0) return next()
+    setImmediate(next)
+  })
 }
 
