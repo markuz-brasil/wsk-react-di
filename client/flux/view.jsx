@@ -1,7 +1,7 @@
 "use strict"
 
 import { React, less } from 'runtime'
-import { di } from 'libs'
+import { c0, di } from 'libs'
 
 var {
   annotate,
@@ -23,12 +23,37 @@ function * ReactStyle () {
   `
 }
 
-annotate(ReactView, new TransientScope)
-annotate(ReactView, new Inject(ReactStyle))
+function randColor () {
+  return (Math.random() * (255 - 0))|0 + 0
+}
+
+var _store = {}
+
+annotate(ReactStyleRand, new TransientScope)
+annotate(ReactStyleRand, new Provide(ReactStyle))
+var counter = 0
+
+function ReactStyleRand () {
+  return function * ReactStyleRand () {
+    var style = `
+      background: linear-gradient(
+        to bottom,
+        lighten(rgb(${randColor()}, ${randColor()}, ${randColor()}), 20%) 0%,
+        darken(rgb(${randColor()}, ${randColor()}, ${randColor()}), 3%) 70%,
+        darken(rgb(${randColor()}, ${randColor()}, ${randColor()}), 3%) 71%,
+        lighten(rgb(${randColor()}, ${randColor()}, ${randColor()}), 10%) 100%
+      );
+    `
+    _store.style = yield renderStyle(style)
+  }
+}
+
+annotate(ReactView, new Inject(ReactStyleRand))
 function * ReactView (style) {
-  var css = yield style
+  yield style
   return function () {
-    return <div style={ css }> { this.state.msg() } </div>
+    c0(style)()
+    return <div style={ _store.style }> { this.state.msg() } </div>
   }
 }
 
