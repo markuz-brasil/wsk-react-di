@@ -29,11 +29,9 @@ function randColor () {
 
 function randPer () {
   return (Math.random() * (10 - 0))|0 + 0
-
 }
 
 var _store = {}
-
 function ReactStyle () {
   return function * ReactStyleRand () {
     var x0 = randPer()
