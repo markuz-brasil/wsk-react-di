@@ -28,7 +28,6 @@ export {
 
   ReactStore,
   ReactState,
-  ReactNext,
 
   ReactStyle,
   ReactView
