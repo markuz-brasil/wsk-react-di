@@ -17,34 +17,9 @@ export {
   ReactView
 }
 
-var _lessCfg = {compress: true}
-var _div = document.createElement('div')
-function renderStyle (str = '', opts = _lessCfg) {
-  var id = `tmp-id-${Math.random().toString().split('.')[1]}`
-  var regex = new RegExp(`(^#${id}{|}$)`)
-
-  return function (next) {
-    less.render(`#${id}{ ${str} }`, opts, (err, value) => {
-      // fix string
-      value = value.replace(regex, '')
-      _div.style.cssText = value
-      var style = {}
-
-      for (let item of _div.style) {
-        if (style[item] !== '') {
-          style[item] = _div.style[item]
-        }
-      }
-      next(err, style)
-    })
-  }
-}
-
 function * ReactStyle () {
-  return yield renderStyle`
-    background: linear-gradient(to bottom, lighten(#00f500, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
-    border-radius: 0px;
-    margin-bottom: 0px;
+  return yield renderStyle `
+    background: linear-gradient(to bottom, lighten(#55f5ab, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
   `
 }
 
@@ -57,9 +32,27 @@ function * ReactView (style) {
   }
 }
 
-annotate(ReactStyleSync, new Provide(ReactStyle))
-function * ReactStyleSync () {
-  // 0.1 sec long async op
-  // take a look at co's API for help
-  return { background: '#cbbdbe'}
+// creating a thunk around less.render to use with c0
+var _lessCfg = {compress: true}
+var _div = document.createElement('div')
+var _id = `tmp-id-${Math.random().toString().split('.')[1]}`
+var _regex = new RegExp(`(^#${_id}{|}$)`)
+
+function renderStyle (str = 'display: none;', opts = _lessCfg) {
+  // this is equivalent of returning a promise. but better performace
+  return function (next) {
+    less.render(`#${_id}{ ${str} }`, opts, (err, value) => {
+      // fix string
+      value = value.replace(_regex, '')
+      _div.style.cssText = value
+      var style = {}
+
+      for (let item of _div.style) {
+        if (style[item] !== '') {
+          style[item] = _div.style[item]
+        }
+      }
+      next(err, style)
+    })
+  }
 }

@@ -4,14 +4,12 @@ import { c0, di } from 'libs'
 
 import {
   ReactStyle,
-  ReactStyleAsync,
   ReactView
 } from './view'
 
 import {
   ReactStore,
-  ReactState,
-  ReactStateAsync
+  ReactState
 } from './state'
 
 var {
@@ -26,14 +24,13 @@ var {
 export {
   createContext,
   ReactContext,
+  ReactNext,
 
   ReactStore,
   ReactState,
-  ReactStateAsync,
   ReactNext,
 
   ReactStyle,
-  ReactStyleAsync,
   ReactView
 }
 
@@ -41,7 +38,6 @@ var _injector
 function createContext (injector) {
   ReactStore().t0 = new Date
   _injector = injector || new Injector([ReactState])
-  // _injector = injector || new Injector([ReactStateAsync])
 
   return function * createContext () {
     return yield _injector.get(ReactContext)
@@ -52,8 +48,8 @@ function createContext (injector) {
 annotate(ReactContext, new Inject(ReactView, ReactStore, ReactState, ReactNext))
 function * ReactContext (view, store, state, next) {
   // pre-rendering the view (less into css)
-  // pre generating initial state
-  // all in parallel
+  // pre-generating initial state
+  // all in parallel if async.
   var [render, initState] = yield [view, state]
 
   return Object.assign({render}, {
