@@ -24,7 +24,7 @@ var {
 // There is a bug on 6to5. It doesnt handle exporting generators well.
 // So just defining all exports at the top instead
 export {
-  createReactCtrl,
+  createContext,
   ReactContext,
 
   ReactStore,
@@ -38,11 +38,12 @@ export {
 }
 
 var _injector
-function createReactCtrl (injector) {
+function createContext (injector) {
+  ReactStore().t0 = new Date
   _injector = injector || new Injector([ReactState])
   // _injector = injector || new Injector([ReactStateAsync])
 
-  return function * ReactCtrl () {
+  return function * createContext () {
     return yield _injector.get(ReactContext)
   }
 }
@@ -52,8 +53,8 @@ annotate(ReactContext, new Inject(ReactView, ReactStore, ReactState, ReactNext))
 function * ReactContext (view, store, state, next) {
   // pre-rendering the view (less into css)
   // pre generating initial state
-  var render = yield view
-  var initState = yield state
+  // all in parallel
+  var [render, initState] = yield [view, state]
 
   return Object.assign({render}, {
     getInitialState () {
@@ -63,7 +64,6 @@ function * ReactContext (view, store, state, next) {
       setImmediate(() => {
         store.setState = store.context.setState.bind(this)
         next()
-        // c0(next)()
       })
       return initState
     },
@@ -80,8 +80,10 @@ function ReactNext (store, state) {
     store.setState(yield state)
     // On sync mode it may blow the stack
     // or it is too fast and the browser drops most of the frames
+    //
+    // TODO: better heuristics. (target 60 FPS, no more or less)
     var next = _injector.get(ReactNext)
-    if (store.pagePaints % 9 !== 0) return next()
+    if ((store.pagePaints * 10) % 90 !== 0) return next()
     setImmediate(next)
   })
 }

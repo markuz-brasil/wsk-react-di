@@ -18,7 +18,11 @@ var TASKS = CFG.tasks
 // Watch Files For Changes & reload
 var FILES = {
   html: [ SRC +'/**/*.{jade,html}', ],
-  bundle: [ SRC +'/{index,src/**/*}.{js,jsx}',],
+  bundle: [
+    SRC +'/{index,src/**/*}.{js,jsx}',
+    SRC +'/{index,libs/**/*}.{js,jsx}',
+    SRC +'/{index,flux/**/*}.{js,jsx}',
+  ],
   vendors: [ SRC +'/vendors/*.{js,jsx}', ],
   tasks: [ 'gulpfile.js', 'etc/**/*.js', ],
 }

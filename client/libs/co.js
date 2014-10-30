@@ -1,5 +1,5 @@
 //
-// I removed most of the setImmediate. justr left those around error messages
+// I removed all setImmediate.
 // this gives a hige perforce boost.
 //
 
@@ -293,7 +293,7 @@ function isObject(val) {
 
 function error(err) {
   if (!err) return;
-  setImmediate(function(){
+  // setImmediate(function(){
     throw err;
-  });
+  // });
 }

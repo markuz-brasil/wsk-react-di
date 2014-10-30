@@ -44,11 +44,11 @@ function Main (...args) {
 // annotate(InitState, new Inject(RootStyles))
 // annotate(RootStyles, new Inject(ReactStore))
 // function RootStyles (store) {
-//   renderStyle(`
-//     background: linear-gradient(to bottom, lighten(#f5f5f5, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
-//     border-radius: 0px;
-//     margin-bottom: 0px;
-//   `).then((css) => {
+  // renderStyle(`
+  //   background: linear-gradient(to bottom, lighten(#f5f5f5, 20%) 0%, darken(#f5f5f5, 3%) 70%,darken(#f5f5f5, 3%) 71%, lighten(#f5f5f5, 10%) 100%);
+  //   border-radius: 0px;
+  //   margin-bottom: 0px;
+  // `).then((css) => {
 //     store.get(RootElem).style = css
 //     store.context.forceUpdate()
 //   }, console.error.bind(console))
