@@ -25,9 +25,10 @@ var PUB = CFG.pub
 
 CFG.to5.entries = SRC +'/index.js'
 CFG.to5.aliases = {
-  libs: './'+ SRC +'/src/core/libs',
-  runtime: './'+ SRC +'/src/core/runtime',
+  libs: './'+ SRC +'/src/libs',
+  runtime: './'+ SRC +'/src/libs/runtime',
   main: './'+ SRC +'/src/main',
+  flux: './'+ SRC +'/src/flux',
   core: './'+ SRC +'/src/core',
 }
 

@@ -11,8 +11,10 @@ React.initializeTouchEvents(true)
 
 c0(function * () {
   var t0 = new Date
+  var ViewCtrl = yield createReactCtrl()
 
-  React.renderComponent(yield createReactCtrl(), document.getElementById('react-app'));
+  React.renderComponent(<ViewCtrl />, document.getElementById('react-app'));
+
   var t1 = new Date
   console.log(`*** first paint took: (${t1 - t0}ms) ***`)
 
