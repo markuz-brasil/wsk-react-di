@@ -28,7 +28,7 @@ function randColor () {
 }
 
 function randPer () {
-  return (Math.random() * (100 - 0))|0 + 0
+  return (Math.random() * (10 - 0))|0 + 0
 
 }
 
