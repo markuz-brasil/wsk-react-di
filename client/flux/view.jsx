@@ -2,6 +2,7 @@
 
 import { React, less } from 'runtime'
 import { c0, di } from 'libs'
+import * as flux from './annotations'
 
 var {
   annotate,
@@ -10,38 +11,33 @@ var {
   TransientScope
 } = di
 
-// There is a bug on 6to5. It doesnt handle exporting generators well.
-// So just defining all exports at the top instead
-export {
-  // ReactLess,
-  View
-}
-
-
-
-// view
+annotate(View, new Provide(flux.View))
+export function View () { return _view }
 
 var _style = { background: '#cb9a76' }
-var _view = {init: renderInit}
+var _view = {}
 
-function * renderInit () {
-  var t0 = new Date
+annotate(InitView, new Provide(flux.InitView))
+annotate(InitView, new Inject(flux.View))
+export function InitView (view) {
+  var iterator = InitView()
 
-  console.log('2: render')
-  yield (next) => setTimeout(next, Math.random()*10|0)
-  console.log('2: done render', new Date - t0)
+  function * InitView () {
+    var t0 = new Date
+    // simulating async op
+    // see co's API for help
+    yield (next) => setTimeout(next, Math.random()*10|0)
+    view.style = _style
+    iterator.style = _style
 
-  _view.style = _style
-  return {
-    render () {
-      return <div style={ this.state.style }> { this.state.msg } </div>
+    return {
+      render () {
+        return <div style={ this.state.style }> { this.state.msg } </div>
+      }
     }
   }
 
-}
-
-function View () {
-  return _view
+  return iterator
 }
 
 // function FluxStyle () {

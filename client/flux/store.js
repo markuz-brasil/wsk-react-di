@@ -1,6 +1,7 @@
 "use strict"
 
 import { di } from 'libs'
+import * as flux from './annotations'
 
 var {
   annotate,
@@ -9,65 +10,42 @@ var {
   TransientScope
 } = di
 
-// There is a bug on 6to5. It doesnt handle exporting generators well.
-// So just defining all exports at the top instead
-export {
-  Store
-  // ReactState
-  // ReactStateAsync
-}
-
 var _store = {
-  pagePaints: 0,
   state: null,
-  _log: [],
+  context: null,
+  paintCount: 1,
+
+  setState (state = _store.state) {
+    _store.context.setState(state)
+    return state
+  },
+
 }
 
-_store.initState = function * initState () {
-  var t0 = new Date
-  console.log('2: store')
-  yield (next) => setTimeout(next, Math.random()*10|0)
-  console.log('2: done store', new Date - t0)
+annotate(Store, new Provide(flux.Store))
+export function Store () { return _store }
 
-  var delta = () => (_store.t1 - _store.t0)|0
+annotate(InitStore, new Provide(flux.InitStore))
+annotate(InitStore, new Inject(flux.Store))
+export function InitStore (store) {
+  var iterator = InitStore()
 
-  _store.state = {}
-  Object.assign(_store.state, {
-    msg:  `
-      first paint @ ${delta()}ms ::
-      ${_store.pagePaints} injected @
-      ${(_store.pagePaints*1000/(delta()))|0} FPS
-    `
-  })
+  function * InitStore () {
+    // simulating async op
+    // see co's API for help
+    yield (next) => setTimeout(next, Math.random()*10|0)
+    store.state = store.state || {}
+    store.state.msg = 'store-data-' + store.paintCount
+    iterator.state = store.state
 
-  return {
-    getInitialState() {
-      _store.context = this
-      _store.setState = this.setState.bind(_store.context)
-      return _store.state
-    },
+    return {
+      getInitialState () {
+        store.context = this
+        return store.state
+      },
+    }
   }
+
+  return iterator
 }
 
-
-
-function Store () {
-  return _store
-}
-
-// annotate(ReactState, new TransientScope)
-// annotate(ReactState, new Inject(Store))
-// function * ReactState (store) {
-//   // store.t0 = store.t0 || new Date
-
-//   // return Object.assign(store.state, {
-//   //   msg: () => {
-//   //     store.t1 = store.t1 || new Date
-//   //     return `
-//   //       first paint @ ${store.t1 - store.t0}ms ::
-//   //       ${store.pagePaints} injected @
-//   //       ${( store.pagePaints*1000/(new Date - store.t0))|0} FPS
-//   //     `
-//   //   },
-//   // })
-// }

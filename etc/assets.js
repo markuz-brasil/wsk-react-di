@@ -49,7 +49,7 @@ function bundleClosure (opt, next) {
     .on('error', next)
     .pipe(vinylify(opt.basename))
     .pipe($.sourcemaps.init({loadMaps: opt.sourcemaps}))
-    .pipe($.uglify())
+    // .pipe($.uglify())
     .pipe($.sourcemaps.write('./maps'))
     .pipe(gulp.dest(opt.dest))
     .pipe($.size({title: 'js: '+ opt.title}))

@@ -6,10 +6,10 @@ export {co, di, assert}
 
 function handler (next) {
   return (err, value) => {
-    if (err) return console.error(err, err.stack)
+    if (err) return console.error(err, err.message, err.stack)
 
     try { return next(null, value) }
-    catch (err) { console.error(err, err.stack) }
+    catch (err) { console.error(err, err.message, err.stack) }
   }
 }
 
@@ -22,17 +22,6 @@ export function c0 (fn) {
     if (typeof next !== 'function') return co(fn)(next)
 
     args.push(handler(next))
-
-    // args.push((err, value) => {
-    //   if (err) { return console.error(err) }
-
-    //   try { next(value) }
-    //   catch (err) {
-    //     if (err) { return console.error(err) }
-    //   }
-
-    // })
-
     co(fn)(...args)
   }
 }
