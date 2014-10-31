@@ -1,20 +1,33 @@
 "use strict"
-import { createContext } from 'flux'
-import { c0 } from 'libs'
+var t0 = new Date
+
+import { Context, Store, Dispatcher } from 'flux'
+import { c0, di } from 'libs'
 import { React, less } from 'runtime'
 import { readFileSync } from 'fs'
 
-console.log(readFileSync('./LICENSE', 'utf8'))
+var {
+  annotate,
+  Inject,
+  Provide,
+  Injector
+} = di
 
-React.initializeTouchEvents(true)
-
+// main
 c0(function * () {
-  var t0 = new Date
+  console.log(readFileSync('./LICENSE', 'utf8'))
 
-  var ViewCtrl = React.createClass(yield createContext())
-  React.renderComponent(<ViewCtrl />, document.getElementById('react-app'));
+  // TODO: explain what is the deal with the Dispatch and dispatcher
+  annotate(ViewDispatcher, new Provide(Dispatcher))
+  function ViewDispatcher () { return dispatcher }
+  var dispatcher = new Injector([ViewDispatcher])
+
+  React.initializeTouchEvents(true)
+
+  var App = React.createClass(yield dispatcher.get(Context))
+  React.renderComponent(<App />, document.getElementById('react-app'));
 
   var t1 = new Date
   console.log(`*** real first paint took: (${t1 - t0}ms) ***`)
 
-})()
+})((err, value) => { if (err) return console.error(err) })

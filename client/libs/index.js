@@ -4,25 +4,34 @@ import * as co from './co'
 
 export {co, di, assert}
 
+function handler (next) {
+  return (err, value) => {
+    if (err) return console.error(err, err.stack)
+
+    try { return next(null, value) }
+    catch (err) { console.error(err, err.stack) }
+  }
+}
+
 export function c0 (fn) {
   return function c0 (...args) {
     if (args.length === 0) return co(fn)()
-
     var next = args.pop()
 
-    if (typeof next !== 'function') {
-      return co(fn)(next)
-    }
+    if (args.length === 0) return co(fn)(handler(next))
+    if (typeof next !== 'function') return co(fn)(next)
 
-    args.push((err, value) => {
-      if (err) { return console.error(err) }
+    args.push(handler(next))
 
-      try { next(value) }
-      catch (err) {
-        if (err) { return console.error(err) }
-      }
+    // args.push((err, value) => {
+    //   if (err) { return console.error(err) }
 
-    })
+    //   try { next(value) }
+    //   catch (err) {
+    //     if (err) { return console.error(err) }
+    //   }
+
+    // })
 
     co(fn)(...args)
   }
