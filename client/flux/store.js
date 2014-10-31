@@ -1,14 +1,9 @@
 "use strict"
 
-import { di } from 'libs'
+import { c0, di } from 'libs'
 import * as flux from './annotations'
 
-var {
-  annotate,
-  Inject,
-  Provide,
-  TransientScope
-} = di
+var { annotate, Inject, Provide } = di
 
 var _store = {
   state: null,
@@ -19,7 +14,6 @@ var _store = {
     _store.context.setState(state)
     return state
   },
-
 }
 
 annotate(Store, new Provide(flux.Store))
@@ -48,4 +42,3 @@ export function InitStore (store) {
 
   return iterator
 }
-

@@ -1,23 +1,9 @@
 "use strict"
 
 import { c0, di } from 'libs'
-
-import { View } from './view'
-import { Store } from './store'
-import { Dispatcher } from './dispatcher'
-
 import * as flux from './annotations'
 
-var {
-  annotate,
-  Inject,
-  Injector,
-  Provide,
-  TransientScope
-} = di
-
-// This is an Action becouse it depends on other Actions
-var a_ct = 0
+var { annotate, Inject, Provide, TransientScope } = di
 
 annotate(ActionPipeline, new TransientScope)
 annotate(ActionPipeline, new Provide(flux.ActionPipeline))
@@ -31,13 +17,13 @@ export function ActionPipeline (...actions) {
   }
 }
 
+var _ticks = 0
 annotate(NextTick, new Provide(flux.NextTick))
 annotate(NextTick, new Inject(flux.Dispatcher))
 export function NextTick (dispatcher) {
   var nextTick = c0(function * NextTick () {
-    a_ct++
-    console.log('actions', a_ct)
-    if (a_ct >= 10) return // just breaking out of the loop
+    _ticks++
+    if (_ticks >= 10) return // just breaking out of the loop
     yield dispatcher.get(ActionPipeline)
   })
 
@@ -69,4 +55,3 @@ export function RePaint (store, view) {
 
   return iterator
 }
-
