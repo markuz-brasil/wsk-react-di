@@ -6,7 +6,7 @@ var { annotate, Inject, Injector, Provide, TransientScope } = di
 
 //
 // TODO: explain vocabulary.
-// Things like Dispatcher, Actions, Providers, Services and Injectors
+// Things like $dispatcher, Actions, Providers, Services and Injectors
 // Also things like Action Iterators and Action Generator
 //
 // Explain the role of each Provider
@@ -17,7 +17,8 @@ var { annotate, Inject, Injector, Provide, TransientScope } = di
 // Maybe it could be a class that extends Injector
 //
 
-export function Dispatcher () { return new Injector([]) }
+var _injector = () => {}
+export function $dispatcher () { return _injector }
 
 //
 // Initialization Actions
@@ -29,28 +30,12 @@ export function Dispatcher () { return new Injector([]) }
 // And initiate nextTick once the whole context is ready
 //
 
-annotate(Context, new Inject(FirstPaint, NextTick))
-export function Context (init, nextTick) {
+annotate(Context, new Inject(Init$store, Init$view, NextTick))
+export function Context (init$store, init$view, nextTick) {
   var iterator = Context()
-  function * Context () {return {render, getInitialState}}
+  function * Context () {}
   return iterator
 }
-
-//
-// The FirstPaint Action Iterator should combine Init$store and
-// Init$view and return an Object where the Context Action can pass it along
-//
-
-annotate(FirstPaint, new Inject(Init$store, Init$view))
-export function FirstPaint (store, view) {
-  var iterator = FirstPaint()
-  function * FirstPaint () {return {render, getInitialState}}
-  return iterator
-}
-
-//
-// $views
-//
 
 //
 // This is a $view Service. It is a "singleton" for
@@ -62,10 +47,9 @@ export function $view () { return _view }
 
 //
 annotate(Init$view, new Inject($view))
-export function Init$view (view) {
+export function Init$view ($view) {
   var iterator = Init$view()
-  function render () {}
-  function * Init$view () {return { render }}
+  function * Init$view () {}
   return iterator
 }
 
@@ -77,10 +61,9 @@ var _store = {}
 export function $store () { return _store }
 
 annotate(Init$store, new Inject($store))
-export function Init$store (store) {
+export function Init$store ($store) {
   var iterator = Init$store()
-  function getInitialState() {}
-  function * Init$store () {return { getInitialState }}
+  function * Init$store () {}
   return iterator
 }
 
@@ -88,26 +71,33 @@ export function Init$store (store) {
 // Event Loop Actions
 //
 
-annotate(ActionCreator, new TransientScope)
-annotate(ActionCreator, new Inject(NextTick))
-export function ActionCreator (...actions) {
-  return function * ActionCreator () {
-    for (let action of actions) { yield action }
-  }
-}
-
-annotate(NextTick, new Inject(Dispatcher))
-export function NextTick (dispatcher) {
-  var nextTick = c0(function * NextTick () {})
-  nextTick.async = setImmediate.bind(null, nextTick)
+annotate(NextTick, new TransientScope)
+annotate(NextTick, new Inject($dispatcher, Actions, RePaint))
+export function NextTick (dispatcher, actions, paint) {
+  var nextTick = c0(function * () {})
+  nextTick.async = setImmediate.bind(setImmediate, nextTick)
   return nextTick
 }
 
-annotate(ActionCreator, new Inject(RePaint))
 annotate(RePaint, new TransientScope)
 annotate(RePaint, new Inject($store, $view))
-export function RePaint (store, view) {
+export function RePaint ($store, $view) {
   var iterator = RePaint()
   function * RePaint () {}
   return iterator
+}
+
+annotate(Actions, new TransientScope)
+export function Actions (...actions) {
+  var iterator = Actions()
+  function * Actions () {}
+  return iterator
+}
+
+Actions.add = function add (...deps) {}
+
+Actions.add(Log)
+export function Log () {
+  // look ma', without generators
+  return (next) => next(null, 'log')
 }

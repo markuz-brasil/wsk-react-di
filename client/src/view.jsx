@@ -18,16 +18,15 @@ export function Init$view (view) {
   var iterator = Init$view()
 
   function * Init$view () {
-    var t0 = new Date
     // simulating async op
     // see co's API for help
-    yield (next) => setTimeout(next, Math.random()*10|0)
+    // yield (next) => setTimeout(next, Math.random()*10|0)
     view.style = _style
     iterator.style = _style
 
     return {
       render () {
-        return <div style={ this.state.style }> { this.state.msg } </div>
+        return <div style={ this.state.style }> { this.state.msg } </div> /// bug on syntax highlight
       }
     }
   }

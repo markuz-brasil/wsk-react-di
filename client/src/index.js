@@ -12,19 +12,15 @@ import {
 
 import {
   Context,
-  FirstPaint,
   NextTick,
   RePaint,
-  ActionCreator
+  Actions
 } from './actions'
 
 export var AppProviders = [
-  Context,    //
-  FirstPaint, //
-  Init$view,  //
-  Init$store, // Boot Stage
-
-  $view, $store, // Services
-  ActionCreator, RePaint, NextTick // EventLoop
+  Context,                    // Boot Action
+  $view, $store,              // Services
+  Init$view, Init$store,      // Init Actions
+  NextTick, Actions, RePaint, // EventLoop Actions
 ]
 

@@ -16,11 +16,11 @@ c0(function * () {
   console.log(readFileSync('./LICENSE', 'utf8'))
 
   // TODO: explain what is the deal with
-  // ViewDispatcher service and this _injector
+  // $dispatcher service and this _injector
 
-  AppProviders.push(ViewDispatcher)
-  annotate(ViewDispatcher, new Provide(flux.Dispatcher))
-  function ViewDispatcher () { return _injector }
+  AppProviders.push($dispatcher)
+  annotate($dispatcher, new Provide(flux.$dispatcher))
+  function $dispatcher () { return _injector }
   var _injector = new Injector(AppProviders)
 
   //
@@ -28,8 +28,11 @@ c0(function * () {
   // Things like componentWillMount method (but not render and getInitialState)
   // is defined by the flux.Context
   //
-  var ctx = yield _injector.get(flux.Dispatcher).get(flux.Context)
-  var App = React.createClass(ctx )
+  var ctx = yield _injector.get(flux.Context)
+
+  // extending and shallow cloning ctx
+  Object.assign({}, ctx, { componentWillMount(){} })
+  var App = React.createClass(ctx)
 
   React.initializeTouchEvents(true)
   React.renderComponent(<App />, document.getElementById('react-app'));
