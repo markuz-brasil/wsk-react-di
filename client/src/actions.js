@@ -51,14 +51,18 @@ export function NextTick ($tick, $dispatcher, actions, paint) {
     // console.log($tick.delay, (new Date - $tick.t0)/$tick.count)
 
     if ($tick.fps === 0) return
-    if ($tick.fps < 0) return $dispatcher.get(NextTick)()
+    if ($tick.fps < 0) return $dispatcher.get(NextTick).sync()
     if ($tick.fps >= 1000/4) return $dispatcher.get(NextTick).async()
 
     return $dispatcher.get(NextTick).timeout()
   })
 
+  nextTick.sync = nextTick
   nextTick.async = setImmediate.bind(null, nextTick)
-  nextTick.timeout = setTimeout.bind(null, nextTick, $tick.delay)
+  nextTick.timeout = (t) => {
+    t = t || $tick.delay
+    return setTimeout(nextTick, t|0)
+  }
   return nextTick
 }
 
