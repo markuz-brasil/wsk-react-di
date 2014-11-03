@@ -23,7 +23,7 @@ var SRC = CFG.src
 var TMP = CFG.tmp
 var PUB = CFG.pub
 
-CFG.to5.entries = SRC +'/index.js'
+CFG.to5.entries = SRC +'/index.jsx'
 CFG.to5.aliases = {
   libs: './'+ SRC +'/libs',
   runtime: './'+ SRC +'/libs/runtime',

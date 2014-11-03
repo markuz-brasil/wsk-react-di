@@ -9,6 +9,10 @@ var _store = {
   state: null,
   context: null,
   paintCount: 1,
+  setState (ctx) {
+    ctx = ctx || this.state
+    this.context.setState(ctx)
+  },
 }
 
 annotate($store, new Provide(flux.$store))
