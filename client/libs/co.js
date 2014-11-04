@@ -28,7 +28,7 @@ module.exports = co;
 function co(fn) {
   var isGenFun = isGeneratorFunction(fn);
 
-  return function (done) {
+  return function _co(done) {
     var ctx = this;
 
     // in toThunk() below we invoke co()
@@ -98,11 +98,11 @@ function co(fn) {
             next.apply(ctx, arguments);
           });
         } catch (e) {
-          setImmediate(function(){
+          // setImmediate(function(){
             if (called) return;
             called = true;
             next(e);
-          });
+          // });
         }
         return;
       }
@@ -160,7 +160,7 @@ function objectToThunk(obj){
   var ctx = this;
   var isArray = Array.isArray(obj);
 
-  return function(done){
+  return function _objectToThunk(done){
     var keys = Object.keys(obj);
     var pending = keys.length;
     var results = isArray
@@ -224,7 +224,7 @@ function objectToThunk(obj){
  */
 
 function promiseToThunk(promise) {
-  return function(fn){
+  return function _promiseToThunk(fn){
     promise.then(function(res) {
       fn(null, res);
     }, fn);

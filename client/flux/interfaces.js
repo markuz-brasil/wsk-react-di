@@ -17,6 +17,8 @@ var { annotate, Inject, Injector, Provide, TransientScope } = di
 // Maybe it could be a class that extends Injector
 //
 
+export function Startup () {}
+
 var _injector = () => {}
 export function $dispatcher () { return _injector }
 
@@ -30,8 +32,8 @@ export function $dispatcher () { return _injector }
 // And initiate nextTick once the whole context is ready
 //
 
-annotate(Context, new Inject(Init$store, Init$view, NextTick))
-export function Context (init$store, init$view, nextTick) {
+annotate(Context, new Inject(State, View, NextTick))
+export function Context (state, init$view, nextTick) {
   var iterator = Context()
   function * Context () {}
   return iterator
@@ -46,10 +48,10 @@ var _view = {}
 export function $view () { return _view }
 
 //
-annotate(Init$view, new Inject($view))
-export function Init$view ($view) {
-  var iterator = Init$view()
-  function * Init$view () {}
+annotate(View, new Inject($view))
+export function View ($view) {
+  var iterator = View()
+  function * View () {}
   return iterator
 }
 
@@ -60,10 +62,10 @@ export function Init$view ($view) {
 var _store = {}
 export function $store () { return _store }
 
-annotate(Init$store, new Inject($store))
-export function Init$store ($store) {
-  var iterator = Init$store()
-  function * Init$store () {}
+annotate(State, new Inject($store))
+export function State ($store) {
+  var iterator = State()
+  function * State () {}
   return iterator
 }
 

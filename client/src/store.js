@@ -5,10 +5,13 @@ import { flux } from 'flux'
 
 var { annotate, Inject, Injector, Provide, TransientScope } = di
 
+// using a Map is also great for a $store
+
 var _store = {
-  state: null,
+  _global: {},
+  state: {},
+  view: {},
   context: null,
-  paintCount: 1,
   setState (ctx) {
     ctx = ctx || this.state
     this.context.setState(ctx)
@@ -16,22 +19,20 @@ var _store = {
 }
 
 annotate($store, new Provide(flux.$store))
-export function $store () { return _store }
+export function $store () { return Object.assign({}, _store) }
 
-annotate(Init$store, new Provide(flux.Init$store))
-annotate(Init$store, new Inject(flux.$store))
-export function Init$store ($store) {
-  var iterator = Init$store()
-  function * Init$store () {
-    // simulating async op
-    // see co's API for help
-    // yield (next) => setTimeout(next, Math.random()*10|0)
-    $store.state = $store.state || {}
-    $store.state.msg = 'store-data-' + $store.paintCount
+annotate(State, new Provide(flux.State))
+annotate(State, new Inject(flux.$store))
+export function State ($store) {
+  var iterator = State()
+
+  function * State () {
+    Object.assign($store.state, _store, {counter:0})
+    if ($store.state.counter !== 0) return $store.state
 
     return {
-      $store: $store,
       getInitialState () {
+        $store.state.counter++
         $store.context = this
         return $store.state
       },

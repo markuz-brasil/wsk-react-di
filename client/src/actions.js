@@ -6,122 +6,80 @@ import { flux } from 'flux'
 var { annotate, Inject, Injector, Provide, TransientScope } = di
 
 annotate(Context, new Provide(flux.Context))
-annotate(Context, new Inject(flux.Init$store, flux.Init$view))
-export function Context (init$store, init$view) {
+annotate(Context, new Inject(flux.State, flux.View))
+export function Context (state, view) {
   var iterator = Context()
   function * Context () {
 
-    // see co's API on yield for help.
-    // Enhanced yield staments ahead.
+    // Enhanced yield statements handling via co's API.
+    // `Startup` is wrapped within a co's thunk,
+    // so it manages all the yield'ed statements.
 
-    var ctx = Object.assign.apply(null, yield [
-      {}, init$store, init$view,
+    return Object.assign.apply(null, yield [
+      {}, state, view,
     ])
-
-    console.log('delaying ctx async: begin')
-    yield (next) => setTimeout(next, 100)
-    console.log('delaying ctx async: end')
-
-    var _counter = 1000
-    while (_counter--){console.log('delaying ctx sync')}
-
-    ctx.$store.state.style = init$view.style
-    return ctx
   }
 
   return iterator
 }
 
-var _tick = {
-  count: 0,
-  fps: 120,
-  t0: new Date,
-  cache: [],
-  snapshot () { this.count++ },
-}
-
-export function $tick () { return _tick }
-
-function * _asyncOps (t0) {
- // short term async.
-  console.log('#### begin async ops ####')
-  setImmediate(()=>{
-    console.log('short async', new Date - t0)
-  })
-
-  // long term async
-  yield (next) => setTimeout(next, 100)
-  console.log('long async', new Date - t0)
-
-  // blocking sync
-  var _counter = 1000
-  while (_counter--){console.log('...')}
-  console.log('sync', new Date - t0)
-
-  console.log('#### end async ops ####')
-}
 //
-// annotate(NextTick, new TransientScope)
+// TODO: better error handling.
 annotate(NextTick, new Provide(flux.NextTick))
-annotate(NextTick, new Inject($tick, flux.$dispatcher, flux.Actions, flux.RePaint))
-export function NextTick ($tick, $dispatcher, actions, paint) {
-  var _counter = 100
+annotate(NextTick, new Inject(flux.$dispatcher, flux.Actions, flux.RePaint))
+var _nextTickCounter = 0
+export function NextTick ($dispatcher, actions, paint) {
   var _ticks = 0
+  // nothing is catching the error here.
 
-  function * tick (payload) {
-    payload.count++
+  return function * _NextTick () {
 
-    var t0 = new Date
-    console.log('status:' ,++_ticks, payload)
-    yield _asyncOps(t0)
+    try { paint(yield actions).next() }
+    catch (err) { console.error(err) }
 
-    return true
+    if (++_nextTickCounter > 1000) return
+
+    var nextTick = c0($dispatcher.get(flux.NextTick))
+
+    var FPS = -70 //negative => setImmediate
+    var delay = (1000/FPS)|0 // => 14 millisec @ 70 FPS
+
+    try {
+      if (++_ticks > 10) {
+        // stop tail recursion after 10 laps
+        if (delay <= 0) { return setImmediate(nextTick) }
+        if (delay > 0) { return setTimeout(nextTick, delay) }
+      }
+
+      if (delay <= 0) yield (next) => setImmediate(next)
+      if (delay > 0) yield (next) => setTimeout(next, delay)
+    }
+    catch (err) { console.error(err) }
+
+    // start a new loop
+    return yield $dispatcher.get(flux.NextTick)
   }
-
-  var $nextTick = nextTick()
-  function * nextTick () {
-    // logic deciding when to break out
-    while (_counter--) { tick.count++; yield tick }
-    console.log('tick:', 'end init')
-  }
-
-  console.log('tick:', 'begin init')
-  return $nextTick
 }
 
-//
-annotate(RePaint, new TransientScope)
+// annotate(RePaint, new TransientScope)
 annotate(RePaint, new Provide(flux.RePaint))
-annotate(RePaint, new Inject(flux.$store, flux.$view))
-export function RePaint ($store, $view) {
+annotate(RePaint, new Inject(flux.$store))
+export function RePaint ($store) {
+  return function * _RePaint (act) {
 
-  function * RePaint () {
-    $store.paintCount++
-    // simulating async op
-    // see co's API for help
-    // yield (next) => setTimeout(next, Math.random()*1000|0)
-
-    $store.state.msg = 'store-data-' + $store.paintCount
+    $store.state.msg = `store-data-${$store.view.counter} :: ${act[0]}`
     $store.state.style = { background: '#45ba76' }
-    console.log('--- Repaint:')
-    var render = $store.setState.bind($store)
-    return render
-
+    $store.setState()
   }
-
-  return RePaint
 }
 
 //
-annotate(Actions, new TransientScope)
+// annotate(Actions, new TransientScope)
 annotate(Actions, new Provide(flux.Actions))
 export function Actions (...actions) {
-  var iterator = Actions()
-  function * Actions () {
-    // processing all actions in series
-    for (let action of actions) { yield action }
+  return function * Actions () {
+    return yield actions // parallel resolution here. co's API
   }
-  return iterator
 }
 
 Actions.add = function add (...deps) {
@@ -130,47 +88,41 @@ Actions.add = function add (...deps) {
   }
 }
 
-
-
 Actions.add(Log)
 export function Log () {
   var t0 = new Date
-  return (next) => {
-    // console.log('log:', new Date() - t0)
-    next()
+  //
+  // look, no generator and still an action.
+  // nodejs express middleware style.
+  // co's API gives you express like middleware for free.
+  //
+  return function _Log (next) {
+    var msg = `log: ${Math.random() * 1000|0}`
+    console.log(msg)
+    next(null, msg)
   }
 }
 
+Actions.add(AsyncOps)
+function AsyncOps () {
+  return function * _AsyncOps () {
 
-    // $tick.snapshot()
-    // if ($tick.count > 200) return console.log('done', $tick)
+    // long term async
+    console.log('async ops ...')
+    yield function _asyncOps (next) { setTimeout(next, Math.random()*1000|0) }
+    console.log('async ops ... done')
+    // yield (next) => setImmediate(next)
+  }
+}
 
-    // yield actions   // resolving actions
-    // yield paint     // painting
+Actions.add(SyncOps)
+function SyncOps () {
+  return function * _SyncOps () {
+    console.log('blocking 10000 ops ...')
 
-
-    // // TODO: make sure paint loop is sync and at 60FPS (if it will render or not)
-    // // while actions is async and takes longer.
-
-    // var fix = 2
-    // $tick.delay = (1000/$tick.fps - fix)|0
-
-    // // console.log($tick.delay, (new Date - $tick.t0)/$tick.count)
-
-    // console.log('&&&', $dispatcher.get(NextTick))
-    // // nextTick()
-    // // if ($tick.fps === 0) return
-    // // if ($tick.fps < 0) return $dispatcher.get(NextTick).sync()
-    // // if ($tick.fps >= 1000/4) return $dispatcher.get(NextTick).async()
-
-    // // return $dispatcher.get(NextTick).timeout()
-
-
-  // nextTick.sync = nextTick
-  // nextTick.async = setImmediate.bind(null, nextTick)
-  // nextTick.timeout = (t) => {
-  //   t = t || $tick.delay
-  //   return setTimeout(nextTick, t|0)
-  // }
-  // return nextTick
+    var _c = 10000
+    while (_c > 0) {_c--}
+    console.log('blocking ops ... done')
+  }
+}
 
