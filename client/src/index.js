@@ -7,14 +7,11 @@ import { React, less } from 'runtime'
 var { annotate, Inject, Injector, Provide, TransientScope } = di
 
 import { View } from './view'
-import { $store, State } from './store'
+import { State } from './state'
+import { $store, Context } from './context'
+import { NextTick, RePaint, Actions } from './actions'
 
-import {
-  Context,
-  NextTick,
-  RePaint,
-  Actions
-} from './actions'
+function $http () {}
 
 export var App = [Startup]
 annotate(Startup, new Provide(flux.Startup))
@@ -28,17 +25,11 @@ function Startup () {
     $dispatcher,                // d.i. injector
     View, State,                // init actions
     Startup, Context,           // boot actions
-    $store,              // services
+    $store, $http               // services
   ])
 
   var iterator = _Startup()
   function * _Startup () {
-
-    //
-    // add anything else into the components ctx.
-    // (but not render and getInitialState, or maybe you can :)
-    // is defined by the flux.Context
-    //
 
     // extending and shallow cloning ctx
     var ctx = yield _dispatcher.get(flux.Context)
@@ -47,12 +38,13 @@ function Startup () {
       componentDidMount(){},
     })
 
-    // React init
+    // first render
     var App = React.createClass(ctx)
     React.initializeTouchEvents(true)
     React.renderComponent(<App />, document.body);
 
-    // entering event loop
+    // entering action-render-loop
+    yield (next) => setImmediate(next)
     return yield _dispatcher.get(flux.NextTick)
   }
 
