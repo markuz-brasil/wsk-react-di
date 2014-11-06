@@ -5,7 +5,7 @@ import { flux } from 'flux'
 
 var { annotate, Inject, Injector, Provide, TransientScope } = di
 
-export {NextTick, RePaint} from './render-action-loop'
+export {NextTick, RePaint} from './paint-action-loop'
 
 annotate(Actions, new Provide(flux.Actions))
 export function Actions (...actions) {
