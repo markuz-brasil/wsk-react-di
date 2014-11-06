@@ -41,7 +41,7 @@ function AsyncOps () {
 
     // shot-term async
     console.log('async ops ...')
-    yield (next) => setTimeout(next, Math.random()*10|0)
+    yield (next) => setTimeout(next, Math.random()*100|0)
     console.log('async ops ... done')
   }
 }

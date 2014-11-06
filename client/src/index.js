@@ -11,6 +11,7 @@ import { State } from './state'
 import { $store, Context } from './context'
 import { NextTick, RePaint, Actions } from './actions'
 
+// placeholder for now
 function $http () {}
 
 export var App = [Startup]

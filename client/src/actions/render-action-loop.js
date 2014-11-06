@@ -19,7 +19,7 @@ export function NextTick ($dispatcher, actions, paint) {
 
   return function * _NextTick () {
     // halting
-    if (++_nextTickCounter > 1000) return
+    // if (++_nextTickCounter > 1000) return
 
     _t0 = new Date().getTime()
 
@@ -57,7 +57,7 @@ annotate(RePaint, new Provide(flux.RePaint))
 annotate(RePaint, new Inject(flux.$store))
 export function RePaint ($store) {
   return function * _RePaint (act) {
-    $store.state.msg = `store-data-${$store.view.counter} :: ${act[0]}`
+    $store.state.msg = `${new Date} :: store-data-${$store.view.counter} :: ${act[0]}`
     $store.state.style = { background: '#45ba76' }
     $store.setState()
   }
