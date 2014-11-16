@@ -6,7 +6,7 @@ import { flux } from 'flux'
 var { annotate, Inject, Injector, Provide, TransientScope } = di
 
 annotate(State, new Provide(flux.State))
-annotate(State, new Inject(flux.$store))
+annotate(State, new Inject(flux.$Store))
 export function State ($store) {
   var iterator = State()
 

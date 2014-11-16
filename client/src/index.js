@@ -8,45 +8,61 @@ var { annotate, Inject, Injector, Provide, TransientScope } = di
 
 import { View } from './view'
 import { State } from './state'
-import { $store, Context } from './context'
+import { Context } from './context'
 import { NextTick, RePaint, Actions } from './actions'
 
 // placeholder for now
-function $http () {}
+function $Http () {}
+
+export function _document () { return document }
+export function _window () { return window }
+
+var _store = {
+  _global: {},
+  state: {},
+  view: {},
+  context: null,
+  setState (ctx) {
+    ctx = ctx || this.state
+    this.context.setState(ctx)
+  },
+}
+
+annotate($Store, new Provide(flux.$Store))
+export function $Store () { return Object.assign({}, _store) }
 
 export var App = [Startup]
 annotate(Startup, new Provide(flux.Startup))
-function Startup () {
+annotate(Startup, new Inject(_document))
+function Startup ($doc) {
   // TODO: explain whats the deal with $dispatcher
 
   annotate($dispatcher, new Provide(flux.$dispatcher))
-  function $dispatcher () { return _dispatcher }
-  var _dispatcher = new Injector([
-    NextTick, Actions, RePaint, // event loop actions
-    $dispatcher,                // d.i. injector
+  function $dispatcher () { return $dispatcher }
+  var $dispatcher = new Injector([
+    NextTick, Actions, RePaint, // paint-actions-loop actions
     View, State,                // init actions
+    $dispatcher,                // current d.i. injector wrap
+    $Store, $Http,              // services
     Startup, Context,           // boot actions
-    $store, $http               // services
   ])
 
   var iterator = _Startup()
   function * _Startup () {
 
     // extending and shallow cloning ctx
-    var ctx = yield _dispatcher.get(flux.Context)
-    ctx = Object.assign({}, ctx, {
+    var ctx = Object.assign({}, yield $dispatcher.get(flux.Context), {
       componentWillMount(){},
       componentDidMount(){},
     })
 
     // first render
-    var App = React.createClass(ctx)
     React.initializeTouchEvents(true)
-    React.renderComponent(<App />, document.body);
+    React.renderComponent(React.createClass(ctx)(null), $doc.body);
 
     // entering action-render-loop
     yield (next) => setImmediate(next)
-    return yield _dispatcher.get(flux.NextTick)
+    return yield $dispatcher.get(flux.NextTick)
   }
 
   return iterator

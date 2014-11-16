@@ -54,11 +54,15 @@ export function NextTick ($dispatcher, actions, paint) {
 
 // annotate(RePaint, new TransientScope)
 annotate(RePaint, new Provide(flux.RePaint))
-annotate(RePaint, new Inject(flux.$store))
+annotate(RePaint, new Inject(flux.$Store))
 export function RePaint ($store) {
   return function * _RePaint (act) {
     $store.state.msg = `${new Date} :: store-data-${$store.view.counter} :: ${act[0]}`
-    $store.state.style = { background: '#45ba76' }
+    $store.state.style = { background: `
+        rgb(${($store.view.counter + 151) % 255},
+        ${($store.view.counter + 173) % 255},
+        ${($store.view.counter + 193) % 255})
+    `}
     $store.setState()
   }
 }

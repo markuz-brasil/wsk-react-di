@@ -12,7 +12,7 @@ var _view = {
 }
 
 annotate(View, new Provide(flux.View))
-annotate(View, new Inject(flux.$store))
+annotate(View, new Inject(flux.$Store))
 export function View ($store) {
   var iterator = _View()
 

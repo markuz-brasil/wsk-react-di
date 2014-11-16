@@ -5,7 +5,7 @@ import { flux } from 'flux'
 
 var { annotate, Inject, Injector, Provide, TransientScope } = di
 
-export {NextTick, RePaint} from './paint-action-loop'
+export {NextTick, RePaint} from './paint-actions-loop'
 
 annotate(Actions, new Provide(flux.Actions))
 export function Actions (...actions) {
@@ -40,9 +40,9 @@ function AsyncOps () {
   return function * _AsyncOps () {
 
     // shot-term async
-    console.log('async ops ...')
-    yield (next) => setTimeout(next, Math.random()*100|0)
-    console.log('async ops ... done')
+    console.log('short async ops ...')
+    yield (next) => setTimeout(next, Math.random()*10|0)
+    console.log('short async ops ... done')
   }
 }
 

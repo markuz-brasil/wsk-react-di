@@ -56,14 +56,13 @@ export function View ($view) {
 }
 
 //
-// $store is a Service to share non style data
+// $Store is a Service to share non style data
 //
+var $Store
+export function $Store () { return $Store }
 
-var _store = {}
-export function $store () { return _store }
-
-annotate(State, new Inject($store))
-export function State ($store) {
+annotate(State, new Inject($Store))
+export function State ($Store) {
   var iterator = State()
   function * State () {}
   return iterator
@@ -82,8 +81,8 @@ export function NextTick (dispatcher, actions, paint) {
 }
 
 annotate(RePaint, new TransientScope)
-annotate(RePaint, new Inject($store, $view))
-export function RePaint ($store, $view) {
+annotate(RePaint, new Inject($Store, $view))
+export function RePaint ($Store, $view) {
   var iterator = RePaint()
   function * RePaint () {}
   return iterator
